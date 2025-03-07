@@ -16,31 +16,31 @@ export const ErrorCatchProvider = ({
 }: Props) => {
   const notification = useNotification();
 
-  // 에러 핸들러
-  const handleError = useCallback((error: Error) => {
-    if(error instanceof ProcessResultError){
-      const n = error.getNotification();
-      notification.show(n.message, {
-        severity: n.severity,
-        autoHideDuration: AUTO_HIDE_DURATION
-      });
-    } else {
-      console.error(error);
-      notification.error();
-    }
-  }, [notification])
-
-
   useEffect(() => {
-    const errorHandler = (event: ErrorEvent) => handleError(event.error);
-    const rejectionHandler = (event: PromiseRejectionEvent) => handleError(event.reason);
-    
-    window.addEventListener('error', errorHandler);
-    window.addEventListener('unhandledrejection', rejectionHandler);
+    // 에러 핸들러
+    const handleError = (event: ErrorEvent | PromiseRejectionEvent) => {
+      const error: Error = event instanceof ErrorEvent ? event.error : event.reason;
+
+      if(error instanceof ProcessResultError){
+        const n = error.getNotification();
+        notification.show(n.message, {
+          severity: n.severity,
+          autoHideDuration: AUTO_HIDE_DURATION
+        });
+      } else {
+        notification.error();
+      }
+
+      // 에러를 처리
+      event.preventDefault();
+    }
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleError);
   
     return () => {
-      window.removeEventListener('error', errorHandler);
-      window.removeEventListener('unhandledrejection', rejectionHandler);
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleError);
     };
   }, []);
   

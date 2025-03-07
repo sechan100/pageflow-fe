@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AccessTokenStorage, PrivatePropertyAccessTokenStorage } from "./AccessTokenStorage";
 import { useAuthentication } from "./use-authentication";
-import { PlainApiResponse } from "@/shared/api/api-response";
+import { PlainApiResponse } from "@/shared/res/api-response";
 import { AccessToken } from "./AccessToken";
 import { SessionExpiredError } from "./SessionExpiredError";
 import { getProxyBaseUrl } from "../proxy";

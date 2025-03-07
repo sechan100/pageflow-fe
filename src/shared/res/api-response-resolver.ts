@@ -1,6 +1,6 @@
 import { err, ok, Result } from "neverthrow";
 import { ApiResponse } from "./api-response";
-import { FieldValidationResult, InvalidField } from "@/global/field-validation";
+import { FieldValidationResult, InvalidField } from "@/shared/field-validation";
 import { ApiResponseError } from "./ApiResponseError";
 
 
@@ -47,6 +47,7 @@ export class ApiResponseResolver<D> {
   resolve(): Result<D, FieldValidationResult> {
     // 성공이면 그대로 반환
     if(this.#response.isSuccess()){
+      this.#successHandler(this.#response.data);
       return ok(this.#response.data);
     }
     // 에러처리
@@ -68,6 +69,7 @@ export class ApiResponseResolver<D> {
 
   getSuccessData(): D {
     if(this.#response.isSuccess()){
+      this.#successHandler(this.#response.data);
       return this.#response.data;
     } else {
       throw new ApiResponseError(this.#response);

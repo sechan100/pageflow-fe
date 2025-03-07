@@ -2,11 +2,12 @@ import { api } from "@/global/api";
 import { accessTokenManager } from "@/global/authentication/access-token-manager";
 import { AccessToken } from "@/global/authentication/AccessToken";
 import { useAuthentication } from "@/global/authentication/use-authentication";
-import { FieldValidationResult } from "@/global/field-validation";
+import { FieldValidationResult } from "@/shared/field-validation";
 import { Result } from "neverthrow";
 import { SESSION_QUERY_KEY, useSessionQuery } from "./use-session-query";
 import { useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useCallback } from "react";
+import { AlreadyLoginedError } from "./AlreadyLoginedError";
 
 
 export type SessionUser = {
@@ -37,6 +38,9 @@ export const useSession = () => {
   const sessionQuery = useSessionQuery();
 
   const login = useCallback(async (username: string, password: string) => {
+    if(useAuthentication.getState().isAuthenticated){
+      throw new AlreadyLoginedError();
+    }
     const response = await api.guest()
       .params({ username, password})
       .post<AccessToken>("/auth/login");

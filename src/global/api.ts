@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { ApiResponse, ApiResponseImpl, PlainApiResponse } from "@/shared/api/api-response";
+import { ApiResponse, ApiResponseImpl, PlainApiResponse } from "@/shared/res/api-response";
 import { accessTokenManager } from "./authentication/access-token-manager";
 import { getProxyBaseUrl } from "./proxy";
 

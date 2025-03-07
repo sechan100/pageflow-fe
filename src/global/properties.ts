@@ -1,4 +1,4 @@
-import { ApiResponse, PlainApiResponse } from "@/shared/api/api-response";
+import { ApiResponse, PlainApiResponse } from "@/shared/res/api-response";
 import axios from "axios";
 import { create } from "zustand";
 import { getProxyBaseUrl } from "./proxy";

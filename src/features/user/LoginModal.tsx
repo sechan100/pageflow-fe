@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { useSession } from '@/entities/user/use-session';
 import { useNotification } from '@/shared/notification';
+import { FieldValidationResult, useFieldValidation } from '@/shared/field-validation';
 
 type LoginDialogProps = {
   open: boolean;
@@ -44,7 +45,7 @@ export const LoginModal = ({
     password: ''
   });
   const { login } = useSession();
-  const notification = useNotification();
+  const { setFieldValidation, getFieldError } = useFieldValidation()
   
   // 입력값 변경
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +68,7 @@ export const LoginModal = ({
     if(result.isOk()) {
       handleClose();
     } else {
-      const invalidFields = result.error.invalidFields;
-      for(const field of invalidFields) {
-        notification.warn(field.message);
-      }
+      setFieldValidation(result.error);
     }
   }, [formData, handleClose]);
 
@@ -114,6 +112,8 @@ export const LoginModal = ({
             variant="outlined"
             value={formData.username}
             onChange={handleInputChange}
+            error={getFieldError("username") != null}
+            helperText={getFieldError("username")?.message}
             required
             sx={{ mb: 2 }}
           />
@@ -127,6 +127,8 @@ export const LoginModal = ({
             variant="outlined"
             value={formData.password}
             onChange={handleInputChange}
+            error={getFieldError("password") != null}
+            helperText={getFieldError("password")?.message}
             required
             slotProps={{
               input: {
