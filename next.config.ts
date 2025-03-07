@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   async rewrites() { // proxy 설정
     return [
       {
-        source: `${process.env.PROXY_PREFIX}/:path*`,
+        source: `${process.env.NEXT_PUBLIC_PROXY_PREFIX}/:path*`,
         destination: `${process.env.API_HOST}/:path*`,
       },
     ];

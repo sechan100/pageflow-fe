@@ -1,4 +1,4 @@
-import { applicationProperties } from '@/global/properties';
+import { useApplicationProperties } from '@/global/properties';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
@@ -66,7 +66,7 @@ export const Footer = () => {
           <IconButton
             color="inherit"
             size="small"
-            href={applicationProperties.xUrl}
+            href={useApplicationProperties.getState().xUrl}
             aria-label="X"
             sx={{ alignSelf: 'center' }}
           >

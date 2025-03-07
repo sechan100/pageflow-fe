@@ -1,13 +1,11 @@
 'use client';
 
 import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { debounce } from 'lodash';
 import { STYLES } from '@/global/styles';
 import { CssBaseline } from '@mui/material';
 
 
-const theme = createTheme({
+const theme: Theme = createTheme({
   palette: {
     primary: {
       main: STYLES.color.primary,

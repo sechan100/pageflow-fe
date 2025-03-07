@@ -4,6 +4,8 @@
 'use client';
 import { MUIThemeProvider } from "./MUIThemProvider";
 import { ReactQueryProvider } from "./ReactQueryProvider";
+import { NotificationProvider } from "./NotificationProvider";
+import { ErrorCatchProvider } from "./ErrorCatchProvider";
 
 
 export const PageflowGlobalProvider = ({children} : {children: React.ReactNode}) => {
@@ -11,7 +13,11 @@ export const PageflowGlobalProvider = ({children} : {children: React.ReactNode})
   return (
     <ReactQueryProvider>
       <MUIThemeProvider>
-        {children}
+        <NotificationProvider>
+          <ErrorCatchProvider>
+            {children}
+          </ErrorCatchProvider>
+        </NotificationProvider>
       </MUIThemeProvider>
     </ReactQueryProvider>
   )
