@@ -30,7 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "eslint-plugin-fsd-lint": "^1.0.5",
+    "eslint-plugin-fsd-import": "^0.0.13",
     "typescript": "^5"
   }
 }

@@ -14,7 +14,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from './ColorModeIconDropdown';
 import { BarLogo } from './BarLogo';
 import { useState } from 'react';
-import { LoginButton } from '@/features/user/LoginButton';
+import { LoginButton } from '@/features/user';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({

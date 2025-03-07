@@ -2,16 +2,16 @@
 'use client'
 
 import { Button } from "@mui/material"
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import { LoginModal } from "./LoginModal"
 
 
 
 type Props = {
-  
+  className?: string
 }
 export const LoginButton = ({
-  
+  className
 }: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   
