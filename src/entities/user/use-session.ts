@@ -4,6 +4,7 @@ import { useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { LoginResult, requestLogin } from "./login";
 import { SESSION_QUERY_KEY, useSessionQuery } from "./use-session-query";
+import { api } from "@/global/api";
 
 
 export type SessionUser = {
@@ -37,7 +38,11 @@ export const useSession = (): UseSession => {
     return await requestLogin(username, password);
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    const res = await api.guest().post("/auth/logout");
+    if(!res.isSuccess()){
+      throw new Error("로그아웃에 실패했습니다.");
+    }
     accessTokenManager.clearToken();
     queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY });
     useAuthentication.getState().deAuthenticate();
