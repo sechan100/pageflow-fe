@@ -1,111 +1,72 @@
-import { err, ok, Result } from "neverthrow";
 import { ApiResponse } from "./api-response";
-import { FieldValidationResult, InvalidField } from "@/shared/field-validation";
 import { ApiResponseError } from "./ApiResponseError";
+import { FieldValidationResult } from "../field-validation";
 
 
 
 
 
-export class ApiResponseResolver<D> {
+export class ApiResponseResolver<D, R> {
   #response: ApiResponse<D>;
   #handlers: {
-    [code: string]: (data: any) => FieldValidationResult;
+    [code: string]: (data: any) => R;
   } = {};
-  #successHandler: (data: D) => D;
-  #defaultHandler: () => FieldValidationResult;
+  #defaultHandler: () => R;
 
   constructor(response: ApiResponse<D>) {
     this.#response = response;
-    this.#successHandler = (data: D) => data;
     this.#defaultHandler = () => {
       throw new Error("api 응답을 처리할 수 없습니다.")
     }
   }
 
-  on<T>(code: string, fieldOrhandler: FieldValidationResult | InvalidField | ((errorData: T) => FieldValidationResult)): ApiResponseResolver<D> {
-    if(typeof fieldOrhandler === "function"){
+  on<T>(code: string, result: ((data: T) => R) | R): ApiResponseResolver<D, R> {
+    if(typeof result === "function"){
       // handler
-      this.#handlers[code] = fieldOrhandler;  
-    } else if("invalidFields" in fieldOrhandler) {
-      // FieldValidationResult
-      this.on(code, () => fieldOrhandler);
-    } else {
-      // InvalidField
-      this.on(code, () => {
-        return { invalidFields: [fieldOrhandler] }
-      });
+      this.#handlers[code] = result as (data: T) => R;
+    }else {
+      // error 데이터
+      this.on(code, () => result);
     }
     return this;
   }
 
-  defaultHandler(handler: () => FieldValidationResult): ApiResponseResolver<D> {
+  defaultHandler(handler: () => R): ApiResponseResolver<D, R> {
     this.#defaultHandler = handler;
     return this;
   }
 
-  resolve(): Result<D, FieldValidationResult> {
-    // 성공이면 그대로 반환
-    if(this.#response.isSuccess()){
-      this.#successHandler(this.#response.data);
-      return ok(this.#response.data);
-    }
-    // 에러처리
+  resolve(): R {
     const handler = this.#handlers[this.#response.code];
     if(handler) {
-      return err(handler(this.#response.data));
+      return handler(this.#response.data);
     } else {
-      return err(this.#defaultHandler());
+      return this.#defaultHandler();
     }
   }
 
-  resolveMap<T>(mapper: (data: D) => T): Result<T, FieldValidationResult> {
-    return this.resolve().map(mapper);
-  }
-
-  resolveGet<T>(successData: T): Result<T, FieldValidationResult> {
-    return this.resolve().map(() => successData);
-  }
-
-  getSuccessData(): D {
+  get(): D {
     if(this.#response.isSuccess()){
-      this.#successHandler(this.#response.data);
       return this.#response.data;
     } else {
       throw new ApiResponseError(this.#response);
     }
   }
 
-  /**
-   * 기본 SUCCESS 핸들러는 데이터를 그대로 반환합니다.
-   * @param handler 
-   * @returns 
-   */
-  SUCCESS(handler: (data: D) => void): ApiResponseResolver<D> {
-    this.#successHandler = (data: D) => {
-      handler(data);
-      return data;
-    }
+  SUCCESS(handler: (data: D) => R): ApiResponseResolver<D, R> {
+    this.on("SUCCESS", handler);
     return this;
   }
 
-  FIELD_VALIDATION_FAIL(): ApiResponseResolver<D> {
-    return this.on("FIELD_VALIDATION_FAIL", (errorData: FieldValidationResult) => {
-      return errorData;
-    });
+  FIELD_VALIDATION_FAIL(handler: (fieldValidationResult: FieldValidationResult) => R): ApiResponseResolver<D, R> {
+    return this.on("FIELD_VALIDATION_FAIL", handler);
   }
 
-  USER_NOT_FOUND(): ApiResponseResolver<D> {
-    return this.on("USER_NOT_FOUND", {
-      field: "username",
-      message: "사용자를 찾을 수 없습니다. 아이디를 확인해주세요."
-    });
+  USER_NOT_FOUND(handler: () => R): ApiResponseResolver<D, R> {
+    return this.on("USER_NOT_FOUND", handler);
   }
 
-  BAD_CREDENTIALS(): ApiResponseResolver<D> {
-    return this.on("BAD_CREDENTIALS", {
-      field: "password",
-      message: "비밀번호가 일치하지 않습니다."
-    });
+  BAD_CREDENTIALS(handler: () => R): ApiResponseResolver<D, R> {
+    return this.on("BAD_CREDENTIALS", handler);
   }
 }

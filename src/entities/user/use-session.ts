@@ -1,13 +1,9 @@
-import { api } from "@/global/api";
 import { accessTokenManager } from "@/global/authentication/access-token-manager";
-import { AccessToken } from "@/global/authentication/AccessToken";
 import { useAuthentication } from "@/global/authentication/use-authentication";
-import { FieldValidationResult } from "@/shared/field-validation";
-import { Result } from "neverthrow";
-import { SESSION_QUERY_KEY, useSessionQuery } from "./use-session-query";
 import { useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { AlreadyLoginedError } from "./AlreadyLoginedError";
+import { LoginResult, requestLogin } from "./login";
+import { SESSION_QUERY_KEY, useSessionQuery } from "./use-session-query";
 
 
 export type SessionUser = {
@@ -29,35 +25,17 @@ export type Session = {
 export type UseSession = {
   session: Session | null;
   sessionQueryResult: UseQueryResult<Session>;
-  login: (username: string, password: string) => Promise<Result<true, FieldValidationResult>>;
+  login: (username: string, password: string) => Promise<LoginResult>;
   logout: () => void;
 }
 
-export const useSession = () => {
+export const useSession = (): UseSession => {
   const queryClient = useQueryClient();
   const sessionQuery = useSessionQuery();
 
   const login = useCallback(async (username: string, password: string) => {
-    if(useAuthentication.getState().isAuthenticated){
-      throw new AlreadyLoginedError();
-    }
-    const response = await api.guest()
-      .params({ username, password})
-      .post<AccessToken>("/auth/login");
-  
-    const resolver = response.resolver()
-      .USER_NOT_FOUND()
-      .BAD_CREDENTIALS()
-      .SUCCESS(accessToken => {
-        // authentication state를 업데이트
-        useAuthentication.getState().authenticate();
-        // accessTokenManager에 토큰 저장
-        accessTokenManager.storeToken(accessToken);
-      })
-
-    return resolver.resolveGet(true);
+    return await requestLogin(username, password);
   }, []);
-
 
   const logout = useCallback(() => {
     accessTokenManager.clearToken();
@@ -66,7 +44,7 @@ export const useSession = () => {
   }, []);
 
   return {
-    session: sessionQuery.data,
+    session: sessionQuery.data??null,
     sessionQueryResult: sessionQuery,
     login,
     logout

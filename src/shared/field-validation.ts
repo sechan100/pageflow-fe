@@ -11,6 +11,10 @@ export type FieldValidationResult = {
   invalidFields: InvalidField[];
 }
 
+export const fromInvalidField = (invalidField: InvalidField): FieldValidationResult => ({
+  invalidFields: [invalidField]
+})
+
 
 export type UseFieldValidation = {
   setFieldValidation: (result: FieldValidationResult) => void;

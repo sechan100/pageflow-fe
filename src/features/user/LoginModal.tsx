@@ -45,8 +45,10 @@ export const LoginModal = ({
     password: ''
   });
   const { login } = useSession();
+  const notification = useNotification();
   const { setFieldValidation, getFieldError } = useFieldValidation()
   
+
   // 입력값 변경
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,33 +57,45 @@ export const LoginModal = ({
       [name]: value
     }));
   }, []);
+
   
   // 비밀번호 보이기/숨기기
   const handleClickShowPassword = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
 
+
   // 로그인 처리 로직 구현
   const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = await login(formData.username, formData.password);
-    if(result.isOk()) {
-      handleClose();
-    } else {
-      setFieldValidation(result.error);
+
+    switch(result.code) {
+      case "success":
+        handleClose();
+        break;
+      case "field-error":
+        setFieldValidation(result.fieldValidationResult);
+        break;
+      case "already-logined":
+        notification.warn(result.message);
+        break;
     }
   }, [formData, handleClose]);
+
 
   // 소셜 로그인 처리 로직 구현
   const handleSocialLogin = useCallback((provider: SocialProvider) => {
     console.log(`${provider} login requested`);
   }, []);
 
+
   // 비밀번호 찾기
   const handleForgotPassword = useCallback(() => {
     console.log('Forgot password clicked');
   }, []);
 
+  
   // 회원가입 다이얼로그 열기 로직
   const handleSignUp = useCallback(() => {
     handleClose();

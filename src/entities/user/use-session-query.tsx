@@ -6,7 +6,7 @@ import { useAuthentication } from "@/global/authentication/use-authentication";
 
 const query = async (): Promise<Session> => {
   const res = await api.user().get<Session>("/user/session");
-  return res.resolver().getSuccessData();
+  return res.resolver().get();
 }
 
 

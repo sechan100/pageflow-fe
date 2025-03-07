@@ -14,7 +14,7 @@ export type ApiResponse<D> = {
 
   isSuccess(): boolean;
   is(code: string): boolean;
-  resolver(): ApiResponseResolver<D>;
+  resolver<R>(): ApiResponseResolver<D, R>;
 }
 
 export class ApiResponseImpl<D> implements ApiResponse<D> {
@@ -36,7 +36,7 @@ export class ApiResponseImpl<D> implements ApiResponse<D> {
     return this.code === code;
   }
 
-  resolver(): ApiResponseResolver<D> {
-    return new ApiResponseResolver(this);
+  resolver<R>(): ApiResponseResolver<D, R> {
+    return new ApiResponseResolver<D, R>(this);
   }
 }
