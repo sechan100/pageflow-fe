@@ -18,6 +18,7 @@ import { useState } from 'react';
 import { BarLogo } from './BarLogo';
 import ColorModeIconDropdown from './ColorModeIconDropdown';
 import { UserWidget } from './UserWidget';
+import { STYLES } from '@/global/styles';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -50,9 +51,18 @@ export const AppBarWidget = () => {
       color='transparent'
       sx={{
         boxShadow: 0,
-        bgcolor: 'transparent',
-        backgroundImage: 'none',
-        mt: 'calc(var(--template-frame-height, 0px) + 28px)',
+        bgcolor: STYLES.color.background,
+        mt: 1,
+        "&::after":{
+          content: '""',
+          position: 'absolute',
+          top: -8,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bgcolor: STYLES.color.background,
+          zIndex: -1,
+        }
       }}
     >
       <Container maxWidth="lg">

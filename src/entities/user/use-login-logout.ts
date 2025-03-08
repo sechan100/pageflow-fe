@@ -12,8 +12,8 @@ export type LoginResult =
 {
   code: "success";
 } | {
-  code: "field-error";
-  fieldValidationResult: FieldValidationResult;
+  code: "error"
+  message: string;
 } | {
   code: "already-logined";
   message: string;
@@ -40,19 +40,9 @@ export const requestLogin = async (username: string, password: string): Promise<
       accessTokenManager.storeToken(accessToken);
       return { code: "success" };
     })
-    .USER_NOT_FOUND(() => ({
-      code: "field-error",
-      fieldValidationResult: fromInvalidField({
-        field: "username",
-        message: "존재하지 않는 사용자입니다."
-      })
-    }))
     .BAD_CREDENTIALS(() => ({
-      code: "field-error",
-      fieldValidationResult: fromInvalidField({
-        field: "password",
-        message: "비밀번호가 일치하지 않습니다."
-      })
+      code: "error",
+      message: "입력하신 정보가 일치하지 않습니다. 다시 확인해주세요."
     }));
 
   return resolver.resolve();
