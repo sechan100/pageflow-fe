@@ -7,7 +7,13 @@ import { getProxyBaseUrl } from "./proxy";
 
 
 type ServerProperties = {
-  refreshTokenExpireDays: number;
+  user: {
+    refreshTokenExpireDays: number;
+    pennameMinLength: number;
+    pennameMaxLength: number;
+    pennameRegex: string;
+    pennameRegexMessage: string;
+  }
 }
 
 /**
@@ -38,7 +44,7 @@ const fetchServerProperties = async () => {
 
 export type ApplicationProperties = {
   xUrl: string;
-  refreshTokenExpireDays: number;
+  serverProperties: ServerProperties;
 }
 
 const serverProperties = await fetchServerProperties();
@@ -46,5 +52,5 @@ const serverProperties = await fetchServerProperties();
 export const useApplicationProperties = create<ApplicationProperties>(() => ({
   // 트위터(X) url
   xUrl: 'https://x.pageflow.com',
-  refreshTokenExpireDays: serverProperties.refreshTokenExpireDays,
+  serverProperties: serverProperties
 }));

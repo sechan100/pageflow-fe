@@ -1,0 +1,1 @@
+export { PennameSettingFeature } from './PennameSettingFeature'

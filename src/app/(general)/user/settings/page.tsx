@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { 
   Container, 
   Paper, 
@@ -18,14 +18,17 @@ import {
   Chip
 } from '@mui/material';
 import { 
-  Save as SaveIcon, 
-  Visibility, 
-  VisibilityOff, 
+  Save as SaveIcon,
+  Visibility,
+  VisibilityOff,
   Email as EmailIcon,
   Person as PersonIcon,
   Lock as LockIcon,
   CloudUpload as CloudUploadIcon
 } from '@mui/icons-material';
+import { Session, SessionUser, useSessionQuery } from '@/entities/user';
+import { PennameSettingFeature } from '@/features/settings';
+
 
 // 기본 사용자 정보 타입
 interface UserInfo {
@@ -34,6 +37,7 @@ interface UserInfo {
   isEmailVerified: boolean;
   profileImage: string | null;
 }
+
 
 // 변경된 데이터 타입
 interface FormData {
@@ -45,14 +49,26 @@ interface FormData {
   profileImage: File | null;
 }
 
-const SettingsPage = () => {
-  // 유저 데이터 (실제로는 API에서 가져올 것)
-  const [userData, setUserData] = useState<UserInfo>({
-    penname: '현재 필명',
-    email: 'current@example.com',
-    isEmailVerified: true,
-    profileImage: 'https://via.placeholder.com/150'
-  });
+export default function SettingsPage() {
+  const sessionQuery = useSessionQuery();
+
+  if(!sessionQuery.data) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <Settings session={sessionQuery.data} />
+  )
+}
+
+
+type Props = {
+  session: Session;
+}
+const Settings = ({
+  session,
+}: Props) => {
+  const userData = session.user;
 
   // 폼 상태 관리
   const [formData, setFormData] = useState<FormData>({
@@ -70,7 +86,7 @@ const SettingsPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [emailChanged, setEmailChanged] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(userData.profileImage);
+  const [previewImage, setPreviewImage] = useState<string | null>(userData.profileImageUrl);
   
   // 폼 유효성 상태
   const [errors, setErrors] = useState({
@@ -126,9 +142,6 @@ const SettingsPage = () => {
     let newErrors = { ...errors };
 
     switch (fieldName) {
-      case 'penname':
-        newErrors.penname = value.length < 2 ? '필명은 최소 2자 이상이어야 합니다.' : '';
-        break;
       case 'newPassword':
         newErrors.newPassword = value.length < 8 ? '비밀번호는 최소 8자 이상이어야 합니다.' : '';
         if (formData.confirmPassword && value !== formData.confirmPassword) {
@@ -356,81 +369,14 @@ const SettingsPage = () => {
             <Grid item xs={12} md={8}>
               <Stack spacing={3}>
                 {/* 필명 변경 */}
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    필명 변경
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    name="penname"
-                    label="필명"
-                    value={formData.penname}
-                    onChange={handleChange}
-                    error={!!errors.penname}
-                    helperText={errors.penname}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <PersonIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
+                <PennameSettingFeature
+                  penname={formData.penname}
+                  onPennameChange={(penname) => setFormData({ ...formData, penname })}
+                />
                 
                 <Divider />
                 
-                {/* 이메일 변경 */}
-                <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                    이메일 변경
-                    {userData.isEmailVerified && !emailChanged && (
-                      <Chip 
-                        label="인증됨" 
-                        color="success" 
-                        size="small" 
-                        sx={{ ml: 1 }} 
-                      />
-                    )}
-                    {(!userData.isEmailVerified || emailChanged) && (
-                      <Chip 
-                        label="인증 필요" 
-                        color="warning" 
-                        size="small" 
-                        sx={{ ml: 1 }} 
-                      />
-                    )}
-                  </Typography>
-                  
-                  <TextField
-                    fullWidth
-                    name="email"
-                    label="이메일"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleEmailChange}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <EmailIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ mb: 2 }}
-                  />
-                  
-                  {(!userData.isEmailVerified || emailChanged) && (
-                    <Button
-                      variant="outlined"
-                      onClick={handleVerifyEmail}
-                      disabled={!!errors.email || !formData.email}
-                    >
-                      이메일 인증하기
-                    </Button>
-                  )}
-                </Box>
+                <EmailSettingFeature />
                 
                 <Divider />
                 
@@ -555,5 +501,3 @@ const SettingsPage = () => {
     </Container>
   );
 };
-
-export default SettingsPage;
