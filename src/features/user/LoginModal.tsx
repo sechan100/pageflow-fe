@@ -19,9 +19,9 @@ import {
   Google as GoogleIcon,
   GitHub as GitHubIcon
 } from '@mui/icons-material';
-import { useSession } from '@/entities/user/use-session';
+import { useLoginLogout } from '@/entities/user/use-login-logout';
 import { useNotification } from '@/shared/notification';
-import { FieldValidationResult, useFieldValidation } from '@/shared/field-validation';
+import { useFieldValidation } from '@/shared/field-validation';
 
 type LoginDialogProps = {
   open: boolean;
@@ -44,7 +44,7 @@ export const LoginModal = ({
     username: '',
     password: ''
   });
-  const { login } = useSession();
+  const { login } = useLoginLogout();
   const notification = useNotification();
   const { setFieldValidation, getFieldError } = useFieldValidation()
   

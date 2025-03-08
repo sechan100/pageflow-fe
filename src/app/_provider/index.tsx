@@ -6,6 +6,7 @@ import { MUIThemeProvider } from "./MUIThemProvider";
 import { ReactQueryProvider } from "./ReactQueryProvider";
 import { NotificationProvider } from "./NotificationProvider";
 import { ErrorCatchProvider } from "./ErrorCatchProvider";
+import { UseAuthenticationProvider } from "@/global/authentication/authentication";
 
 
 export const PageflowGlobalProvider = ({children} : {children: React.ReactNode}) => {
@@ -15,7 +16,9 @@ export const PageflowGlobalProvider = ({children} : {children: React.ReactNode})
       <MUIThemeProvider>
         <NotificationProvider>
           <ErrorCatchProvider>
-            {children}
+            <UseAuthenticationProvider>
+              {children}
+            </UseAuthenticationProvider>
           </ErrorCatchProvider>
         </NotificationProvider>
       </MUIThemeProvider>

@@ -1,7 +1,22 @@
 import { api } from "@/global/api";
-import { Session } from "./use-session";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthentication } from "@/global/authentication/use-authentication";
+import { useAuthentication } from "@/global/authentication/authentication";
+import { accessTokenManager } from "@/global/authentication/access-token-manager";
+
+
+export type SessionUser = {
+  uid: string;
+  username: string;
+  email: string;
+  role: string;
+  penname: string;
+  profileImageUrl: string;
+  emailVerified: boolean;
+}
+
+export type Session = {
+  user: SessionUser;
+}
 
 
 const query = async (): Promise<Session> => {

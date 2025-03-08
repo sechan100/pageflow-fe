@@ -1,5 +1,5 @@
 import React from "react";
-import GlobalLayout from "../GlobalLayout";
+import { GlobalLayout } from "../GlobalLayout";
 
 
 export default function RootLayout({

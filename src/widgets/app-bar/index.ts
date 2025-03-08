@@ -1,1 +1,1 @@
-export { AppBar } from './AppBar'
+export { AppBarWidget } from './AppBarWidget'

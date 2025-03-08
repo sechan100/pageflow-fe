@@ -14,7 +14,10 @@ import React from 'react';
  * D: 초기 데이터 타입
  * S: store 상태 타입
  */
-type SetState<S> = (partial: S | Partial<S> | ((state: S) => S | Partial<S>), replace?: boolean | undefined) => void
+type SetState<S> = 
+(partial: S | Partial<S> | ((state: S) => S | Partial<S>), replace?: false) => void
+|
+((state: S | ((state: S) => S), replace: true) => void);
 type GetState<S> = () => S
 type Initializer<D, S> = (data: D, set: SetState<S>, get: GetState<S>) => S
 

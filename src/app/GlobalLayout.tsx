@@ -26,7 +26,7 @@ const rootStyle = css({
   "--color-accent": STYLES.color.primary,
 });
 
-const GlobalLayout = ({
+export const GlobalLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
   return (
@@ -42,9 +42,10 @@ const GlobalLayout = ({
         />
       </head>
       <body>
-        <PageflowGlobalProvider>{children}</PageflowGlobalProvider>
+        <PageflowGlobalProvider>
+          {children}
+        </PageflowGlobalProvider>
       </body>
     </html>
   );
 }
-export default GlobalLayout;

@@ -1,20 +1,23 @@
-import * as React from 'react';
-import { alpha, styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MUIAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Drawer from '@mui/material/Drawer';
-import MenuIcon from '@mui/icons-material/Menu';
+'use client';
+
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  MenuItem,
+  AppBar,
+  Drawer,
+  Container,
+  Toolbar,
+} from '@mui/material';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ColorModeIconDropdown from './ColorModeIconDropdown';
-import { BarLogo } from './BarLogo';
+import MenuIcon from '@mui/icons-material/Menu';
+import { alpha, styled } from '@mui/material/styles';
 import { useState } from 'react';
-import { LoginButton } from '@/features/user';
+import { BarLogo } from './BarLogo';
+import ColorModeIconDropdown from './ColorModeIconDropdown';
+import { UserWidget } from './UserWidget';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -34,7 +37,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 
-export const AppBar = () => {
+export const AppBarWidget = () => {
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => {
@@ -42,9 +45,9 @@ export const AppBar = () => {
   };
 
   return (
-    <MUIAppBar
+    <AppBar
       position="fixed"
-      enableColorOnDark
+      color='transparent'
       sx={{
         boxShadow: 0,
         bgcolor: 'transparent',
@@ -54,6 +57,7 @@ export const AppBar = () => {
     >
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
+          {/* 로고와 메뉴들 */}
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <BarLogo />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -77,19 +81,15 @@ export const AppBar = () => {
               </Button>
             </Box>
           </Box>
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 1,
-              alignItems: 'center',
-            }}
-          >
-            <Button color="primary" variant="text" size="small">
-              Sign in
-            </Button>
-            <LoginButton />
-            <ColorModeIconDropdown />
+
+          {/* UserWidget 영역 */}
+          <Box sx={{
+            display: { xs: 'none', md: 'flex' },
+          }}>
+            <UserWidget />
           </Box>
+
+          {/* 모바일 드롭다운 */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
@@ -138,6 +138,6 @@ export const AppBar = () => {
           </Box>
         </StyledToolbar>
       </Container>
-    </MUIAppBar>
+    </AppBar>
   );
 }

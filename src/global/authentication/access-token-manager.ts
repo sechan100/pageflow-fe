@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AccessTokenStorage, PrivatePropertyAccessTokenStorage } from "./AccessTokenStorage";
-import { useAuthentication } from "./use-authentication";
+import { useAuthentication } from "./authentication";
 import { PlainApiResponse } from "@/shared/res/api-response";
 import { AccessToken } from "./AccessToken";
 import { SessionExpiredError } from "./SessionExpiredError";

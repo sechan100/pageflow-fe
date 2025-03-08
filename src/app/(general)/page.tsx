@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 'use client';
 import Container from '@mui/material/Container';
-import { AppBar } from '@/widgets/app-bar';
+import { AppBarWidget } from '@/widgets/app-bar';
 import { Footer } from '@/widgets/footer';
 
 
 export const Home = () => {
   return (
     <>
-      <AppBar />
+      <AppBarWidget />
       <Container
         maxWidth="lg"
         component="main"
