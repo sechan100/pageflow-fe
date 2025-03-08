@@ -19,9 +19,8 @@ import {
   Google as GoogleIcon,
   GitHub as GitHubIcon
 } from '@mui/icons-material';
-import { useLoginLogout } from '@/entities/user/use-login-logout';
+import { LoginResult, useLoginLogout } from '@/entities/user/use-login-logout';
 import { useNotification } from '@/shared/notification';
-import { useFieldValidation } from '@/shared/field-validation';
 
 type LoginDialogProps = {
   open: boolean;
@@ -46,7 +45,7 @@ export const LoginModal = ({
   });
   const { login } = useLoginLogout();
   const notification = useNotification();
-  const { setFieldValidation, getFieldError } = useFieldValidation()
+  const [ error, setError ] = useState<{ message: string} | null>(null);
   
 
   // 입력값 변경
@@ -56,6 +55,7 @@ export const LoginModal = ({
       ...prevData,
       [name]: value
     }));
+    setError(null);
   }, []);
 
   
@@ -74,11 +74,11 @@ export const LoginModal = ({
       case "success":
         handleClose();
         break;
-      case "field-error":
-        setFieldValidation(result.fieldValidationResult);
-        break;
+      case "error":
+        // intentional fallthrough
       case "already-logined":
-        notification.warn(result.message);
+        setError({ message: result.message });
+        // notification.error(result.message);
         break;
     }
   }, [formData, handleClose]);
@@ -126,8 +126,7 @@ export const LoginModal = ({
             variant="outlined"
             value={formData.username}
             onChange={handleInputChange}
-            error={getFieldError("username") != null}
-            helperText={getFieldError("username")?.message}
+            error={!!error}
             required
             sx={{ mb: 2 }}
           />
@@ -141,8 +140,8 @@ export const LoginModal = ({
             variant="outlined"
             value={formData.password}
             onChange={handleInputChange}
-            error={getFieldError("password") != null}
-            helperText={getFieldError("password")?.message}
+            error={!!error}
+            helperText={error?.message}
             required
             slotProps={{
               input: {

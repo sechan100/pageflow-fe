@@ -62,10 +62,6 @@ export class ApiResponseResolver<D, R> {
     return this.on("FIELD_VALIDATION_FAIL", handler);
   }
 
-  USER_NOT_FOUND(handler: () => R): ApiResponseResolver<D, R> {
-    return this.on("USER_NOT_FOUND", handler);
-  }
-
   BAD_CREDENTIALS(handler: () => R): ApiResponseResolver<D, R> {
     return this.on("BAD_CREDENTIALS", handler);
   }
