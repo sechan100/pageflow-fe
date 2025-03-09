@@ -15,10 +15,11 @@ type Props = {
   email: string;
   isEmailVerified: boolean;
   /**
- * 변경사항을 저장하기 전의 이메일
- */
+   * 변경사항을 저장하기 전의 이메일
+   */
   originalEmail: string
   onEmailChange: (email: string) => void;
+  onEmailValidChange: (isValid: boolean) => void;
   className?: string;
 };
 export const EmailSettingFeature = ({
@@ -26,9 +27,15 @@ export const EmailSettingFeature = ({
   isEmailVerified,
   originalEmail,
   onEmailChange,
+  onEmailValidChange,
   className,
 }: Props) => {
-  const [fieldError, setFieldError] = useState<string | null>(null);
+  const [fieldError, _setFieldError] = useState<string | null>(null);
+
+  const setFieldError = useCallback((error: string | null) => {
+    _setFieldError(error);
+    onEmailValidChange(error !== null);
+  }, []);
 
 
   const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +164,7 @@ export const EmailVerificationButton = ({
     <Box
       sx={{
         display: "flex",
-        alignItems: "start",
+        alignItems: "center",
         justifyContent: "end",
       }}
     >
@@ -167,7 +174,7 @@ export const EmailVerificationButton = ({
             현재 이메일: {email}&nbsp;
           </Typography>
           <Button variant="outlined" onClick={handleVerifyEmail}>
-            이메일 인증하기
+            인증 메일 보내기
           </Button>
         </>
       )}

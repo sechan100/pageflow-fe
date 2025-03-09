@@ -8,11 +8,20 @@ import { getProxyBaseUrl } from "./proxy";
 
 type ServerProperties = {
   user: {
+    // refresh token 만료 기간
     refreshTokenExpireDays: number;
+
+    // 필명
     pennameMinLength: number;
     pennameMaxLength: number;
     pennameRegex: string;
     pennameRegexMessage: string;
+
+    // 비밀번호
+    passwordMinLength: number;
+    passwordMaxLength: number;
+    passwordRegex: string;
+    passwordRegexMessage: string;
   }
 }
 
@@ -32,7 +41,7 @@ class ServerNotResponseError extends Error {
 const fetchServerProperties = async () => {
   const res = await axios.get<PlainApiResponse<ServerProperties>>(getProxyBaseUrl() + '/server-properties');
   const code = res.data.code;
-  if(code === "SUCCESS"){
+  if (code === "SUCCESS") {
     return res.data.data;
   } else {
     /**
