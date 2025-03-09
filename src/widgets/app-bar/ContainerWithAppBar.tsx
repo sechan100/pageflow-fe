@@ -12,13 +12,13 @@ export const ContainerWithAppBar = ({
   className,
   children,
 }: Props) => {
-  
+
   return (
     <>
       <Container
         maxWidth="lg"
         component="main"
-        sx={{ display: 'flex', flexDirection: 'column', my: 8, gap: 4 }}
+        sx={{ display: 'flex', flexDirection: 'column', my: 12, gap: 4 }}
       >
         {children}
       </Container>

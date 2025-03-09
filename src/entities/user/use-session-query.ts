@@ -11,7 +11,7 @@ export type SessionUser = {
   role: string;
   penname: string;
   profileImageUrl: string;
-  emailVerified: boolean;
+  isEmailVerified: boolean;
 }
 
 export type Session = {
