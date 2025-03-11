@@ -1,26 +1,18 @@
 'use client'
 
-import { passwordMatchRequest } from "@/entities/user"
-import { useApplicationProperties } from "@/global/properties"
 import { PasswordField } from "@/shared/components/PasswordField"
-import { Field } from "@/shared/field-validation"
+import { Field } from "@/shared/hooks/use-field-state"
 import { useNotification } from "@/shared/notification"
-import { VisibilityOff, Visibility } from "@mui/icons-material"
-import { Dialog, Box, DialogTitle, Typography, DialogContent, DialogContentText, TextField, InputAdornment, IconButton, Button, Divider, DialogActions, Stack, Paper } from "@mui/material"
-import { LockIcon } from "lucide-react"
+import { Button, Container, Stack, Typography } from "@mui/material"
 import { useCallback, useState } from "react"
 
 
-type PasswordChangeModalProps = {
-  open: boolean
-  handleClose: () => void
+type PasswordChangePageProps = {
   className?: string
 }
-export const PasswordChangeModalFeature = ({
-  open,
-  handleClose,
+export default function PasswordChangePage({
   className
-}: PasswordChangeModalProps) => {
+}: PasswordChangePageProps) {
   const notification = useNotification()
 
   const [currentPasswordField, setCurrentPasswordField] = useState<Field<string>>({
@@ -97,7 +89,6 @@ export const PasswordChangeModalFeature = ({
     if (success) {
       notification.success("비밀번호가 정상적으로 변경되었습니다.")
       clearPasswords();
-      handleClose();
     } else {
       setCurrentPasswordField({
         ...currentPasswordField,
@@ -108,46 +99,42 @@ export const PasswordChangeModalFeature = ({
 
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogTitle>
-        <Typography variant="h5" component="div" align="center" fontWeight="bold">
-          비밀번호 변경
-        </Typography>
-      </DialogTitle>
+    <Container maxWidth="md">
+      <Typography variant="h4" component="h1" gutterBottom align="center">
+        비밀번호 변경
+      </Typography>
 
       {/* 비밀번호 변경 */}
-      <Paper sx={{ p: 5 }}>
-        <Stack spacing={2}>
-          <PasswordField
-            passwordField={currentPasswordField}
-            onPasswordFieldChange={setCurrentPasswordField}
-            label="현재 비밀번호"
-            validatePassword={validateCurrentPassword}
-          />
+      <Stack spacing={2}>
+        <PasswordField
+          passwordField={currentPasswordField}
+          onPasswordFieldChange={setCurrentPasswordField}
+          label="현재 비밀번호"
+          validatePassword={validateCurrentPassword}
+        />
 
-          <PasswordField
-            passwordField={newPasswordField}
-            onPasswordFieldChange={setNewPasswordField}
-            validatePassword={validateNewPassword}
-            label="새 비밀번호"
-          />
+        <PasswordField
+          passwordField={newPasswordField}
+          onPasswordFieldChange={setNewPasswordField}
+          validatePassword={validateNewPassword}
+          label="새 비밀번호"
+        />
 
-          <PasswordField
-            passwordField={confirmPasswordField}
-            onPasswordFieldChange={setConfirmPasswordField}
-            label="새 비밀번호 확인"
-            validatePassword={validateConfirmPassword}
-          />
-        </Stack>
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleSubmit}
-        >
-          변경하기
-        </Button>
-      </Paper>
-    </Dialog>
+        <PasswordField
+          passwordField={confirmPasswordField}
+          onPasswordFieldChange={setConfirmPasswordField}
+          label="새 비밀번호 확인"
+          validatePassword={validateConfirmPassword}
+        />
+      </Stack>
+      <Button
+        variant="contained"
+        fullWidth
+        sx={{ mt: 2 }}
+        onClick={handleSubmit}
+      >
+        변경하기
+      </Button>
+    </Container>
   )
 }

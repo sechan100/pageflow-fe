@@ -6,13 +6,21 @@ import { Pencil } from "lucide-react";
 import { useCallback, useState } from "react";
 
 type Props = {
+  // penname
   penname: string;
-  onPennameChange: (penname: string) => void;
+  onChange: (penname: string) => void;
+
+  // error
+  error: string | null;
+  onErrorChange: (error: string | null) => void;
+
   className?: string;
 };
 export const PennameSettingFeature = ({
   penname,
-  onPennameChange,
+  onChange,
+  error,
+  onErrorChange,
   className,
 }: Props) => {
   const {
@@ -25,25 +33,26 @@ export const PennameSettingFeature = ({
       },
     },
   } = useApplicationProperties();
-  const [fieldError, setFieldError] = useState<string | null>(null);
 
   const handlePennameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const penname = e.target.value;
-    onPennameChange(penname);
+    onChange(penname);
+
+    let newError: string | null = null;
     if (pennameMinLength > penname.length) {
-      setFieldError(`필명은 ${pennameMinLength}자 이상이어야 합니다.`);
-      return;
+      newError = `필명은 ${pennameMinLength}자 이상이어야 합니다.`;
+
+    } else if (pennameMaxLength < penname.length) {
+      newError = `필명은 ${pennameMaxLength}자 이하여야 합니다.`;
+
+    } else if (!new RegExp(pennameRegex).test(penname)) {
+      newError = pennameRegexMessage;
+
+    } else {
+      newError = null;
     }
-    if (pennameMaxLength < penname.length) {
-      setFieldError(`필명은 ${pennameMaxLength}자 이하여야 합니다.`);
-      return;
-    }
-    if (!new RegExp(pennameRegex).test(penname)) {
-      setFieldError(pennameRegexMessage);
-      return;
-    }
-    setFieldError(null);
-  }, [onPennameChange, penname]);
+    onErrorChange(newError);
+  }, [onChange, penname]);
 
   return (
     <>
@@ -56,8 +65,8 @@ export const PennameSettingFeature = ({
           name="penname"
           value={penname}
           onChange={handlePennameChange}
-          error={!!fieldError}
-          helperText={fieldError}
+          error={!!error}
+          helperText={error}
           slotProps={{
             input: {
               startAdornment: (

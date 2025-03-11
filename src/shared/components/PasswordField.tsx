@@ -3,7 +3,7 @@
 import { useApplicationProperties } from "@/global/properties"
 import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { useCallback, useState } from "react"
-import { Field } from "../field-validation"
+import { Field } from "../hooks/use-field-state"
 import { LockIcon } from "lucide-react"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 

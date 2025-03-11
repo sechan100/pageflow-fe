@@ -12,44 +12,41 @@ import { Mail } from "lucide-react";
 import { useCallback, useState } from "react";
 
 type Props = {
-  email: string;
+  // email
+  email: string
+  onChange: (email: string) => void;
+
+  // original email & email verification
   isEmailVerified: boolean;
-  /**
-   * 변경사항을 저장하기 전의 이메일
-   */
   originalEmail: string
-  onEmailChange: (email: string) => void;
-  onEmailValidChange: (isValid: boolean) => void;
+
+  // error
+  error: string | null;
+  onErrorChange: (error: string | null) => void;
   className?: string;
 };
 export const EmailSettingFeature = ({
   email,
+  onChange,
   isEmailVerified,
   originalEmail,
-  onEmailChange,
-  onEmailValidChange,
+  error,
+  onErrorChange,
   className,
 }: Props) => {
-  const [fieldError, _setFieldError] = useState<string | null>(null);
-
-  const setFieldError = useCallback((error: string | null) => {
-    _setFieldError(error);
-    onEmailValidChange(error !== null);
-  }, []);
-
 
   const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
-    onEmailChange(newEmail);
+    onChange(newEmail);
 
     // 이메일 형식 검증
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail);
     if (!isEmail) {
-      setFieldError("유효한 이메일 형식이 아닙니다.");
-      return;
+      onErrorChange("유효한 이메일 형식이 아닙니다.");
+    } else {
+      onErrorChange(null);
     }
-    setFieldError(null);
-  }, [onEmailChange, email]);
+  }, [onChange, email]);
 
 
   return (
@@ -84,8 +81,8 @@ export const EmailSettingFeature = ({
           type="email"
           value={email}
           onChange={handleEmailChange}
-          error={!!fieldError}
-          helperText={fieldError}
+          error={!!error}
+          helperText={error}
           slotProps={{
             input: {
               sx: {

@@ -1,6 +1,7 @@
 import React from "react";
 import { GlobalLayout } from "../GlobalLayout";
 import { AppBarWidget, ContainerWithAppBar } from "@/widgets/app-bar";
+import { Box } from "@mui/material";
 
 
 export default function RootLayout({
@@ -13,9 +14,13 @@ export default function RootLayout({
   return (
     <GlobalLayout>
       <AppBarWidget />
-      <ContainerWithAppBar>
+      <Box
+        sx={{
+          my: 14,
+        }}
+      >
         {children}
-      </ContainerWithAppBar>
+      </Box>
     </GlobalLayout>
   );
 }

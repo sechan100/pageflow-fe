@@ -2,7 +2,7 @@
 import { Session, useSessionQuery } from "@/entities/user";
 import { PennameSettingFeature } from "@/features/settings";
 import { EmailSettingFeature } from "@/features/settings/EmailSettingFeature";
-import { PasswordChangeModalFeature } from "@/features/settings/PasswordChangeModalFeature";
+import { useFieldState } from "@/shared/hooks/use-field-state";
 import { useNotification } from "@/shared/notification";
 import {
   CloudUpload as CloudUploadIcon,
@@ -14,7 +14,7 @@ import {
   Button,
   Container,
   Divider,
-  Grid,
+  Grid2,
   Stack,
   Typography
 } from "@mui/material";
@@ -42,65 +42,66 @@ type Props = {
   session: Session;
 };
 const Settings = ({ session }: Props) => {
-  const queriedUserData = session.user;
+  const userData = session.user;
   const notification = useNotification();
 
-  const [formData, setFormData] = useState<FormData>({
-    penname: queriedUserData.penname,
-    email: queriedUserData.email,
-    profileImage: null,
-  });
-  const [previewImage, setPreviewImage] = useState<string | null>(queriedUserData.profileImageUrl);
+  // email
+  const [email, setEmail] = useState(userData.email);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  // penname
+  const [penname, setPenname] = useState(userData.penname);
+  const [pennameError, setPennameError] = useState<string | null>(null);
+
+  // profileImageFile
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImageFileError, setProfileImageFileError] = useState<string | null>(null);
+
+  // profile image preview
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(userData.profileImageUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [errors, setErrors] = useState<{
-    penname: boolean;
-    email: boolean;
-    profileImage: boolean;
-  }>({
-    penname: false,
-    email: false,
-    profileImage: false,
-  });
-  const isAllFieldValid = useMemo(() => !Object.values(errors).some((error) => error), [errors]);
+
+  const isAllFieldValid = useMemo(() => {
+    return !emailError && !pennameError && !profileImageFileError;
+  }, [emailError, pennameError, profileImageFileError]);
 
 
-  const handleImageButtonClick = () => {
+  const isAnyFieldChanged = useMemo(() => {
+    const isEmailChanged = email !== userData.email;
+    const isPennameChanged = penname !== userData.penname;
+    const isProfileImageChanged = profileImageFile !== null;
+    return isEmailChanged || isPennameChanged || isProfileImageChanged;
+  }, [email, penname, profileImageFile]);
+
+
+
+  const handleImageButtonClick = useCallback(() => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
-  };
+  }, []);
 
   const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-
     if (file) {
-      setFormData({
-        ...formData,
-        profileImage: file,
-      });
-
       // 미리보기 생성
       const reader = new FileReader();
       reader.onload = () => {
-        setPreviewImage(reader.result as string);
+        setProfileImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+      setProfileImageFile(file);
     }
-  }, [formData]);
+  }, []);
 
 
-  /**
-   * 폼 제출
-   * @returns 
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAllFieldValid) {
       throw new Error("form data에 유효하지 않은 필드가 있습니다.");
     }
 
-    console.log("프로필 업데이트 요청!", formData);
     const isRequestSuccess = true;
     if (isRequestSuccess) {
       notification.success("프로필이 업데이트되었습니다.");
@@ -109,31 +110,33 @@ const Settings = ({ session }: Props) => {
     }
   };
 
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4" component="h1" gutterBottom align="center">
-        사용자 설정
+        프로필 설정
       </Typography>
 
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={4}>
+        <Grid2 container spacing={4}>
           {/* 프로필 이미지 섹션 */}
-          <Grid
-            item
-            xs={12}
-            md={4}
+          <Grid2
+            size={{
+              xs: 12,
+              md: 3,
+            }}
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Box sx={{ mb: 2, textAlign: "center" }}>
+            <Box sx={{ textAlign: "center" }}>
               <Typography variant="h6" gutterBottom>
                 프로필 이미지
               </Typography>
               <Avatar
-                src={previewImage || undefined}
+                src={profileImagePreview || undefined}
                 sx={{ width: 150, height: 150, mb: 2, mx: "auto" }}
               />
               <input
@@ -152,32 +155,40 @@ const Settings = ({ session }: Props) => {
                 이미지 변경
               </Button>
             </Box>
-          </Grid>
+          </Grid2>
 
           {/* 사용자 정보 섹션 */}
-          <Grid item xs={12} md={8}>
-            <Stack spacing={3}>
+          <Grid2
+            size={{
+              xs: 12,
+              md: 9,
+            }}
+          >
+            <Stack spacing={5}>
               <PennameSettingFeature
-                penname={formData.penname}
-                onPennameChange={(penname) =>
-                  setFormData({ ...formData, penname })
-                }
+                penname={penname}
+                onChange={setPenname}
+                error={pennameError}
+                onErrorChange={setPennameError}
               />
-              <Divider />
               <EmailSettingFeature
-                email={formData.email}
-                originalEmail={queriedUserData.email}
-                onEmailValidChange={(isValid) => setErrors({ ...errors, email: !isValid })}
-                onEmailChange={(email) => setFormData({ ...formData, email })}
-                isEmailVerified={queriedUserData.isEmailVerified}
+                email={email}
+                onChange={setEmail}
+                isEmailVerified={userData.isEmailVerified}
+                originalEmail={userData.email}
+                error={emailError}
+                onErrorChange={setEmailError}
               />
-              <Divider />
-              <PasswordChangeSetting />
             </Stack>
-          </Grid>
+          </Grid2>
 
           {/* 저장 버튼 */}
-          <Grid item xs={12}>
+          <Grid2
+            size={{
+              xs: 12,
+            }}
+          >
+            <Divider />
             <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
               <Button
                 type="submit"
@@ -185,48 +196,14 @@ const Settings = ({ session }: Props) => {
                 color="primary"
                 startIcon={<SaveIcon />}
                 size="large"
+                disabled={!(isAnyFieldChanged && isAllFieldValid)}
               >
                 설정 저장
               </Button>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </form>
-    </Container>
+    </Container >
   );
 };
-
-
-
-type PasswordChangeSettingProps = {
-  className?: string
-}
-const PasswordChangeSetting = ({
-  className
-}: PasswordChangeSettingProps) => {
-  const [passwordChangeModalOpen, setPasswordChangeModalOpen] = useState(false);
-
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-      }}
-    >
-      <Typography variant="h6" gutterBottom>
-        비밀번호 변경
-      </Typography>
-      <Button
-        variant="outlined"
-        onClick={() => setPasswordChangeModalOpen(true)}
-      >
-        비밀번호 변경
-      </Button>
-      <PasswordChangeModalFeature
-        open={passwordChangeModalOpen}
-        handleClose={() => setPasswordChangeModalOpen(false)}
-      />
-    </Box>
-  )
-}
