@@ -26,7 +26,7 @@ class AxiosAPI implements API {
   #auth: boolean; // 인증된 요청을 보낼 것인지(Authorization 헤더를 포함하는가)
 
 
-  constructor(auth: boolean){
+  constructor(auth: boolean) {
     this.#config = {
       baseURL: getProxyBaseUrl(),
       headers: {
@@ -42,7 +42,7 @@ class AxiosAPI implements API {
    * @param data 
    * @returns 
    */
-  data(data: any){
+  data(data: any) {
     this.#config.data = data;
     return this;
   }
@@ -50,13 +50,13 @@ class AxiosAPI implements API {
   // queryString
   params(params: {
     [key: string]: string
-  }){
+  }) {
     this.#config.params = params;
     return this;
   }
 
   // queryString
-  param(key: string, value: string){
+  param(key: string, value: any) {
     this.#config.params = {
       ...this.#config.params,
       [key]: value
@@ -64,7 +64,7 @@ class AxiosAPI implements API {
     return this;
   }
 
-  contentType(type: string){
+  contentType(type: string) {
     this.#config.headers!["Content-Type"] = type;
     return this;
   }
@@ -72,7 +72,7 @@ class AxiosAPI implements API {
   // 요청 전송
   async fetch<D>(): Promise<ApiResponse<D>> {
     // 전처리
-    if(!this.#auth){
+    if (!this.#auth) {
       delete this.#config.headers?.Authorization;
     } else {
       this.#config.headers!.Authorization = BEARER + await accessTokenManager.ensureAccessToken();
@@ -100,19 +100,19 @@ class AxiosAPI implements API {
     return Promise.resolve(res);
   }
 
-  get<D>(uri: string){
+  get<D>(uri: string) {
     this.#config.method = "GET";
     this.#config.url = uri;
     return this.fetch<D>();
   }
 
-  post<D>(uri: string){
+  post<D>(uri: string) {
     this.#config.method = "POST";
     this.#config.url = uri;
     return this.fetch<D>();
   }
 
-  delete<D>(uri: string){
+  delete<D>(uri: string) {
     this.#config.method = "DELETE";
     this.#config.url = uri;
     return this.fetch<D>();

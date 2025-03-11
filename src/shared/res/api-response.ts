@@ -22,7 +22,7 @@ export class ApiResponseImpl<D> implements ApiResponse<D> {
   description: string;
   data: D;
 
-  constructor(response: PlainApiResponse<D>){
+  constructor(response: PlainApiResponse<D>) {
     this.code = response.code;
     this.description = response.description;
     this.data = response.data;

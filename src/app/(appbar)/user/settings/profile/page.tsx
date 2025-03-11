@@ -1,5 +1,6 @@
 "use client";
-import { Session, useSessionQuery } from "@/entities/user";
+import { Session, SESSION_QUERY_KEY, useSessionQuery } from "@/entities/user";
+import { updateProfileRequest } from "@/entities/user/update-profile";
 import { PennameSettingFeature } from "@/features/settings";
 import { EmailSettingFeature } from "@/features/settings/EmailSettingFeature";
 import { useFieldState } from "@/shared/hooks/use-field-state";
@@ -18,6 +19,7 @@ import {
   Stack,
   Typography
 } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 
 
@@ -31,12 +33,6 @@ export default function SettingsPage() {
   return <Settings session={sessionQuery.data} />;
 }
 
-interface FormData {
-  penname: string;
-  email: string;
-  profileImage: File | null;
-}
-
 
 type Props = {
   session: Session;
@@ -44,6 +40,7 @@ type Props = {
 const Settings = ({ session }: Props) => {
   const userData = session.user;
   const notification = useNotification();
+  const queryClient = useQueryClient();
 
   // email
   const [email, setEmail] = useState(userData.email);
@@ -72,8 +69,7 @@ const Settings = ({ session }: Props) => {
     const isPennameChanged = penname !== userData.penname;
     const isProfileImageChanged = profileImageFile !== null;
     return isEmailChanged || isPennameChanged || isProfileImageChanged;
-  }, [email, penname, profileImageFile]);
-
+  }, [email, penname, profileImageFile, userData]);
 
 
   const handleImageButtonClick = useCallback(() => {
@@ -96,19 +92,26 @@ const Settings = ({ session }: Props) => {
   }, []);
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAllFieldValid) {
       throw new Error("form data에 유효하지 않은 필드가 있습니다.");
     }
 
-    const isRequestSuccess = true;
-    if (isRequestSuccess) {
+    const res = await updateProfileRequest({
+      email,
+      penname,
+      profileImage: profileImageFile,
+      toDefaultProfileImage: false,
+    })
+    if (res.isSuccess()) {
+      setProfileImageFile(null);
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY });
       notification.success("프로필이 업데이트되었습니다.");
     } else {
       notification.error("프로필 업데이트에 실패했습니다.");
     }
-  };
+  }, [email, penname, profileImageFile, isAllFieldValid, notification]);
 
 
   return (
