@@ -126,6 +126,7 @@ export const EmailVerificationButton = ({
   className
 }: EmailVerificationButtonProps) => {
   const [state, setState] = useState<EmailVerifiedState>(isEmailVerified ? "verified" : "unverified");
+  const [isEmailSending, setIsEmailSending] = useState(false);
   const [canSendEmailAfter, setCanSendEmailAfter] = useState(0);
 
 
@@ -141,9 +142,11 @@ export const EmailVerificationButton = ({
 
   // 이메일 인증 요청
   const handleVerifyEmail = useCallback(async () => {
+    setIsEmailSending(true);
     await emailVerificationRequest();
     setState("verification-email-sended");
     makeCanSendEmailAfter(VERIFICAITON_EMAIL_SEND_INTERVAL);
+    setIsEmailSending(false);
   }, []);
 
   /**
@@ -181,7 +184,11 @@ export const EmailVerificationButton = ({
           <Typography variant="subtitle2" color="textDisabled">
             현재 이메일: {email}&nbsp;
           </Typography>
-          <Button variant="outlined" onClick={handleVerifyEmail}>
+          <Button
+            variant="outlined"
+            onClick={handleVerifyEmail}
+            loading={isEmailSending}
+          >
             인증 메일 보내기
           </Button>
         </>
@@ -191,7 +198,12 @@ export const EmailVerificationButton = ({
           <Typography variant="subtitle2" color="textDisabled">
             현재 이메일: {email}&nbsp;
           </Typography>
-          <Button variant="outlined" onClick={handleVerifyEmail} disabled={canSendEmailAfter !== 0}>
+          <Button
+            variant="outlined"
+            onClick={handleVerifyEmail}
+            disabled={canSendEmailAfter !== 0}
+            loading={isEmailSending}
+          >
             {canSendEmailAfter > 0 ? (
               <>{canSendEmailAfter}초 후에 재발송 가능</>
             ) : (
