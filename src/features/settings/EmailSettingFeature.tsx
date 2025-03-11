@@ -1,5 +1,6 @@
 "use client";
 
+import { emailVerificationRequest } from "@/entities/user/email-verification-reques";
 import {
   Box,
   Button,
@@ -9,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Mail } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Props = {
   // email
@@ -128,9 +129,19 @@ export const EmailVerificationButton = ({
   const [canSendEmailAfter, setCanSendEmailAfter] = useState(0);
 
 
+  // props.isEmailVerified와 state를 동기화
+  useEffect(() => {
+    if (isEmailVerified) {
+      setState("verified");
+    } else {
+      setState("unverified");
+    }
+  }, [isEmailVerified]);
+
+
   // 이메일 인증 요청
   const handleVerifyEmail = useCallback(async () => {
-    console.log("인증 이메일 구현");
+    await emailVerificationRequest();
     setState("verification-email-sended");
     makeCanSendEmailAfter(VERIFICAITON_EMAIL_SEND_INTERVAL);
   }, []);
