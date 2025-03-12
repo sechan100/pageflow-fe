@@ -91,7 +91,7 @@ class AxiosAPI implements API {
       "============[ API Request ]============",
       `[URL]: ${this.#config.url}`,
       `[METHOD]: ${this.#config.method}`,
-      `[DATA]: ${JSON.stringify(this.#config.data)}`,
+      `[DATA]: ${JSON.stringify(this.#config.data ?? null)}`,
       `[DELAY]: ${timeTaken}ms`,
       `[RES]: `,
       JSON.stringify(res, null, 2)

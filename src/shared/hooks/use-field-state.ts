@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 
 
-export type Field<T> = {
+export type Field<T = any> = {
   field: string;
   value: T;
   error: string | null;

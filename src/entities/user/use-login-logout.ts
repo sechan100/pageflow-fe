@@ -5,19 +5,18 @@ import { useCallback } from "react";
 import { SESSION_QUERY_KEY } from "./use-session-query";
 import { api } from "@/global/api";
 import { AccessToken } from "@/global/authentication/AccessToken";
-import { FieldValidationResult, fromInvalidField } from "@/shared/field-validation";
 
 
 export type LoginResult =
-{
-  code: "success";
-} | {
-  code: "error"
-  message: string;
-} | {
-  code: "already-logined";
-  message: string;
-};
+  {
+    code: "success";
+  } | {
+    code: "error"
+    message: string;
+  } | {
+    code: "already-logined";
+    message: string;
+  };
 
 
 export const requestLogin = async (username: string, password: string): Promise<LoginResult> => {
@@ -64,7 +63,7 @@ export const useLoginLogout = (): UseLoginLogout => {
 
   const logout = useCallback(async () => {
     const res = await api.guest().post("/auth/logout");
-    if(!res.isSuccess()){
+    if (!res.isSuccess()) {
       throw new Error("로그아웃에 실패했습니다.");
     }
     accessTokenManager.clearToken();

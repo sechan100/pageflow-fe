@@ -1,6 +1,8 @@
 'use client'
 
+import { changePasswordRequest } from "@/entities/user/password"
 import { PasswordField } from "@/shared/components/PasswordField"
+import { FieldErrorDispatcher } from "@/shared/field"
 import { Field } from "@/shared/hooks/use-field-state"
 import { useNotification } from "@/shared/notification"
 import { Button, Container, Stack, Typography } from "@mui/material"
@@ -79,21 +81,33 @@ export default function PasswordChangePage({
   }, [currentPasswordField, newPasswordField, confirmPasswordField])
 
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (currentPasswordField.error || newPasswordField.error || confirmPasswordField.error) {
       return
     }
-    console.log("비밀번호 변경 요청")
-    const success = true;
-    if (success) {
-      notification.success("비밀번호가 정상적으로 변경되었습니다.")
-      clearPasswords();
-    } else {
-      setCurrentPasswordField({
-        ...currentPasswordField,
-        error: "비밀번호가 일치하지 않습니다."
-      })
+
+    const result = await changePasswordRequest({
+      currentPassword: currentPasswordField.value,
+      newPassword: newPasswordField.value
+    });
+    switch (result.code) {
+      case "success":
+        notification.success("비밀번호가 정상적으로 변경되었습니다.")
+        clearPasswords();
+        break;
+      case "field-error":
+        new FieldErrorDispatcher(result.fieldErrors)
+          .on("currentPassword", (message) => setCurrentPasswordField({
+            ...currentPasswordField,
+            error: message
+          }))
+          .on("newPassword", (message) => setNewPasswordField({
+            ...newPasswordField,
+            error: message
+          }))
+          .dispatch();
+        break;
     }
   }, [currentPasswordField, newPasswordField, confirmPasswordField])
 

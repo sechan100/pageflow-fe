@@ -7,4 +7,4 @@ export type { Session, SessionUser } from "./use-session-query"
 export { useSessionQuery, SESSION_QUERY_KEY } from "./use-session-query"
 
 // password
-export { passwordMatchRequest } from "./password";
+export { changePasswordRequest as passwordMatchRequest } from "./password";

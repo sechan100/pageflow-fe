@@ -1,5 +1,5 @@
 import { api } from "@/global/api";
-import { FieldValidationResult } from "@/shared/field-validation";
+import { FieldError } from "@/shared/field";
 
 
 
@@ -7,7 +7,7 @@ export type SignupResult = {
   code: "success";
 } | {
   code: "field-error";
-  fieldValidationResult: FieldValidationResult;
+  fieldErrors: FieldError[];
 }
 
 export type SignupForm = {
@@ -25,9 +25,9 @@ export const requestSignup = async (form: SignupForm): Promise<SignupResult> => 
 
   const resolver = res.resolver<SignupResult>()
     .SUCCESS(() => ({ code: "success" }))
-    .FIELD_VALIDATION_FAIL((fvr) => ({
+    .FIELD_VALIDATION_ERROR((fieldErrors) => ({
       code: "field-error",
-      fieldValidationResult: fvr
+      fieldErrors,
     }));
 
   return resolver.resolve();

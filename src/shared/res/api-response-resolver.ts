@@ -1,9 +1,11 @@
 import { ApiResponse } from "./api-response";
 import { ApiResponseError } from "./ApiResponseError";
-import { FieldValidationResult } from "../field-validation";
+import { FieldError, ServerFieldValidationResult } from "../field";
 
 
-
+const toFieldErrors = (f: ServerFieldValidationResult): FieldError[] => {
+  return f.invalidFields.map(({ field, message }) => ({ field, message }));
+}
 
 
 export class ApiResponseResolver<D, R> {
@@ -21,10 +23,10 @@ export class ApiResponseResolver<D, R> {
   }
 
   on<T>(code: string, result: ((data: T) => R) | R): ApiResponseResolver<D, R> {
-    if(typeof result === "function"){
+    if (typeof result === "function") {
       // handler
       this.#handlers[code] = result as (data: T) => R;
-    }else {
+    } else {
       // error 데이터
       this.on(code, () => result);
     }
@@ -38,7 +40,7 @@ export class ApiResponseResolver<D, R> {
 
   resolve(): R {
     const handler = this.#handlers[this.#response.code];
-    if(handler) {
+    if (handler) {
       return handler(this.#response.data);
     } else {
       return this.#defaultHandler();
@@ -46,7 +48,7 @@ export class ApiResponseResolver<D, R> {
   }
 
   get(): D {
-    if(this.#response.isSuccess()){
+    if (this.#response.isSuccess()) {
       return this.#response.data;
     } else {
       throw new ApiResponseError(this.#response);
@@ -58,8 +60,13 @@ export class ApiResponseResolver<D, R> {
     return this;
   }
 
-  FIELD_VALIDATION_FAIL(handler: (fieldValidationResult: FieldValidationResult) => R): ApiResponseResolver<D, R> {
-    return this.on("FIELD_VALIDATION_FAIL", handler);
+  FIELD_VALIDATION_ERROR(
+    handler: (fieldErrors: FieldError[], originalResult: ServerFieldValidationResult) => R
+  ): ApiResponseResolver<D, R> {
+    return this.on(
+      "FIELD_VALIDATION_ERROR",
+      (f: ServerFieldValidationResult) => handler(toFieldErrors(f), f)
+    );
   }
 
   BAD_CREDENTIALS(handler: () => R): ApiResponseResolver<D, R> {
