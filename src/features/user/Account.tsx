@@ -29,13 +29,13 @@ export const AccountFeature = ({
   const session = useSessionQuery();
   const { popover, setPopover } = useAccountPopoverStore();
   const avatarContainerRef = useRef<HTMLButtonElement>(null);
-  
-  if(session.isLoading) {
+
+  if (session.isLoading) {
     return (
       <Avatar>P</Avatar>
     )
   }
-  
+
   const user = (session.data as Session).user;
 
   return (
@@ -57,7 +57,7 @@ export const AccountFeature = ({
       </Button>
 
       {/* 팝오버 창 */}
-      <Popover 
+      <Popover
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -110,10 +110,10 @@ export const UserInfo = ({
   user,
   className
 }: UserInfoProps) => {
-  
+
   return (
     <ListItem>
-      <Box 
+      <Box
         sx={{
           display: "flex",
           gap: 1,
@@ -174,7 +174,7 @@ export const CustomListItem = ({
     link && router.push(link)
     setPopover(false)
   }, [link, router])
-  
+
   return (
     <ListItem disablePadding>
       <ListItemButton onClick={handleRoute}>
@@ -194,8 +194,9 @@ type LogoutListItemProps = {
 export const LogoutListItem = ({
   className
 }: LogoutListItemProps) => {
+  const { setPopover } = useAccountPopoverStore();
   const { logout } = useLoginLogout();
-  
+
   return (
     <ListItem disablePadding dense>
       <Box sx={{
@@ -207,7 +208,10 @@ export const LogoutListItem = ({
       }}>
         <Button
           size="small"
-          onClick={logout}
+          onClick={() => {
+            setPopover(false);
+            logout();
+          }}
           startIcon={<Logout />}
           variant="outlined"
         >

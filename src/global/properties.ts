@@ -39,15 +39,17 @@ class ServerNotResponseError extends Error {
  * 서버에서 필요한 프로퍼티를 가져온다.
  */
 const fetchServerProperties = async () => {
-  const res = await axios.get<PlainApiResponse<ServerProperties>>(getProxyBaseUrl() + '/server-properties');
-  const code = res.data.code;
-  if (code === "SUCCESS") {
-    return res.data.data;
-  } else {
-    /**
-     * client가 최초로 전송하는 proxy api 요청이므로, 응답이 없으면 서버가 죽은겨
-     */
-    throw new ServerNotResponseError(res.data.description);
+  try {
+    const res = await axios.get<PlainApiResponse<ServerProperties>>(getProxyBaseUrl() + '/server-properties');
+    const code = res.data.code;
+    if (code === "SUCCESS") {
+      return res.data.data;
+    } else {
+      throw new ServerNotResponseError(res.data.description);
+    }
+  } catch (Error) {
+    // client가 최초로 전송하는 proxy api 요청이므로, 응답이 없으면 서버가 죽은겨
+    throw new ServerNotResponseError('서버가 응답하지 않습니다.');
   }
 }
 
