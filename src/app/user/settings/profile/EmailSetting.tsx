@@ -166,7 +166,6 @@ export const EmailSetting = ({
         <EmailField
           email={email}
           onChange={onChange}
-          sx={{ mb: 2 }}
         />
         <EmailVerificationButton
           isEmailVerified={isEmailVerified}

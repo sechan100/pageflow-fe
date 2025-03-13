@@ -4,6 +4,7 @@ import { Field } from "@/shared/field";
 import { AccountCircle } from "@mui/icons-material";
 import { InputAdornment, SxProps, TextField } from "@mui/material"
 import { useCallback } from "react";
+import { fieldMarginY } from "./field-margin-y";
 
 
 
@@ -42,7 +43,10 @@ export const UsernameField = ({
         error={!!username.error}
         helperText={username.error}
         required
-        sx={sx}
+        sx={{
+          my: fieldMarginY,
+          ...sx
+        }}
         fullWidth
         slotProps={{
           input: {

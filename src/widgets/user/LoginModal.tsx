@@ -21,18 +21,15 @@ import {
 } from '@mui/icons-material';
 import { useLoginLogout } from '@/entities/user';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
+import { Field } from '@/shared/field';
+import { PasswordField, UsernameField } from '@/features/user';
 
-type FormData = {
-  username: string;
-  password: string;
-}
 
 type SocialProvider = 'Google' | 'GitHub';
 
 const links = {
   signup: '/signup',
 }
-
 
 /**
  * 로그인 모달 컴포넌트
@@ -45,31 +42,20 @@ export const LoginModal = ({
   open,
   handleClose
 }: Props) => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
-    username: '',
-    password: ''
-  });
   const { login } = useLoginLogout();
   const { router, searchParams } = useNextRouter();
-  const [error, setError] = useState<{ message: string } | null>(null);
+
+  /**
+   * [[ fields
+   * 사용자 인증 정보를 구체적으로 제공하지 않기위해서 error는 하나만 사용.
+   */
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  // ]]
 
 
-  // 입력값 변경
-  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
-    setError(null);
-  }, []);
-
-
-  const handleClickShowPassword = useCallback(() => {
-    setShowPassword((prev) => !prev);
-  }, []);
-
+  // 로그인 성공 처리
   const onLoginSuccess = useCallback(() => {
     const returnUrl = searchParams.get('returnUrl') || '/';
     router.replace(returnUrl);
@@ -79,7 +65,7 @@ export const LoginModal = ({
   // 로그인 처리 로직 구현
   const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await login(formData.username, formData.password);
+    const result = await login(username, password);
 
     switch (result.code) {
       case "success":
@@ -89,11 +75,10 @@ export const LoginModal = ({
       case "error":
       // intentional fallthrough
       case "already-logined":
-        setError({ message: result.message });
-        // notification.error(result.message);
+        setError(result.message);
         break;
     }
-  }, [formData.password, formData.username, handleClose, login, onLoginSuccess]);
+  }, [login, username, password, onLoginSuccess, handleClose]);
 
 
   // 소셜 로그인 처리 로직 구현
@@ -108,7 +93,7 @@ export const LoginModal = ({
   }, []);
 
 
-  // 회원가입 다이얼로그 열기 로직
+  // 회원가입 페이지로 이동
   const handleSignUp = useCallback(() => {
     router.push(links.signup);
     handleClose();
@@ -129,48 +114,17 @@ export const LoginModal = ({
             계정 정보를 입력하여 로그인하세요.
           </DialogContentText>
 
-          <TextField
-            id="username"
-            name="username"
-            label="아이디"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={formData.username}
-            onChange={handleInputChange}
-            error={!!error}
-            required
-            sx={{ mb: 2 }}
+          {/* Fields */}
+          <UsernameField
+            username={{ value: username, error: null }}
+            onChange={({ value }: Field) => setUsername(value)}
+          />
+          <PasswordField
+            password={{ value: password, error: error }}
+            onChange={({ value }: Field) => setPassword(value)}
           />
 
-          <TextField
-            id="password"
-            name="password"
-            label="비밀번호"
-            type={showPassword ? 'text' : 'password'}
-            fullWidth
-            variant="outlined"
-            value={formData.password}
-            onChange={handleInputChange}
-            error={!!error}
-            helperText={error?.message}
-            required
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }
-            }}
-          />
-
+          {/* 비밀번호 잊음? */}
           <Box sx={{ mt: 1, textAlign: 'right' }}>
             <Typography
               variant="body2"
@@ -182,6 +136,7 @@ export const LoginModal = ({
             </Typography>
           </Box>
 
+          {/* 제출 */}
           <Button
             type="submit"
             fullWidth
@@ -191,12 +146,14 @@ export const LoginModal = ({
             로그인
           </Button>
 
+          {/* 또는 */}
           <Divider sx={{ my: 2 }}>
             <Typography variant="body2" color="text.secondary">
               또는
             </Typography>
           </Divider>
 
+          {/* 소셜 로그인 */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
             <Button
               variant="outlined"
@@ -217,6 +174,7 @@ export const LoginModal = ({
           </Box>
         </DialogContent>
 
+        {/* 회원가입 */}
         <DialogActions sx={{ justifyContent: 'center', pb: 3, px: 3 }}>
           <Typography variant="body2">
             계정이 없으신가요?{' '}

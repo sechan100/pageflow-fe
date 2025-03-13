@@ -4,6 +4,7 @@ import { Field } from "@/shared/field"
 import { InputAdornment, SxProps, TextField } from "@mui/material"
 import { Pencil } from "lucide-react"
 import { useCallback } from "react"
+import { fieldMarginY } from "./field-margin-y"
 
 
 
@@ -60,7 +61,10 @@ export const PennameField = ({
       onChange={handlePennameChange}
       error={!!penname.error}
       helperText={penname.error}
-      sx={sx}
+      sx={{
+        my: fieldMarginY,
+        ...sx
+      }}
       fullWidth
       slotProps={{
         input: {

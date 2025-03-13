@@ -4,6 +4,7 @@ import { Field } from "@/shared/field"
 import { TextField, InputAdornment, SxProps, Theme } from "@mui/material"
 import { Mail } from "lucide-react"
 import { useCallback } from "react"
+import { fieldMarginY } from "./field-margin-y"
 
 
 
@@ -44,7 +45,10 @@ export const EmailField = ({
       onChange={handleEmailChange}
       error={!!email.error}
       helperText={email.error}
-      sx={sx}
+      sx={{
+        my: fieldMarginY,
+        ...sx
+      }}
       fullWidth
       slotProps={{
         input: {

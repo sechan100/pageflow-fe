@@ -6,6 +6,7 @@ import { useCallback, useState } from "react"
 import { LockIcon } from "lucide-react"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { Field } from "@/shared/field"
+import { fieldMarginY } from "./field-margin-y"
 
 
 
@@ -88,7 +89,10 @@ export const PasswordField = ({
       onChange={handlePasswordChange}
       error={!!password.error}
       helperText={password.error}
-      sx={sx}
+      sx={{
+        my: fieldMarginY,
+        ...sx
+      }}
       fullWidth
       slotProps={{
         input: {

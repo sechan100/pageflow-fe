@@ -24,11 +24,6 @@ import { UserApi } from '@/entities/user';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
 import { useNotification } from '@/shared/notification';
 
-
-const fieldSx: SxProps = {
-  mb: 2
-}
-
 const links = {
   login: '/?login=true'
 }
@@ -110,17 +105,14 @@ export default function SignupPage() {
           <UsernameField
             username={username}
             onChange={setUsername}
-            sx={fieldSx}
           />
           <PasswordField
             password={password}
             onChange={setPassword}
-            sx={fieldSx}
           />
           <EmailField
             email={email}
             onChange={setEmail}
-            sx={fieldSx}
           />
           <Divider sx={{ my: 2 }} />
           <Typography
@@ -133,7 +125,6 @@ export default function SignupPage() {
           <PennameField
             penname={penname}
             onChange={setPenname}
-            sx={fieldSx}
           />
           <Description sx={{ my: 0, fontSize: '0.8em' }}>
             필명은 Pageflow에서 사용할 이름입니다.
