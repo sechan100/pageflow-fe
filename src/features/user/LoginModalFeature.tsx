@@ -22,10 +22,7 @@ import {
 import { useLoginLogout } from '@/entities/user/use-login-logout';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
 
-type LoginDialogProps = {
-  open: boolean;
-  handleClose: () => void;
-}
+
 
 type FormData = {
   username: string;
@@ -34,10 +31,14 @@ type FormData = {
 
 type SocialProvider = 'Google' | 'GitHub';
 
-export const LoginModal = ({
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+}
+export const LoginModalFeature = ({
   open,
   handleClose
-}: LoginDialogProps) => {
+}: Props) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     username: '',

@@ -1,3 +1,2 @@
-export { LoginButton } from "./LoginButton";
-
-export { AccountFeature } from "./Account"
+export { LoginModalFeature } from "./LoginModalFeature";
+export { AccountFeature } from "./AccountFeature"
