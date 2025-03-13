@@ -19,8 +19,8 @@ import {
   Google as GoogleIcon,
   GitHub as GitHubIcon
 } from '@mui/icons-material';
-import { LoginResult, useLoginLogout } from '@/entities/user/use-login-logout';
-import { useNotification } from '@/shared/notification';
+import { useLoginLogout } from '@/entities/user/use-login-logout';
+import { useNextRouter } from '@/shared/hooks/useNextRouter';
 
 type LoginDialogProps = {
   open: boolean;
@@ -44,9 +44,9 @@ export const LoginModal = ({
     password: ''
   });
   const { login } = useLoginLogout();
-  const notification = useNotification();
-  const [ error, setError ] = useState<{ message: string} | null>(null);
-  
+  const { router, searchParams } = useNextRouter();
+  const [error, setError] = useState<{ message: string } | null>(null);
+
 
   // 입력값 변경
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -58,11 +58,15 @@ export const LoginModal = ({
     setError(null);
   }, []);
 
-  
-  // 비밀번호 보이기/숨기기
+
   const handleClickShowPassword = useCallback(() => {
     setShowPassword((prev) => !prev);
   }, []);
+
+  const onLoginSuccess = useCallback(() => {
+    const returnUrl = searchParams.get('returnUrl') || '/';
+    router.replace(returnUrl);
+  }, [router, searchParams]);
 
 
   // 로그인 처리 로직 구현
@@ -70,12 +74,13 @@ export const LoginModal = ({
     e.preventDefault();
     const result = await login(formData.username, formData.password);
 
-    switch(result.code) {
+    switch (result.code) {
       case "success":
+        onLoginSuccess();
         handleClose();
         break;
       case "error":
-        // intentional fallthrough
+      // intentional fallthrough
       case "already-logined":
         setError({ message: result.message });
         // notification.error(result.message);
@@ -95,7 +100,7 @@ export const LoginModal = ({
     console.log('Forgot password clicked');
   }, []);
 
-  
+
   // 회원가입 다이얼로그 열기 로직
   const handleSignUp = useCallback(() => {
     handleClose();
@@ -110,13 +115,13 @@ export const LoginModal = ({
           로그인
         </Typography>
       </DialogTitle>
-      
+
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
             계정 정보를 입력하여 로그인하세요.
           </DialogContentText>
-          
+
           <TextField
             id="username"
             name="username"
@@ -130,7 +135,7 @@ export const LoginModal = ({
             required
             sx={{ mb: 2 }}
           />
-          
+
           <TextField
             id="password"
             name="password"
@@ -158,18 +163,18 @@ export const LoginModal = ({
               }
             }}
           />
-                    
+
           <Box sx={{ mt: 1, textAlign: 'right' }}>
-            <Typography 
-              variant="body2" 
-              color="primary" 
+            <Typography
+              variant="body2"
+              color="primary"
               sx={{ cursor: 'pointer' }}
               onClick={handleForgotPassword}
             >
               비밀번호를 잊으셨나요?
             </Typography>
           </Box>
-          
+
           <Button
             type="submit"
             fullWidth
@@ -178,13 +183,13 @@ export const LoginModal = ({
           >
             로그인
           </Button>
-          
+
           <Divider sx={{ my: 2 }}>
             <Typography variant="body2" color="text.secondary">
               또는
             </Typography>
           </Divider>
-          
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
             <Button
               variant="outlined"
@@ -204,7 +209,7 @@ export const LoginModal = ({
             </Button>
           </Box>
         </DialogContent>
-        
+
         <DialogActions sx={{ justifyContent: 'center', pb: 3, px: 3 }}>
           <Typography variant="body2">
             계정이 없으신가요?{' '}

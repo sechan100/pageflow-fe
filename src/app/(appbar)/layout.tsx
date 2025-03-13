@@ -1,6 +1,6 @@
 import React from "react";
 import { GlobalLayout } from "../GlobalLayout";
-import { AppBarWidget, ContainerWithAppBar } from "@/widgets/app-bar";
+import { AppBarWidget } from "@/widgets/app-bar";
 import { Box } from "@mui/material";
 
 

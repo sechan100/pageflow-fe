@@ -83,6 +83,7 @@ export const AccountFeature = ({
           <CustomListItem
             icon={<Pencil />}
             primary="집필하기"
+            link="/write"
           />
           <CustomListItem
             icon={<LibraryBig />}
@@ -195,6 +196,7 @@ export const LogoutListItem = ({
   className
 }: LogoutListItemProps) => {
   const { setPopover } = useAccountPopoverStore();
+  const { router } = useNextRouter();
   const { logout } = useLoginLogout();
 
   return (
@@ -210,6 +212,8 @@ export const LogoutListItem = ({
           size="small"
           onClick={() => {
             setPopover(false);
+            console.log("로그아웃");
+            router.push("/");
             logout();
           }}
           startIcon={<Logout />}

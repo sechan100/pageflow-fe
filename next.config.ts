@@ -10,12 +10,11 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
   images: {
     domains: ['localhost'], // 이미지 도메인
   },
 
-  reactStrictMode: true, // 리액트 엄격 모드
+  reactStrictMode: true,
 
 };
 

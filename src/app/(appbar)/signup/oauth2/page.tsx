@@ -8,18 +8,18 @@ import { Button } from "@/shared/components/shadcn/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouting } from "@/shared/hook/useRouting";
-import { signupApi, SignupForm }  from "@/bounded-context/user/api/signup";
+import { signupApi, SignupForm } from "@/bounded-context/user/api/signup";
 import { ApiResponse } from "@/global/api/ApiResponse";
 import { FieldError, FieldErrors } from "@/global/api/commonResponseTypes";
 
 
 
 
-export default function OAuth2SignupForm(){
+export default function OAuth2SignupForm() {
   const { getUrlState } = useRouting();
 
   // 라우팅으로 같이 넘어온 데이터가 존재하지 않음 -> 라우팅을 통한 접근이 아니므로 에러
-  if(!getUrlState().signupCache){
+  if (!getUrlState().signupCache) {
     throw new Error("url state가 존재하지 않습니다.");
   }
   const signupCache = getUrlState().signupCache;
@@ -42,7 +42,7 @@ export default function OAuth2SignupForm(){
   })
 
   // 제출 이벤트 콜백
-  async function onSubmit(values: z.infer<typeof signupFormSchema>){
+  async function onSubmit(values: z.infer<typeof signupFormSchema>) {
     // Post 요청에 담을 객체를 생성
     const requestForm: SignupForm = {
       username: signupCache.username,
@@ -58,7 +58,7 @@ export default function OAuth2SignupForm(){
         res.data.errors.forEach(
           (error: FieldError) => signupForm.setError(
             // @ts-ignore
-            error.field, { type: "manual", message: error.message}
+            error.field, { type: "manual", message: error.message }
           )
         )
       })
