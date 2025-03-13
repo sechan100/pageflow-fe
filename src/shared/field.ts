@@ -1,5 +1,12 @@
 
 
+// useState로 field를 정의할 때 사용하는 타입
+export type Field = {
+  value: string;
+  error: string | null;
+}
+
+
 export type InvalidField = {
   field: string;
   reason: string;
@@ -25,7 +32,7 @@ export class FieldErrorDispatcher {
     private fieldErrors: FieldError[]
   ) { }
 
-  on(field: string, handler: (message: string) => void): FieldErrorDispatcher {
+  set(field: string, handler: (message: string) => void): FieldErrorDispatcher {
     this.#handlers[field] = handler;
     return this;
   }

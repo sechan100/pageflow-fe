@@ -3,7 +3,6 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import fsdImportPlugin from 'eslint-plugin-fsd-import';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -12,16 +11,17 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.config({ extends: ['next/core-web-vitals', 'next/typescript'],
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["off"],
+      "@typescript-eslint/no-explicit-any": ["off"],
+    }
+  }),
   {
     plugins: {
       'fsd-import': fsdImportPlugin,
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": ["warn", {
-        "caveats": false
-      }],
-      
       // 상대 경로 규칙
       'fsd-import/fsd-relative-path': ['error', { 
         alias: '@' // 프로젝트의 alias 설정 (예: '@'가 src 폴더를 가리키는 경우)

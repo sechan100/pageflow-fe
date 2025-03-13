@@ -1,14 +1,11 @@
-/** @jsxImportSource @emotion/react */
-
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
-import { Typography } from "@mui/material";
 
 export const BarLogo = () => {
   const { router } = useNextRouter();
 
   return (
     <div
-      css={{
+      style={{
         width: 100,
         marginLeft: 20,
         color: 'black',

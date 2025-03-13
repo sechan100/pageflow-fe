@@ -1,9 +1,8 @@
-/** @jsxImportSource @emotion/react */
 'use client'
 
 import { useNotification } from "@/shared/notification"
 import { ProcessResultError } from "@/global/ProcessResultError"
-import { useCallback, useEffect } from "react"
+import { useEffect } from "react"
 import { AUTO_HIDE_DURATION } from "@/shared/notification/use-notification"
 
 
@@ -21,7 +20,7 @@ export const ErrorCatchProvider = ({
     const handleError = (event: ErrorEvent | PromiseRejectionEvent) => {
       const error: Error = event instanceof ErrorEvent ? event.error : event.reason;
 
-      if(error instanceof ProcessResultError){
+      if (error instanceof ProcessResultError) {
         const n = error.getNotification();
         notification.show(n.message, {
           severity: n.severity,
@@ -37,13 +36,13 @@ export const ErrorCatchProvider = ({
 
     window.addEventListener('error', handleError);
     window.addEventListener('unhandledrejection', handleError);
-  
+
     return () => {
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleError);
     };
-  }, []);
-  
+  }, [notification]);
+
   return (
     <div>
       {children}

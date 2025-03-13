@@ -1,10 +1,10 @@
-export type { LoginResult, UseLoginLogout } from "./use-login-logout";
-export { useLoginLogout } from "./use-login-logout"
+export type { LoginResult, UseLoginLogout } from "./hooks/use-login-logout";
+export { useLoginLogout } from "./hooks/use-login-logout"
 
-export { requestSignup } from "./signup";
+export type { Session, SessionUser } from "./hooks/use-session-query"
+export { useSessionQuery, SESSION_QUERY_KEY } from "./hooks/use-session-query"
 
-export type { Session, SessionUser } from "./use-session-query"
-export { useSessionQuery, SESSION_QUERY_KEY } from "./use-session-query"
 
-// password
-export { changePasswordRequest as passwordMatchRequest } from "./password";
+
+
+export { UserApi } from "./api";

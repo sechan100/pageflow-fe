@@ -1,5 +1,5 @@
 'use client'
-import { useApplicationProperties } from "../properties";
+import { ApplicationProperties, useApplicationProperties } from "../properties";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { useEffect, useState } from "react";
 
@@ -28,13 +28,16 @@ type UseAuthenticationProviderData = {
  * local storage에 저장된 SESSION_FLAG를 통해서 인증여부를 '최초' 판단한다.
  * 이후에 다양한 로직들이 서버와 소통하면서 실제로 세션이 존재하지 않는 경우, 해당 상태를 적절히 업데이트해준다.
  */
-const [Provider, useStore] = createStoreContext<UseAuthenticationProviderData, UseAuthentication>(({ isAuthenticated, isAuthenticatedLoading }, set) => ({
+const [Provider, useStore] = createStoreContext<
+  UseAuthenticationProviderData,
+  UseAuthentication
+>(({ isAuthenticated, isAuthenticatedLoading }, set) => ({
   isAuthenticated,
 
   isAuthenticatedLoading,
 
   authenticate: () => {
-    const refreshTokenExpireDays = useApplicationProperties.getState().serverProperties.user.refreshTokenExpireDays;
+    const refreshTokenExpireDays = useApplicationProperties.getState().user.refreshTokenExpireDays;
     const expiredAt = Date.now() + 1000 * 60 * 60 * 24 * refreshTokenExpireDays; // x일 뒤 만료
     localStorage.setItem(SESSION_FLAG_NAME, String(expiredAt));
     set({ isAuthenticated: true });
@@ -65,22 +68,22 @@ const isSessionValid = () => {
 
 
 export const UseAuthenticationProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthData, setIsAuthData] = useState<UseAuthenticationProviderData>({
+  const [data, setData] = useState<UseAuthenticationProviderData>({
     isAuthenticated: false,
-    isAuthenticatedLoading: true
+    isAuthenticatedLoading: true,
   });
 
   useEffect(() => {
     const isAuthenticated = isSessionValid();
-    setIsAuthData({
+    setData({
       isAuthenticated,
-      isAuthenticatedLoading: false
+      isAuthenticatedLoading: false,
     });
   }, [])
 
   return (
     <Provider
-      data={isAuthData}
+      data={data}
       onDataChange={(store, { isAuthenticated, isAuthenticatedLoading }) => {
         store.setState({
           isAuthenticated,

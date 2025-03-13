@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 'use client'
 import { NotificationProvider as BaseNotificationProvider } from "@/shared/notification"
 
@@ -11,7 +10,7 @@ type Props = {
 export const NotificationProvider = ({
   children,
 }: Props) => {
-  
+
   return (
     <BaseNotificationProvider anchorOrigin={{
       vertical: 'bottom',

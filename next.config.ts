@@ -1,8 +1,8 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-
-  async rewrites() { // proxy 설정
+  // proxy 설정
+  async rewrites() {
     return [
       {
         source: `${process.env.NEXT_PUBLIC_PROXY_PREFIX}/:path*`,
@@ -10,8 +10,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
   images: {
-    domains: ['localhost'], // 이미지 도메인
+    domains: ['localhost'],
   },
 
   reactStrictMode: true,

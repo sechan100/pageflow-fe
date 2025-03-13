@@ -7,20 +7,23 @@ import { ReactQueryProvider } from "./ReactQueryProvider";
 import { NotificationProvider } from "./NotificationProvider";
 import { ErrorCatchProvider } from "./ErrorCatchProvider";
 import { UseAuthenticationProvider } from "@/global/authentication/authentication";
+import { ApplicationPropertiesProvider } from "@/global/properties";
 
 
-export const PageflowGlobalProvider = ({children} : {children: React.ReactNode}) => {
+export const PageflowGlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ReactQueryProvider>
       <MUIThemeProvider>
-        <NotificationProvider>
-          <ErrorCatchProvider>
-            <UseAuthenticationProvider>
-              {children}
-            </UseAuthenticationProvider>
-          </ErrorCatchProvider>
-        </NotificationProvider>
+        <ApplicationPropertiesProvider>
+          <NotificationProvider>
+            <ErrorCatchProvider>
+              <UseAuthenticationProvider>
+                {children}
+              </UseAuthenticationProvider>
+            </ErrorCatchProvider>
+          </NotificationProvider>
+        </ApplicationPropertiesProvider>
       </MUIThemeProvider>
     </ReactQueryProvider>
   )
