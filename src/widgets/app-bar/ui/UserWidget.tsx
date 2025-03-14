@@ -1,6 +1,6 @@
 'use client'
 
-import { Account } from "@/features/user"
+import { Account } from "./Account";
 import { useAuthentication } from "@/global/authentication/authentication"
 import { useNextRouter } from "@/shared/hooks/useNextRouter"
 import { Box, Button, ButtonProps } from "@mui/material"
@@ -20,7 +20,7 @@ const LoginButton = ({
 
   // loginRequired 쿼리 파라미터가 true일 때 login 모달을 열어줌
   useEffect(() => {
-    if (searchParams.get("login") === "true") {
+    if (searchParams?.get("login") === "true") {
       setOpen(true)
     }
   }, [searchParams])

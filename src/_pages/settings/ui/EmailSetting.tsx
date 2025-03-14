@@ -1,6 +1,5 @@
 "use client";
 
-import { UserApi } from '@/entities/user';
 import { EmailField } from '@/features/user';
 import { Field } from '@/shared/field';
 import {
@@ -16,8 +15,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { SettingTitle } from '../SettingTitle';
+import { SettingTitle } from './SettingTitle';
 import { Description } from '@/shared/components/Description';
+import { emailVerificationApi } from '../api/email-verification-reques';
 
 
 type EmailVerifiedState = "unverified" | "verification-email-sended" | "verified"
@@ -75,7 +75,7 @@ const EmailVerificationButton = ({
   const handleVerifyEmail = useCallback(async () => {
     setOpenConfirmDialog(false);
     setIsEmailSending(true);
-    const result = await UserApi.requestEmailVerification({ email: email.value });
+    const result = await emailVerificationApi({ email: email.value });
     if (result.code === "success") {
       setState("verification-email-sended");
       makeCanSendEmailAfter(VERIFICAITON_EMAIL_SEND_INTERVAL);

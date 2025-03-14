@@ -19,7 +19,7 @@ import {
   Google as GoogleIcon,
   GitHub as GitHubIcon
 } from '@mui/icons-material';
-import { useLoginLogout } from '@/entities/user';
+import { useLoginLogout } from '../model/use-login-logout'
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
 import { Field } from '@/shared/field';
 import { PasswordField, UsernameField } from '@/features/user';
@@ -57,7 +57,7 @@ export const LoginModal = ({
 
   // 로그인 성공 처리
   const onLoginSuccess = useCallback(() => {
-    const returnUrl = searchParams.get('returnUrl') || '/';
+    const returnUrl = searchParams?.get('returnUrl') || '/';
     router.replace(returnUrl);
   }, [router, searchParams]);
 

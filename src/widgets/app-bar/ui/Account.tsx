@@ -1,7 +1,8 @@
 'use client'
 
-import { Session, SessionUser, useLoginLogout, useSessionQuery } from "@/entities/user"
+import { Session, SessionUser, useSessionQuery } from "@/entities/user"
 import { useNextRouter } from "@/shared/hooks/useNextRouter"
+import { useLoginLogout } from "../model/use-login-logout"
 import { Logout } from "@mui/icons-material"
 import { Avatar, Box, Button, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Typography } from "@mui/material"
 import { Cog, LibraryBig, Pencil } from "lucide-react"

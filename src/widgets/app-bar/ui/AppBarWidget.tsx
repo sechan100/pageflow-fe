@@ -17,7 +17,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { BarLogo } from './BarLogo';
 import ColorModeIconDropdown from './ColorModeIconDropdown';
-import { UserWidget } from '../user/UserWidget';
+import { UserWidget } from './UserWidget';
 import { STYLES } from '@/global/styles';
 
 
@@ -38,14 +38,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 }));
 
 
-type Props = {
-  userWidget: React.ReactNode;
-}
-export const AppBarWidget = ({
-  userWidget,
-}: Props) => {
-  const [open, setOpen] = useState(false);
 
+export const AppBarWidget = () => {
+  const [open, setOpen] = useState(false);
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
@@ -58,7 +53,7 @@ export const AppBarWidget = ({
         boxShadow: 0,
         bgcolor: STYLES.color.background,
         mt: 1,
-        "&::after":{
+        "&::after": {
           content: '""',
           position: 'absolute',
           top: -8,
@@ -101,7 +96,7 @@ export const AppBarWidget = ({
           <Box sx={{
             display: { xs: 'none', md: 'flex' },
           }}>
-            {userWidget}
+            <UserWidget />
           </Box>
 
           {/* 모바일 드롭다운 */}

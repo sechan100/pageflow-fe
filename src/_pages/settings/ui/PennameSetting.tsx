@@ -3,7 +3,7 @@
 import { PennameField } from '@/features/user';
 import { Field } from "@/shared/field";
 import { Typography, Box, SxProps } from "@mui/material";
-import { SettingTitle } from '../SettingTitle';
+import { SettingTitle } from './SettingTitle';
 
 type Props = {
   penname: Field;

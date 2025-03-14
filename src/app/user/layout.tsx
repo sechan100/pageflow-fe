@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
-import { AuthGuard } from "../AuthGuard";
-import { WithAppbarLayout } from "../WithAppbarLayout";
+import { AuthGuard } from "../_utils/AuthGuard";
+import { WithAppbarLayout } from "../_utils/WithAppbarLayout";
 
 
 export default function UserLayout({

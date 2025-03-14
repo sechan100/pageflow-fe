@@ -1,6 +1,6 @@
 import { api } from "@/global/api";
 import { ApiResponse } from "@/shared/res/api-response";
-import { User } from "../model";
+import { User } from '@/entities/user';
 
 
 
@@ -11,7 +11,7 @@ export type RequestForm = {
   toDefaultProfileImage: boolean;
 }
 
-export const updateProfile = async (requestForm: RequestForm): Promise<ApiResponse<User>> => {
+export const updateProfileApi = async (requestForm: RequestForm): Promise<ApiResponse<User>> => {
   const formData = new FormData();
 
   // email, penname

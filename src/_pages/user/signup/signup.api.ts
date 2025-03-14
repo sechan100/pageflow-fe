@@ -17,7 +17,7 @@ export type SignupForm = {
   penname: string;
 }
 
-export const signup = async (form: SignupForm): Promise<SignupResult> => {
+export const signupApi = async (form: SignupForm): Promise<SignupResult> => {
   const res = await api
     .guest()
     .data(form)

@@ -14,7 +14,7 @@ type ChangePasswordResult = {
   fieldErrors: FieldError[];
 }
 
-export const changePassword = async ({ currentPassword, newPassword }: Form): Promise<ChangePasswordResult> => {
+export const changePasswordApi = async ({ currentPassword, newPassword }: Form): Promise<ChangePasswordResult> => {
   const data = {
     currentPassword,
     newPassword

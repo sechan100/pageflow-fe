@@ -4,26 +4,20 @@ import { STYLES } from "@/global/styles";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Drawer, Box, Typography, List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { Lock, UserCog } from "lucide-react";
+import { settingMenu } from "../config/setting-menu";
 
 
 const sidebarWidth = 350;
-
-const links = {
-  profile: '/user/settings/profile',
-  account: '/user/settings/account',
-}
 
 type SettingsMenuItemProps = {
   text: string,
   icon: React.ReactNode,
   subLink: string,
-  className?: string
 }
 const SettingsMenuItem = ({
   text,
   icon,
   subLink: link,
-  className
 }: SettingsMenuItemProps) => {
   const { router } = useNextRouter();
 
@@ -79,14 +73,14 @@ export const SettingMenu = ({
           </Typography>
           <List>
             <SettingsMenuItem
-              text="프로필 설정"
+              text={settingMenu.profile.text}
               icon={<UserCog />}
-              subLink={links.profile}
+              subLink={settingMenu.profile.link}
             />
             <SettingsMenuItem
-              text="계정 설정"
+              text={settingMenu.account.text}
               icon={<Lock />}
-              subLink={links.account}
+              subLink={settingMenu.account.link}
             />
           </List>
           <Divider />

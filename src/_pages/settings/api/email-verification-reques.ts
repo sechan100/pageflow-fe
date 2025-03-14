@@ -1,8 +1,4 @@
 import { api } from "@/global/api";
-import { ApiResponse } from "@/shared/res/api-response";
-
-
-
 
 
 type Form = {
@@ -16,7 +12,7 @@ type EmailVerificationResult = {
   message: string;
 }
 
-export const requestEmailVerification = async (form: Form): Promise<EmailVerificationResult> => {
+export const emailVerificationApi = async (form: Form): Promise<EmailVerificationResult> => {
   const res = await api
     .user()
     .data(form)

@@ -1,12 +1,12 @@
 'use client'
 
-import { UserApi } from "@/entities/user"
 import { PasswordField } from "@/features/user"
 import { Field, FieldErrorDispatcher } from "@/shared/field"
 import { useNotification } from "@/shared/notification"
-import { Box, Button, Container, Stack, Typography } from "@mui/material"
+import { Box, Button, Stack } from "@mui/material"
 import { useCallback, useMemo, useState } from "react"
-import { SettingTitle } from "../SettingTitle"
+import { SettingTitle } from "./SettingTitle"
+import { changePasswordApi } from "../api/change-password"
 
 
 const fieldNames = {
@@ -86,7 +86,7 @@ export const PasswordSetting = () => {
     if (!(isAllFieldValid && isAllFieldFilled)) throw new Error("모든 필드가 유효하지 않습니다.");
     e.preventDefault();
 
-    const result = await UserApi.changePassword({
+    const result = await changePasswordApi({
       currentPassword: currentPasswordField.value,
       newPassword: newPasswordField.value
     });

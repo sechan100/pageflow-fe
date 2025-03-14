@@ -1,6 +1,5 @@
 import React from "react";
 import { AppBarWidget } from "@/widgets/app-bar";
-import { UserWidget } from "@/widgets/user";
 import { Box } from "@mui/material";
 
 
@@ -12,9 +11,7 @@ export const WithAppbarLayout = ({
 
   return (
     <>
-      <AppBarWidget
-        userWidget={<UserWidget />}
-      />
+      <AppBarWidget />
       <Box
         sx={{
           my: 14,
