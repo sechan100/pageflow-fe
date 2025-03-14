@@ -122,13 +122,13 @@ export default function PasswordChangePage() {
             onChange={setCurrentPasswordField}
             label="현재 비밀번호"
             fieldName={fieldNames.current}
-            validatePassword={validateCurrentPassword}
+            customValidaotr={validateCurrentPassword}
           />
 
           <PasswordField
             password={newPasswordField}
             onChange={setNewPasswordField}
-            validatePassword={validateNewPassword}
+            customValidaotr={validateNewPassword}
             label="새 비밀번호"
             fieldName={fieldNames.new}
           />
@@ -138,7 +138,7 @@ export default function PasswordChangePage() {
             onChange={setConfirmPasswordField}
             label="새 비밀번호 확인"
             fieldName={fieldNames.confirm}
-            validatePassword={validateConfirmPassword}
+            customValidaotr={validateConfirmPassword}
           />
         </Stack>
         <Button

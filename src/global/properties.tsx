@@ -1,6 +1,5 @@
 import { PlainApiResponse } from "@/shared/res/api-response";
 import axios from "axios";
-import { create } from "zustand";
 import { getProxyBaseUrl } from "./proxy";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { useEffect, useState } from "react";

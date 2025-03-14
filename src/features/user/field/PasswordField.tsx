@@ -14,11 +14,9 @@ type Props = {
   password: Field;
   onChange: (field: Field) => void;
 
-  /**
-   * 비밀번호 유효성 검사
-   * default: 필요한 기본 비밀번호 유효성 검사를 진행한다.
-   */
-  validatePassword?: (password: string, defaultValidator: (password: string) => string | null) => string | null,
+  // default: false
+  disableValidator?: boolean;
+  customValidaotr?: (password: string, defaultValidator: (password: string) => string | null) => string | null,
 
   /**
    * default: '비밀번호'
@@ -32,7 +30,8 @@ type Props = {
 export const PasswordField = ({
   password,
   onChange,
-  validatePassword,
+  disableValidator,
+  customValidaotr,
   label = '비밀번호',
   fieldName = 'password',
   sx,
@@ -54,7 +53,7 @@ export const PasswordField = ({
   }, [showPassword]);
 
 
-  const validatePasswordWithDefaultRule = useCallback((password: string) => {
+  const defaultValidator = useCallback((password: string) => {
     if (password.length < passwordMinLength) {
       return `비밀번호는 ${passwordMinLength}자 이상이어야 합니다.`;
     }
@@ -70,13 +69,17 @@ export const PasswordField = ({
 
   const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
+    if (disableValidator) {
+      onChange({ value: newPassword, error: null });
+      return;
+    }
 
-    const newError = validatePassword ? validatePassword(newPassword, validatePasswordWithDefaultRule) : validatePasswordWithDefaultRule(newPassword);
+    const newError = customValidaotr ? customValidaotr(newPassword, defaultValidator) : defaultValidator(newPassword);
     onChange({
       value: newPassword,
       error: newError
     })
-  }, [onChange, validatePassword, validatePasswordWithDefaultRule]);
+  }, [disableValidator, customValidaotr, defaultValidator, onChange]);
 
 
   return (

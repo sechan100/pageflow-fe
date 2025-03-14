@@ -118,10 +118,12 @@ export const LoginModal = ({
           <UsernameField
             username={{ value: username, error: null }}
             onChange={({ value }: Field) => setUsername(value)}
+            disableValidator
           />
           <PasswordField
             password={{ value: password, error: error }}
             onChange={({ value }: Field) => setPassword(value)}
+            disableValidator
           />
 
           {/* 비밀번호 잊음? */}
