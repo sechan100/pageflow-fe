@@ -15,7 +15,7 @@ const fieldNames = {
 }
 
 
-export default function PasswordChangePage() {
+export const PasswordSetting = () => {
   const notification = useNotification()
 
   // [[ fields
@@ -110,7 +110,7 @@ export default function PasswordChangePage() {
 
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Typography variant="h4" component="h1" gutterBottom align="center">
         비밀번호 변경
       </Typography>

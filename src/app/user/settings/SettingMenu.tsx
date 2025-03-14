@@ -8,6 +8,37 @@ import { Lock, UserCog } from "lucide-react";
 
 const sidebarWidth = 300;
 
+const links = {
+  profile: '/user/settings/profile',
+  account: '/user/settings/account',
+}
+
+type SettingsMenuItemProps = {
+  text: string,
+  icon: React.ReactNode,
+  subLink: string,
+  className?: string
+}
+const SettingsMenuItem = ({
+  text,
+  icon,
+  subLink: link,
+  className
+}: SettingsMenuItemProps) => {
+  const { router } = useNextRouter();
+
+  return (
+    <ListItem key={text} dense>
+      <ListItemButton onClick={() => router.push(link)}>
+        <ListItemIcon>
+          {icon}
+        </ListItemIcon>
+        <ListItemText primary={text} />
+      </ListItemButton>
+    </ListItem>
+  )
+}
+
 type SettingMenuProps = {
   className?: string
 }
@@ -50,43 +81,17 @@ export const SettingMenu = ({
             <SettingsMenuItem
               text="프로필 설정"
               icon={<UserCog />}
-              subLink="/user/settings/profile"
+              subLink={links.profile}
             />
             <SettingsMenuItem
-              text="비밀번호 변경"
+              text="계정 설정"
               icon={<Lock />}
-              subLink="/user/settings/password"
+              subLink={links.account}
             />
           </List>
           <Divider />
         </Box>
       </Drawer>
     </>
-  )
-}
-
-type SettingsMenuItemProps = {
-  text: string,
-  icon: React.ReactNode,
-  subLink: string,
-  className?: string
-}
-const SettingsMenuItem = ({
-  text,
-  icon,
-  subLink: link,
-  className
-}: SettingsMenuItemProps) => {
-  const { router } = useNextRouter();
-
-  return (
-    <ListItem key={text} dense>
-      <ListItemButton onClick={() => router.push(link)}>
-        <ListItemIcon>
-          {icon}
-        </ListItemIcon>
-        <ListItemText primary={text} />
-      </ListItemButton>
-    </ListItem>
   )
 }

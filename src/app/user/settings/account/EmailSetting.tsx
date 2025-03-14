@@ -118,10 +118,6 @@ const EmailVerificationButton = ({
 }
 
 type Props = {
-  // email
-  email: Field;
-  onChange: (field: Field) => void;
-
   // original email & email verification
   isEmailVerified: boolean;
   originalEmail: string
@@ -129,12 +125,14 @@ type Props = {
   sx?: SxProps;
 };
 export const EmailSetting = ({
-  email,
-  onChange,
   isEmailVerified,
   originalEmail,
   sx,
 }: Props) => {
+  const [email, setEmail] = useState<Field>({
+    value: originalEmail,
+    error: "",
+  });
 
 
   return (
@@ -165,7 +163,7 @@ export const EmailSetting = ({
 
         <EmailField
           email={email}
-          onChange={onChange}
+          onChange={setEmail}
         />
         <EmailVerificationButton
           isEmailVerified={isEmailVerified}

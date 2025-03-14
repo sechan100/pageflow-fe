@@ -19,7 +19,6 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { PennameSetting } from "./PennameSetting";
-import { EmailSetting } from "./EmailSetting";
 import { Field } from "@/shared/field";
 
 
@@ -172,12 +171,6 @@ const Settings = ({ session }: Props) => {
               <PennameSetting
                 penname={penname}
                 onChange={setPenname}
-              />
-              <EmailSetting
-                email={email}
-                onChange={setEmail}
-                isEmailVerified={userData.isEmailVerified}
-                originalEmail={userData.email}
               />
             </Stack>
           </Grid2>
