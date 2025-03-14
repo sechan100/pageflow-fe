@@ -1,7 +1,7 @@
 import { useAuthentication } from "@/global/authentication/authentication";
 import { useQuery } from "@tanstack/react-query";
 import { getTocApi } from "../api/get-toc";
-import { Toc } from "./toc.type";
+import { SvToc } from "./toc.type";
 
 
 
@@ -20,6 +20,6 @@ export const useTocQuery = (bookId: string) => {
 
   return {
     ...query,
-    toc: query.data as Toc
+    toc: query.data as SvToc
   }
 }

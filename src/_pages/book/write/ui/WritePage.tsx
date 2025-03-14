@@ -4,7 +4,7 @@ import { Box, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { getBookApi } from "../api/get-book"
 import { UseBookProvider } from "../model/use-book"
-import { TocSideDrawer } from "./TocSideDrawer"
+import { SideDrawer } from "./SideDrawer"
 
 
 
@@ -38,7 +38,7 @@ export const WritePage = ({
       <Box sx={{
         display: 'flex',
       }}>
-        <TocSideDrawer />
+        <SideDrawer />
         <Box>
           {book.title}
         </Box>
