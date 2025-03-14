@@ -7,12 +7,10 @@ import { useEffect } from "react"
 
 
 type Props = {
-  className?: string
   children: React.ReactNode
 }
 export const AuthGuard = ({
   children,
-  className
 }: Props) => {
   const { router, pathname } = useNextRouter()
   const { isAuthenticated, isAuthenticatedLoading } = useAuthentication();

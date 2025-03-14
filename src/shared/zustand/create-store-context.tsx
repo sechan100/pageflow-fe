@@ -2,10 +2,9 @@
  * zustand store를 특정 값을 가지고 초기화할 수 있도록 해주는 유틸함수.
  * Context API를 사용하지 않고 전역 변수를 통해 관리합니다.
  */
+import React, { useEffect, useRef } from 'react';
 import { StoreApi, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
-import { useEffect, useRef } from 'react';
-import React from 'react';
 
 /**
  * D: 초기 데이터 타입

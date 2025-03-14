@@ -1,9 +1,9 @@
 'use client';
 
-import React from "react";
-import localFont from "next/font/local";
-import { PageflowGlobalProvider } from "./_provider";
 import { STYLES } from "@/global/styles";
+import localFont from "next/font/local";
+import React from "react";
+import { PageflowGlobalProvider } from "./_provider";
 
 const gowunBatang = localFont({
   src: [
