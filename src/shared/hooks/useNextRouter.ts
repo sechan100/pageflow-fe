@@ -1,4 +1,4 @@
-import { useRouter, useParams, usePathname, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 
 export const useNextRouter = () => {

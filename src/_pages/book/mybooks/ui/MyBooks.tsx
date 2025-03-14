@@ -2,7 +2,7 @@
 import { Box, Container, Grid2, Paper, SxProps, Typography } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { myBooksApi } from "../api/my-books"
-import { MyBooks as MyBooksType } from "../model/my-books"
+import { MyBooks } from "../model/my-books"
 import { BookCard } from "./BookCard"
 import { CreateBookButton } from "./CreateBookButton"
 import { EmptyMyBooks } from "./EmptyMyBooks"
@@ -12,7 +12,7 @@ import { EmptyMyBooks } from "./EmptyMyBooks"
 type Props = {
   sx?: SxProps
 }
-export const MyBooks = ({
+export const MyBooksPage = ({
   sx
 }: Props) => {
   const { data, isError, isLoading } = useQuery({
@@ -35,7 +35,7 @@ export const MyBooks = ({
     )
   }
 
-  const myBooks = data as MyBooksType;
+  const myBooks = data as MyBooks;
   return (
     <Container maxWidth="lg" sx={{
       display: "flex",

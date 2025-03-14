@@ -11,7 +11,7 @@ const cardHeight = cardWidth * 1.5;
 const cardInfoHeight = 60;
 
 
-const writeBookLink = (bookId: string) => `/write/book/${bookId}`
+const writeBookLink = (bookId: string) => `/write/${bookId}`
 
 type Props = {
   book: Book;
