@@ -1,10 +1,10 @@
 'use client';
 
+import { MyBooks } from "@/_pages/book";
 
-export default function MyBooksPage() {
+
+export default function Page() {
   return (
-    <div className="container h-full">
-      내책들
-    </div>
+    <MyBooks />
   )
 }
