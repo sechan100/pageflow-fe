@@ -19,6 +19,21 @@ const findNode = (children: TocNode[], nodeId: string): TocNode | null => {
   return null;
 }
 
+const mutateAllFolder = (children: TocNode[], mutate: (folder: TocFolder) => void): TocNode[] => {
+  return children.map(child => {
+    const newChild = { ...child };
+    if(NodeTypeGuard.isFolder(newChild)) {
+      mutate(newChild);
+      return {
+        ...newChild,
+        children: mutateAllFolder(newChild.children, mutate)
+      };
+    } else {
+      return newChild;
+    }
+  });
+}
+
 export const tocOperations = {
 
   findNode: (toc: Toc, nodeId: string): TocNode => {
@@ -53,5 +68,25 @@ export const tocOperations = {
       const folder = tocOperations.findFolder(draft, folderId);
       folder.isOpen = !folder.isOpen;
     });
+  },
+
+  expendAllFolders: (toc: Toc): Toc => {
+    return {
+      ...toc,
+      root: {
+        ...toc.root,
+        children: mutateAllFolder(toc.root.children, folder => folder.isOpen = true)
+      }
+    }
+  },
+
+  collapseAllFolders: (toc: Toc): Toc => {
+    return {
+      ...toc,
+      root: {
+        ...toc.root,
+        children: mutateAllFolder(toc.root.children, folder => folder.isOpen = false)
+      }
+    }
   }
 }

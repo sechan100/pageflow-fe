@@ -9,6 +9,8 @@ type UseToc = {
   findFolder: (folderId: string) => TocFolder;
   findSection: (sectionId: string) => TocSection;
   toggleFolder: (folderId: string) => void;
+  expendAllFolders: () => void;
+  collapseAllFolders: () => void;
 }
 
 export const [UseTocProvider, useToc] = createStoreContext<Toc, UseToc>((toc, set, get) => ({
@@ -16,5 +18,7 @@ export const [UseTocProvider, useToc] = createStoreContext<Toc, UseToc>((toc, se
   findNode: (nodeId) => tocOperations.findNode(toc, nodeId),
   findFolder: (folderId) => tocOperations.findFolder(toc, folderId),
   findSection: (sectionId) => tocOperations.findSection(toc, sectionId),
-  toggleFolder: (folderId) => set({ toc: tocOperations.toggleFolder(get().toc, folderId) })
+  toggleFolder: (folderId) => set({ toc: tocOperations.toggleFolder(get().toc, folderId) }),
+  expendAllFolders: () => set({ toc: tocOperations.expendAllFolders(get().toc) }),
+  collapseAllFolders: () => set({ toc: tocOperations.collapseAllFolders(get().toc) }),
 }));
