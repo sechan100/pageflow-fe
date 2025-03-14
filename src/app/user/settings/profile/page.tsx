@@ -42,11 +42,6 @@ const Settings = ({ session }: Props) => {
   const queryClient = useQueryClient();
 
   // [[ fields
-  const [email, setEmail] = useState<Field>({
-    value: userData.email,
-    error: null,
-  });
-
   const [penname, setPenname] = useState<Field>({
     value: userData.penname,
     error: null,
@@ -60,16 +55,15 @@ const Settings = ({ session }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isAllFieldValid = useMemo(() => {
-    return !email.error && !penname.error && !profileImageFileError;
-  }, [email.error, penname.error, profileImageFileError]);
+    return !penname.error && !profileImageFileError;
+  }, [penname.error, profileImageFileError]);
 
 
   const isAnyFieldChanged = useMemo(() => {
-    const isEmailChanged = email.value !== userData.email;
     const isPennameChanged = penname.value !== userData.penname;
     const isProfileImageChanged = profileImageFile !== null;
-    return isEmailChanged || isPennameChanged || isProfileImageChanged;
-  }, [email, penname, profileImageFile, userData]);
+    return isPennameChanged || isProfileImageChanged;
+  }, [penname, profileImageFile, userData]);
 
 
   const handleImageButtonClick = useCallback(() => {
@@ -99,7 +93,6 @@ const Settings = ({ session }: Props) => {
     }
 
     const res = await UserApi.updateProfile({
-      email: email.value,
       penname: penname.value,
       profileImage: profileImageFile,
       toDefaultProfileImage: false,
@@ -111,7 +104,7 @@ const Settings = ({ session }: Props) => {
     } else {
       notification.error("프로필 업데이트에 실패했습니다.");
     }
-  }, [isAllFieldValid, email, penname, profileImageFile, queryClient, notification]);
+  }, [isAllFieldValid, penname, profileImageFile, queryClient, notification]);
 
 
   return (

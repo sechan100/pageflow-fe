@@ -6,7 +6,6 @@ import { User } from "../model";
 
 
 export type RequestForm = {
-  email: string | null;
   penname: string | null;
   profileImage: File | null;
   toDefaultProfileImage: boolean;
@@ -17,7 +16,6 @@ export const updateProfile = async (requestForm: RequestForm): Promise<ApiRespon
 
   // email, penname
   const emailPennameForm = {
-    email: requestForm.email,
     penname: requestForm.penname
   }
   formData.append('form', new Blob([JSON.stringify(emailPennameForm)], { type: 'application/json' }));
