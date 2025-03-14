@@ -7,29 +7,42 @@ import {
   Box,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   SxProps,
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { SettingTitle } from '../SettingTitle';
+import { Description } from '@/shared/components/Description';
 
 
 type EmailVerifiedState = "unverified" | "verification-email-sended" | "verified"
 
-const VERIFICAITON_EMAIL_SEND_INTERVAL = 20;
+const VERIFICAITON_EMAIL_SEND_INTERVAL = 30;
 
 type EmailVerificationButtonProps = {
+  email: Field;
+  originalEmail: string;
   isEmailVerified: boolean
-  email: string
-  className?: string
+  onErrorChange: (error: string) => void;
 }
 const EmailVerificationButton = ({
-  isEmailVerified,
   email,
-  className
+  originalEmail,
+  isEmailVerified,
+  onErrorChange,
 }: EmailVerificationButtonProps) => {
   const [state, setState] = useState<EmailVerifiedState>(isEmailVerified ? "verified" : "unverified");
+  // 이메일 인증 요청을 서버에서 아직 처리중인지 여부
   const [isEmailSending, setIsEmailSending] = useState(false);
+  // 이메일 인증 요청 후, 다시 인증 이메일을 보낼 수 있는 시간(초)
   const [canSendEmailAfter, setCanSendEmailAfter] = useState(0);
+  // 이메일 인증 요청 확인 다이얼로그 open flag
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
 
   // props.isEmailVerified와 state를 동기화
@@ -60,17 +73,17 @@ const EmailVerificationButton = ({
 
   // 이메일 인증 요청
   const handleVerifyEmail = useCallback(async () => {
+    setOpenConfirmDialog(false);
     setIsEmailSending(true);
-    await UserApi.requestEmailVerification();
-    setState("verification-email-sended");
-    makeCanSendEmailAfter(VERIFICAITON_EMAIL_SEND_INTERVAL);
+    const result = await UserApi.requestEmailVerification({ email: email.value });
+    if (result.code === "success") {
+      setState("verification-email-sended");
+      makeCanSendEmailAfter(VERIFICAITON_EMAIL_SEND_INTERVAL);
+    } else {
+      onErrorChange(result.message);
+    }
     setIsEmailSending(false);
-  }, [makeCanSendEmailAfter]);
-
-
-  if (isEmailVerified) {
-    return <></>
-  }
+  }, [email.value, makeCanSendEmailAfter, onErrorChange]);
 
   return (
     <Box
@@ -81,38 +94,74 @@ const EmailVerificationButton = ({
       }}
     >
       {state === "unverified" && (
-        <>
-          <Typography variant="subtitle2" color="textDisabled">
-            현재 이메일: {email}&nbsp;
-          </Typography>
-          <Button
-            variant="outlined"
-            onClick={handleVerifyEmail}
-            loading={isEmailSending}
-          >
-            인증 메일 보내기
-          </Button>
-        </>
+        <Button
+          variant="contained"
+          onClick={() => setOpenConfirmDialog(true)}
+          loading={isEmailSending}
+          disabled={!!email.error}
+        >
+          인증 메일 보내기
+        </Button>
       )}
       {state === "verification-email-sended" && (
+        <Button
+          variant="outlined"
+          onClick={() => setOpenConfirmDialog(true)}
+          disabled={canSendEmailAfter !== 0}
+          loading={isEmailSending}
+        >
+          {canSendEmailAfter > 0 ? (
+            <>{canSendEmailAfter}초 후에 재발송 가능</>
+          ) : (
+            <>인증 이메일 재발송</>
+          )}
+        </Button>
+      )}
+      {state === "verified" && (
         <>
-          <Typography variant="subtitle2" color="textDisabled">
-            현재 이메일: {email}&nbsp;
-          </Typography>
+          <Description sx={{ mr: 1, fontSize: "0.7em" }}>
+            변경할 이메일로 인증 메일을 보내드립니다. 인증을 완료하시면 이메일이 변경됩니다.
+          </Description>
           <Button
-            variant="outlined"
-            onClick={handleVerifyEmail}
-            disabled={canSendEmailAfter !== 0}
+            variant="contained"
+            onClick={() => setOpenConfirmDialog(true)}
             loading={isEmailSending}
+            disabled={!!email.error || email.value === originalEmail}
           >
-            {canSendEmailAfter > 0 ? (
-              <>{canSendEmailAfter}초 후에 재발송 가능</>
-            ) : (
-              <>인증 이메일 재발송</>
-            )}
+            이메일 변경
           </Button>
         </>
       )}
+      <Dialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+      >
+        <DialogTitle>
+          이메일 인증 요청
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Typography component="span" color='primary'>
+              {`'${email.value}'`}
+            </Typography>
+            로 인증 메일을 보내시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenConfirmDialog(false)}
+          >
+            아니요
+          </Button>
+          <Button
+            variant='contained'
+            onClick={handleVerifyEmail}
+            autoFocus
+          >
+            예
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }
@@ -120,13 +169,13 @@ const EmailVerificationButton = ({
 type Props = {
   // original email & email verification
   isEmailVerified: boolean;
-  originalEmail: string
+  email: string
 
   sx?: SxProps;
 };
 export const EmailSetting = ({
   isEmailVerified,
-  originalEmail,
+  email: originalEmail,
   sx,
 }: Props) => {
   const [email, setEmail] = useState<Field>({
@@ -138,9 +187,7 @@ export const EmailSetting = ({
   return (
     <>
       <Box>
-        <Typography
-          variant="h6"
-          gutterBottom
+        <SettingTitle
           sx={{ display: "flex", alignItems: "center" }}
         >
           이메일
@@ -159,15 +206,17 @@ export const EmailSetting = ({
               sx={{ ml: 1 }}
             />
           )}
-        </Typography>
+        </SettingTitle>
 
         <EmailField
           email={email}
           onChange={setEmail}
         />
         <EmailVerificationButton
+          email={email}
+          originalEmail={originalEmail}
           isEmailVerified={isEmailVerified}
-          email={originalEmail}
+          onErrorChange={(error) => setEmail((prev) => ({ ...prev, error }))}
         />
       </Box>
     </>

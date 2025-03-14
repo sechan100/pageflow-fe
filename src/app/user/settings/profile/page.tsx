@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { PennameSetting } from "./PennameSetting";
 import { Field } from "@/shared/field";
+import { SettingPageTitle } from "../SettingPageTitle";
 
 
 export default function SettingsPage() {
@@ -109,9 +110,7 @@ const Settings = ({ session }: Props) => {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        프로필 설정
-      </Typography>
+      <SettingPageTitle>프로필 설정</SettingPageTitle>
 
       <form onSubmit={handleSubmit}>
         <Grid2 container spacing={4}>

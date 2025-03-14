@@ -6,7 +6,7 @@ import { Drawer, Box, Typography, List, Divider, ListItem, ListItemButton, ListI
 import { Lock, UserCog } from "lucide-react";
 
 
-const sidebarWidth = 300;
+const sidebarWidth = 350;
 
 const links = {
   profile: '/user/settings/profile',

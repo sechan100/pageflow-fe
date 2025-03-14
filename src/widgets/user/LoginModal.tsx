@@ -116,13 +116,20 @@ export const LoginModal = ({
 
           {/* Fields */}
           <UsernameField
-            username={{ value: username, error: null }}
-            onChange={({ value }: Field) => setUsername(value)}
+            username={{ value: username, error }}
+            onChange={({ value }: Field) => {
+              setUsername(value)
+              setError(null)
+            }}
             disableValidator
+            disableErrorText
           />
           <PasswordField
-            password={{ value: password, error: error }}
-            onChange={({ value }: Field) => setPassword(value)}
+            password={{ value: password, error }}
+            onChange={({ value }: Field) => {
+              setPassword(value)
+              setError(null)
+            }}
             disableValidator
           />
 

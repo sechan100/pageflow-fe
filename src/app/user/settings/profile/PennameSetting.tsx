@@ -3,6 +3,7 @@
 import { PennameField } from '@/features/user';
 import { Field } from "@/shared/field";
 import { Typography, Box, SxProps } from "@mui/material";
+import { SettingTitle } from '../SettingTitle';
 
 type Props = {
   penname: Field;
@@ -18,9 +19,7 @@ export const PennameSetting = ({
   return (
     <>
       <Box>
-        <Typography variant="h6" gutterBottom>
-          필명
-        </Typography>
+        <SettingTitle>필명</SettingTitle>
         <PennameField
           penname={penname}
           onChange={onChange}

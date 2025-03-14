@@ -6,6 +6,7 @@ import { Field, FieldErrorDispatcher } from "@/shared/field"
 import { useNotification } from "@/shared/notification"
 import { Box, Button, Container, Stack, Typography } from "@mui/material"
 import { useCallback, useMemo, useState } from "react"
+import { SettingTitle } from "../SettingTitle"
 
 
 const fieldNames = {
@@ -80,6 +81,7 @@ export const PasswordSetting = () => {
   }, [currentPasswordField, newPasswordField, confirmPasswordField])
 
 
+  // 변경 버튼 클릭
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     if (!(isAllFieldValid && isAllFieldFilled)) throw new Error("모든 필드가 유효하지 않습니다.");
     e.preventDefault();
@@ -110,13 +112,14 @@ export const PasswordSetting = () => {
 
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        비밀번호 변경
-      </Typography>
+    <>
       <Box component="form" onSubmit={handleSubmit}>
-        {/* 비밀번호 변경 */}
-        <Stack spacing={2}>
+        <SettingTitle sx={{
+          mb: 2
+        }}>
+          비밀번호 변경
+        </SettingTitle>
+        <Stack spacing={3}>
           <PasswordField
             password={currentPasswordField}
             onChange={setCurrentPasswordField}
@@ -151,6 +154,6 @@ export const PasswordSetting = () => {
           변경하기
         </Button>
       </Box>
-    </Container>
+    </>
   )
 }

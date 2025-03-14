@@ -15,6 +15,7 @@ type Props = {
 
   // default: false
   disableValidator?: boolean;
+  disableErrorText?: boolean;
   lable?: string;
   fieldName?: string;
   sx?: SxProps;
@@ -23,6 +24,7 @@ export const UsernameField = ({
   username,
   onChange,
   disableValidator,
+  disableErrorText,
   lable = '아이디',
   fieldName = 'username',
   sx
@@ -69,7 +71,7 @@ export const UsernameField = ({
         value={username.value}
         onChange={handleUsernameChange}
         error={!!username.error}
-        helperText={username.error}
+        helperText={!disableErrorText ? username.error : null}
         required
         sx={{
           my: fieldMarginY,

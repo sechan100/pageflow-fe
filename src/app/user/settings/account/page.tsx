@@ -21,6 +21,7 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Field } from "@/shared/field";
 import { EmailSetting } from "./EmailSetting";
 import { PasswordSetting } from "./PasswordSetting";
+import { SettingPageTitle } from "../SettingPageTitle";
 
 
 export default function AccountSettingsPage() {
@@ -42,23 +43,15 @@ const AccountSettings = ({ session }: Props) => {
   const notification = useNotification();
   const queryClient = useQueryClient();
 
-  // [[ fields
-  const [email, setEmail] = useState<Field>({
-    value: userData.email,
-    error: null,
-  });
-  // ]]
-
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" component="h1" gutterBottom align="center">
-        계정 설정
-      </Typography>
+      <SettingPageTitle>계정 설정</SettingPageTitle>
       <Stack spacing={5}>
         <EmailSetting
           isEmailVerified={userData.isEmailVerified}
-          originalEmail={userData.email}
+          email={userData.email}
         />
+        <Divider />
         <PasswordSetting />
       </Stack>
     </Container >
