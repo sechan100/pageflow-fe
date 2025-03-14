@@ -4,7 +4,7 @@ import { Field } from "@/shared/field";
 import { AccountCircle } from "@mui/icons-material";
 import { InputAdornment, SxProps, TextField } from "@mui/material"
 import { useCallback } from "react";
-import { fieldMarginY } from "./field-margin-y";
+import { fieldMarginY } from "../../../shared/components/field-margin-y";
 import { useApplicationProperties } from "@/global/properties";
 
 

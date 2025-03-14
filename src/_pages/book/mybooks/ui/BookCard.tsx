@@ -1,9 +1,17 @@
 'use client'
-import { Book } from "@/entities/book"
-import { SxProps } from "@mui/material"
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Book } from "@/entities/book";
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
+import { Box, Card, CardMedia, SxProps, Typography } from '@mui/material';
 
 
+
+
+const cardWidth = 170;
+const cardHeight = cardWidth * 1.5;
+const cardInfoHeight = 60;
+
+
+const writeBookLink = (bookId: string) => `/write/book/${bookId}`
 
 type Props = {
   book: Book;
@@ -13,25 +21,29 @@ export const BookCard = ({
   book,
   sx
 }: Props) => {
+  const { router } = useNextRouter();
+
   return (
     <Card
       sx={{
-        maxWidth: 280,
-        height: 380,
+        width: cardWidth,
+        height: cardHeight + cardInfoHeight,
         display: 'flex',
         flexDirection: 'column',
         transition: 'transform 0.3s, box-shadow 0.3s',
+        cursor: 'pointer',
         '&:hover': {
           transform: 'translateY(-8px)',
-          boxShadow: '0 12px 20px rgba(0, 0, 0, 0.2)',
+          boxShadow: '0 6px 10px rgba(0, 0, 0, 0.2)',
         },
         ...sx
       }}
+      onClick={() => router.push(writeBookLink(book.id))}
       elevation={3}
     >
       <CardMedia
         component="img"
-        height="280"
+        height={cardHeight}
         image={book.coverImageUrl}
         alt={`${book.title} cover`}
         sx={{
@@ -39,23 +51,22 @@ export const BookCard = ({
         }}
       />
 
-      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{
+          borderTop: '1px solid #ccc',
+          p: 1
+        }}
+      >
         <Typography
-          variant="h6"
-          component="div"
+          variant="subtitle2"
           sx={{
-            fontWeight: 600,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            lineHeight: 1.2,
           }}
         >
           {book.title}
         </Typography>
-      </CardContent>
+      </Box>
     </Card>
   );
 };

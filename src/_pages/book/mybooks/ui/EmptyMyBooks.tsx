@@ -1,7 +1,5 @@
 'use client'
-import { Box, Button, Container, SxProps, Typography } from "@mui/material"
-import { CreateBookModal } from "./CreateBookModal"
-import { useState } from "react"
+import { Box, SxProps, Typography } from "@mui/material"
 import { NotebookPen } from "lucide-react"
 
 
@@ -12,7 +10,6 @@ type Props = {
 export const EmptyMyBooks = ({
   sx
 }: Props) => {
-  const [open, setOpen] = useState(false)
 
   return (
     <Box sx={{
@@ -32,16 +29,6 @@ export const EmptyMyBooks = ({
       }}>
         아직 집필중인 책이 없습니다.
       </Typography>
-      <Button
-        variant="contained"
-        onClick={() => setOpen(true)}
-      >
-        + 새로운 책 집필하기
-      </Button>
-      <CreateBookModal
-        open={open}
-        onClose={() => setOpen(false)}
-      />
     </Box>
   )
 }

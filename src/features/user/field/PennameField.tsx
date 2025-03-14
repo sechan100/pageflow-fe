@@ -4,7 +4,7 @@ import { Field } from "@/shared/field"
 import { InputAdornment, SxProps, TextField } from "@mui/material"
 import { Pencil } from "lucide-react"
 import { useCallback } from "react"
-import { fieldMarginY } from "./field-margin-y"
+import { fieldMarginY } from "../../../shared/components/field-margin-y"
 
 
 
