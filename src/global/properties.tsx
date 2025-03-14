@@ -13,17 +13,23 @@ type ServerProperties = {
     // refresh token 만료 기간
     refreshTokenExpireDays: number;
 
-    // 필명
-    pennameMinLength: number;
-    pennameMaxLength: number;
-    pennameRegex: string;
-    pennameRegexMessage: string;
+    // 아이디
+    usernameMinLength: number;
+    usernameMaxLength: number;
+    usernameRegex: string;
+    usernameRegexMessage: string;
 
     // 비밀번호
     passwordMinLength: number;
     passwordMaxLength: number;
     passwordRegex: string;
     passwordRegexMessage: string;
+
+    // 필명
+    pennameMinLength: number;
+    pennameMaxLength: number;
+    pennameRegex: string;
+    pennameRegexMessage: string;
   }
 }
 
