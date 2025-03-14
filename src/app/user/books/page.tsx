@@ -1,10 +1,10 @@
 'use client';
 
 
-export default function MyBooksPage(){
-  return(
+export default function MyBooksPage() {
+  return (
     <div className="container h-full">
-      {/* <MyBooksFeature /> */}
+      내책들
     </div>
   )
 }

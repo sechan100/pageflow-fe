@@ -142,6 +142,12 @@ const LogoutListItem = ({
   )
 }
 
+const links = {
+  write: "/user/books",
+  library: "/library",
+  settings: "/user/settings"
+}
+
 type Props = {
   className?: string
 }
@@ -205,16 +211,17 @@ export const Account = ({
           <CustomListItem
             icon={<Pencil />}
             primary="집필하기"
-            link="/write"
+            link={links.write}
           />
           <CustomListItem
             icon={<LibraryBig />}
             primary="서재"
+            link={links.library}
           />
           <CustomListItem
             icon={<Cog />}
             primary="설정"
-            link="/user/settings"
+            link={links.settings}
           />
           <Divider />
           <LogoutListItem />
