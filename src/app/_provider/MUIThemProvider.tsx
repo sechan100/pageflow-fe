@@ -1,8 +1,8 @@
 'use client';
 
-import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
 import { STYLES } from '@/global/styles';
 import { CssBaseline } from '@mui/material';
+import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
 
 
 const theme: Theme = createTheme({

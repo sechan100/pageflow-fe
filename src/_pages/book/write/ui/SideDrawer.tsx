@@ -1,6 +1,6 @@
 'use client'
 import { useTocQuery } from "@/entities/book";
-import { TocTree } from "@/widgets/book";
+import { TocWidget } from "@/widgets/book";
 import {
   ChevronLeft as ChevronLeftIcon, Menu as MenuIcon
 } from "@mui/icons-material";
@@ -96,7 +96,7 @@ export const SideDrawer = ({
           <ChevronLeftIcon />
         </IconButton>
       </Box>
-      <TocTree
+      <TocWidget
         svToc={toc}
       />
     </Drawer>

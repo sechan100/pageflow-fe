@@ -1,8 +1,8 @@
 'use client'
-import { useSortable } from "@dnd-kit/sortable";
-import { Box, SxProps } from "@mui/material";
+import { SxProps } from "@mui/material";
 import { memo } from "react";
 import { TocSection } from "../model/toc.type";
+import { Dndable } from "./Dndable";
 import { StyledSectionNode } from "./styled-toc-node";
 
 
@@ -12,41 +12,21 @@ type Props = {
   depth: number;
   sx?: SxProps
 }
-export const DndTocSection = memo(function SortableSection({
+export const DndTocSection = memo(function DroppableSection({
   section,
   depth,
   sx
 }: Props) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    isOver,
-  } = useSortable({ id: section.id });
-
-  const style = transform ? {
-    transform: `translate(${transform.x}, ${transform.y})`,
-    transition,
-  } : undefined;
-
 
   return (
-    <Box
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      sx={{
-        backgroundColor: isDragging ? 'skyblue' : isOver ? "red" : "inherit",
-      }}
+    <Dndable
+      node={section}
+      depth={depth}
     >
       <StyledSectionNode
         section={section}
         depth={depth}
       />
-    </Box>
+    </Dndable>
   );
 })

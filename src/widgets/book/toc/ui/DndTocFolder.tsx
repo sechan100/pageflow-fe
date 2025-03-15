@@ -1,10 +1,12 @@
 'use client'
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { Box, Collapse, List, SxProps } from "@mui/material";
-import { memo, useMemo } from "react";
-import { dndConfig } from "../config/dnd-config";
+import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
+import { Box, Collapse, List, Tooltip } from "@mui/material";
+import { memo, useCallback, useRef } from "react";
+import { useIndicator } from "../model/dnd/use-indicator";
+import { useIsOver } from "../model/dnd/use-is-over";
 import { TocFolder } from "../model/toc.type";
-import { useToc } from "../model/use-toc";
+import { useFolderOpen } from "../model/use-folder-open";
+import { Dndable } from "./Dndable";
 import { renderTocNode } from "./render-toc-node";
 import { StyledFolderNode } from "./styled-toc-node";
 
@@ -13,78 +15,65 @@ import { StyledFolderNode } from "./styled-toc-node";
 type Props = {
   folder: TocFolder;
   depth: number;
-  sx?: SxProps
 }
-export const DndTocFolder = memo(function DndSortableContextProviderFolder({
+export const DndTocFolder = memo(function DroppableFolder({
   folder,
   depth,
-  sx
 }: Props) {
-  const items = useMemo(() => folder.children.map(c => c.id), [folder.children]);
-  console.debug('FolderNode', folder.title)
+  const { isOpen, toggle } = useFolderOpen(folder.id);
+  const isOver = useIsOver(folder.id);
+  const { indicator } = useIndicator(folder.id);
+  const isIntoFolderOperation = indicator?.mode === "box" && isOver;
 
+  // drag 때문에 folder가 닫혀있는건지 여부(일시적으로 닫힌 경우)
+  const isClosedForDragStart = useRef(false);
 
-  return (
-    <SortableContext
-      items={items}
-      strategy={dndConfig.sortableStrategy}
-    >
-      <SortableFolder folder={folder} depth={depth} />
-    </SortableContext>
-  );
-})
+  // 해당 folder가 drag될 때, folder가 열려있다면 일시적으로 닫음
+  const onDragStart = useCallback(({ active }: DragStartEvent) => {
+    if (active.id === folder.id && isOpen) {
+      toggle();
+      isClosedForDragStart.current = true;
+    }
+  }, [folder.id, isOpen, toggle]);
 
+  // 해당 folder가 drag end되면 folder를 다시 열음
+  const onDragEnd = useCallback(({ active }: DragEndEvent) => {
+    if (active.id === folder.id && isClosedForDragStart.current) {
+      toggle();
+      isClosedForDragStart.current = false;
+    }
+  }, [folder.id, toggle]);
 
-
-type SortableFolderProps = {
-  folder: TocFolder;
-  depth: number;
-  sx?: SxProps
-}
-const SortableFolder = ({
-  folder,
-  depth,
-  sx
-}: SortableFolderProps) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    isOver,
-  } = useSortable({ id: folder.id });
-  const toggleFolder = useToc(s => s.toggleFolder);
-
-  const style = transform ? {
-    transform: `translate(${transform.x}, ${transform.y})`,
-    transition,
-  } : undefined;
-
+  useDndMonitor({
+    onDragStart,
+    onDragEnd,
+  })
 
   return (
     <Box>
-      <Box
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
-        sx={{
-          backgroundColor: isDragging ? 'skyblue' : isOver ? "red" : "inherit",
-        }}
+      <Dndable
+        node={folder}
+        depth={depth}
       >
         <StyledFolderNode
           folder={folder}
+          isOpen={isOpen}
           depth={depth}
-          onClick={({ id }) => toggleFolder(id)}
+          onClick={() => toggle()}
         />
-      </Box>
-      <Collapse in={folder.isOpen} timeout="auto" unmountOnExit>
+        <Tooltip
+          title={`'${folder.title}'에 추가`}
+          placement="right"
+          open={isIntoFolderOperation}
+        >
+          <Box />
+        </Tooltip>
+      </Dndable >
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
         <List disablePadding>
           {folder.children.map(child => renderTocNode(child, depth + 1))}
         </List>
       </Collapse>
     </Box>
-  )
-}
+  );
+})

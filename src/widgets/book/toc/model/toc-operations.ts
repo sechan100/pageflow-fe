@@ -1,5 +1,3 @@
-import { SvNodeTypeGuard } from "@/entities/book";
-import { produce } from "immer";
 import { NodeTypeGuard, Toc, TocFolder, TocNode, TocSection } from "./toc.type";
 
 
@@ -9,7 +7,7 @@ const findNode = (children: TocNode[], nodeId: string): TocNode | null => {
       return node;
     }
 
-    if(SvNodeTypeGuard.isSvFolder(node)) {
+    if(NodeTypeGuard.isFolder(node)) {
       const found = findNode(node.children, nodeId);
       if(found) {
         return found;
@@ -34,7 +32,28 @@ const mutateAllFolder = (children: TocNode[], mutate: (folder: TocFolder) => voi
   });
 }
 
-export const tocOperations = {
+type FindParentResult = {
+  parent: TocFolder
+  index: number
+}
+const findParent = (parent: TocFolder, nodeId: string): FindParentResult | null => {
+  for(let i = 0; i < parent.children.length; i++) {
+    const child = parent.children[i];
+    if(child.id === nodeId) {
+      return { parent, index: i };
+    }
+
+    if(NodeTypeGuard.isFolder(child)) {
+      const found = findParent(child, nodeId);
+      if(found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
+export const TocOperations = {
 
   findNode: (toc: Toc, nodeId: string): TocNode => {
     const found = findNode(toc.root.children, nodeId);
@@ -63,30 +82,39 @@ export const tocOperations = {
     }
   },
 
-  toggleFolder: (toc: Toc, folderId: string): Toc => {
-    return produce(toc, draft => {
-      const folder = tocOperations.findFolder(draft, folderId);
-      folder.isOpen = !folder.isOpen;
-    });
-  },
-
-  expendAllFolders: (toc: Toc): Toc => {
-    return {
-      ...toc,
-      root: {
-        ...toc.root,
-        children: mutateAllFolder(toc.root.children, folder => folder.isOpen = true)
-      }
+  findParent: (toc: Toc, nodeId: string): FindParentResult => {
+    const found = findParent(toc.root, nodeId);
+    if(found) {
+      return found;
+    } else {
+      throw new Error(`Parent not found: ${nodeId}`);
     }
   },
 
-  collapseAllFolders: (toc: Toc): Toc => {
-    return {
-      ...toc,
-      root: {
-        ...toc.root,
-        children: mutateAllFolder(toc.root.children, folder => folder.isOpen = false)
+  // root를 제외한 모든 노드를 순회하며 map을 만든다.
+  toMap: (toc: Toc): Map<string, TocNode> => {
+    const map = new Map<string, TocNode>();
+    const traverse = (node: TocNode) => {
+      map.set(node.id, node);
+      if(NodeTypeGuard.isFolder(node)) {
+        node.children.forEach(traverse);
       }
     }
+    toc.root.children.forEach(traverse);
+    return map;
+  },
+
+  toMapWith: <T>(toc: Toc, filter: (node: TocNode) => boolean, mapFn: (node: TocNode) => T): Map<string, T> => {
+    const map = new Map<string, T>();
+    const traverse = (node: TocNode) => {
+      if(filter(node)) {
+        map.set(node.id, mapFn(node));
+      }
+      if(NodeTypeGuard.isFolder(node)) {
+        node.children.forEach(traverse);
+      }
+    }
+    toc.root.children.forEach(traverse);
+    return map;
   }
 }

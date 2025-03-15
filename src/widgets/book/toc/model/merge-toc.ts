@@ -1,4 +1,4 @@
-import { SvToc, SvTocFolder, SvTocSection } from "@/entities/book";
+import { SvToc, SvTocFolder, SvTocNode, SvTocSection } from "@/entities/book";
 import { NodeTypeGuard, Toc, TocFolder, TocNode, TocNodeType, TocSection } from "./toc.type";
 
 
@@ -43,7 +43,7 @@ const mergeSection = ({ serverSection, clientSection, context }: {
   if(!clientSection) {
     return {
       id: serverSection.id,
-      type: 'SECTION',
+      type: 'section',
       title: serverSection.title,
     }
   }
@@ -61,7 +61,7 @@ const mergeSection = ({ serverSection, clientSection, context }: {
 }
 
 const mergeChildren = ({ serverChildren, clientChildren, context }: {
-  serverChildren: TocNode[];
+  serverChildren: SvTocNode[];
   clientChildren: TocNode[];
   context: TocMergeContext;
 }): TocNode[] => {
@@ -127,8 +127,7 @@ const mergeFolder = ({ serverFolder, clientFolder, context }: {
   if(!clientFolder) {
     return {
       id: serverFolder.id,
-      type: 'FOLDER',
-      isOpen: true, // 기본 값으로 folder를 열려있는 상태로 설정한다.
+      type: 'folder',
       title: serverFolder.title,
       children: mergeChildren({
         serverChildren: serverFolder.children,

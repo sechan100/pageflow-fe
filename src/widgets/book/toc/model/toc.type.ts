@@ -1,6 +1,9 @@
+/**
+ * 클라이언트에서 사용하는 Toc 타입들을 정의.
+ * SvToc 타입들과는 다르다.
+ */
 
-
-export type TocNodeType = "FOLDER" | "SECTION";
+export type TocNodeType = "folder" | "section";
 
 export type TocNode = {
   id: string; // UUID
@@ -9,13 +12,12 @@ export type TocNode = {
 }
 
 export type TocFolder = TocNode & {
-  type: "FOLDER";
-  isOpen: boolean;
+  type: "folder";
   children: TocNode[];
 }
 
 export type TocSection = TocNode & {
-  type: "SECTION";
+  type: "section";
 }
 
 export type Toc = {
@@ -25,12 +27,12 @@ export type Toc = {
 
 export const NodeTypeGuard = {
   isTocNode: (obj: any): obj is TocNode => {
-    return obj && typeof obj.id === "string" && typeof obj.title === "string" && (obj.type === "FOLDER" || obj.type === "SECTION");
+    return obj && typeof obj.id === "string" && typeof obj.title === "string" && (obj.type === "folder" || obj.type === "section");
   },
   isFolder(node: any): node is TocFolder {
-    return this.isTocNode(node) && node.type === "FOLDER";
+    return this.isTocNode(node) && node.type === "folder";
   },
   isSection(node: any): node is TocSection {
-    return this.isTocNode(node) && node.type === "SECTION";
+    return this.isTocNode(node) && node.type === "section";
   }
 }

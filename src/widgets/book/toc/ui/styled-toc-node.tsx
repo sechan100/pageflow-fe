@@ -3,6 +3,7 @@ import { Article, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { FolderIcon, FolderOpenIcon } from "lucide-react";
 import { memo } from "react";
+import { indentPerDepth } from "../config";
 import { TocFolder, TocSection } from "../model/toc.type";
 
 
@@ -10,12 +11,14 @@ import { TocFolder, TocSection } from "../model/toc.type";
 type StyledFolderNodeProps = {
   folder: TocFolder;
   depth: number;
+  isOpen: boolean;
   onClick?: (folder: TocFolder) => void;
   sx?: SxProps
 }
 export const StyledFolderNode = memo(function Folder({
   folder,
   depth,
+  isOpen,
   onClick,
   sx
 }: StyledFolderNodeProps) {
@@ -24,10 +27,10 @@ export const StyledFolderNode = memo(function Folder({
     <>
       <ListItemButton
         onClick={() => onClick?.(folder)}
-        sx={{ pl: 2 + depth * 2 }}
+        sx={{ pl: 2 + depth * indentPerDepth }}
       >
         <ListItemIcon>
-          {folder.isOpen ? <FolderOpenIcon /> : <FolderIcon />}
+          {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
         </ListItemIcon>
         <ListItemText
           primary={folder.title}
@@ -36,7 +39,7 @@ export const StyledFolderNode = memo(function Folder({
             title: folder.title
           }}
         />
-        {folder.isOpen ? <ExpandLess /> : <ExpandMore />}
+        {isOpen ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
     </>
   )
@@ -56,7 +59,7 @@ export const StyledSectionNode = memo(function Section({
   return (
     <ListItemButton
       key={section.id}
-      sx={{ pl: 2 + depth * 2 }}
+      sx={{ pl: 2 + depth * indentPerDepth }}
     >
       <ListItemIcon>
         <Article />

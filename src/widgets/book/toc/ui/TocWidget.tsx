@@ -1,6 +1,6 @@
 'use client'
 import { SvToc } from "@/entities/book";
-import { SxProps } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { useEffect, useState } from "react";
 import { mergeServerToc } from "../model/merge-toc";
 import { Toc } from "../model/toc.type";
@@ -13,7 +13,7 @@ type Props = {
   svToc: SvToc;
   sx?: SxProps
 }
-export const TocTree = ({
+export const TocWidget = ({
   svToc,
   sx
 }: Props) => {
@@ -32,7 +32,14 @@ export const TocTree = ({
   return (
     <UseTocProvider data={toc} onDataChange={(s, toc) => s.setState({ toc })}>
       <TocToolBar />
-      <TocRoot />
+      <Box
+        sx={{
+          overflowY: "auto",
+          height: "100%",
+        }}
+      >
+        <TocRoot />
+      </Box>
     </UseTocProvider>
   )
 }
