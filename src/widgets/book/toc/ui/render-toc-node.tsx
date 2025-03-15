@@ -1,13 +1,13 @@
 import { NodeTypeGuard, TocNode } from "../model/toc.type";
-import { FolderNode } from "./FolderNode";
-import { SectionNode } from "./SectionNode";
+import { DndTocFolder } from "./DndTocFolder";
+import { DndTocSection } from "./DndTocSection";
 
 
 // 재귀적으로 TOC 노드를 렌더링하는 함수
 export const renderTocNode = (node: TocNode, depth = 0) => {
   if (NodeTypeGuard.isFolder(node)) {
     return (
-      <FolderNode
+      <DndTocFolder
         key={node.id}
         folder={node}
         depth={depth}
@@ -15,7 +15,7 @@ export const renderTocNode = (node: TocNode, depth = 0) => {
     )
   } else if (NodeTypeGuard.isSection(node)) {
     return (
-      <SectionNode
+      <DndTocSection
         key={node.id}
         section={node}
         depth={depth}
