@@ -40,10 +40,6 @@ export const useFolderOpen = (folderId: string, disabled = false) => {
     syncFolderOpenState(folderId, newIsOpen);
   }, [folderId, isOpen, disabled, syncFolderOpenState]);
 
-  useEffect(() => {
-    console.log(useToc.getState().findNode(folderId).title, "동기화")
-  }, [folderId, isOpen])
-
   return {
     isOpen,
     getIsOpen: () => {
