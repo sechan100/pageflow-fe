@@ -1,6 +1,6 @@
 'use client'
 import { closestCenter, DndContext, DragEndEvent, DragMoveEvent, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
-import { SxProps } from "@mui/material"
+import { List, SxProps } from "@mui/material"
 import { useCallback } from "react"
 import { dndConfig } from "../config"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
@@ -68,7 +68,9 @@ export const TocRoot = ({
       onDragEnd={handleDragEnd}
       onDragMove={handleDragMove}
     >
-      {toc.root.children.map(child => renderTocNode(child, 0))}
+      <List>
+        {toc.root.children.map(child => renderTocNode(child, 0))}
+      </List>
       <OverlayProvider />
     </DndContext>
   )

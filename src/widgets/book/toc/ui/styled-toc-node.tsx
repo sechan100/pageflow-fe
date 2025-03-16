@@ -1,11 +1,52 @@
 'use client'
-import { Article, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, FilePen } from "lucide-react";
 import { memo } from "react";
 import { indentPerDepth } from "../config";
 import { TocFolder, TocSection } from "../model/toc.type";
 
+
+type NodeButtonProps = {
+  depth: number;
+  icon: React.ReactNode;
+  text: string;
+  onClick?: () => void;
+  sx?: SxProps
+}
+const NodeButton = ({
+  depth,
+  icon,
+  onClick,
+  text,
+  sx
+}: NodeButtonProps) => {
+
+  return (
+    <ListItemButton
+      dense
+      onClick={onClick}
+      sx={{
+        pl: 1 + depth * indentPerDepth,
+        position: 'relative',
+      }}
+    >
+      <ListItemIcon sx={{
+        minWidth: 0,
+        mr: 1,
+      }}>
+        {icon}
+      </ListItemIcon>
+      <ListItemText
+        primary={text}
+        slotProps={{
+          primary: {
+            noWrap: true,
+          }
+        }}
+      />
+    </ListItemButton>
+  )
+}
 
 
 type StyledFolderNodeProps = {
@@ -24,26 +65,12 @@ export const StyledFolderNode = memo(function Folder({
 }: StyledFolderNodeProps) {
 
   return (
-    <>
-      <ListItemButton
-        onClick={() => onClick?.(folder)}
-        sx={{
-          pl: 2 + depth * indentPerDepth,
-        }}
-      >
-        <ListItemIcon>
-          {isOpen ? <ChevronDown /> : <ChevronRight />}
-        </ListItemIcon>
-        <ListItemText
-          primary={folder.title}
-          primaryTypographyProps={{
-            noWrap: true,
-            title: folder.title
-          }}
-        />
-        {isOpen ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-    </>
+    <NodeButton
+      depth={depth}
+      onClick={() => onClick?.(folder)}
+      icon={isOpen ? <ChevronDown /> : <ChevronRight />}
+      text={folder.title}
+    />
   )
 })
 
@@ -59,22 +86,12 @@ export const StyledSectionNode = memo(function Section({
 }: StyledSectionNodeProps) {
 
   return (
-    <ListItemButton
-      key={section.id}
-      sx={{
-        pl: 2 + depth * indentPerDepth,
-      }}
-    >
-      <ListItemIcon>
-        <Article />
-      </ListItemIcon>
-      <ListItemText
-        primary={section.title}
-        primaryTypographyProps={{
-          noWrap: true,
-          title: section.title
-        }}
-      />
-    </ListItemButton>
+    <NodeButton
+      depth={depth}
+      // icon={<NotepadText />}
+      // icon={<File size={20} />}
+      icon={<FilePen size={20} />}
+      text={section.title}
+    />
   )
 })

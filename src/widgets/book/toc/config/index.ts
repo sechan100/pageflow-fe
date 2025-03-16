@@ -7,7 +7,7 @@ export const dndConfig = {
 }
 
 // mui padding 기준(1 = 8px)
-export const indentPerDepth = 2;
+export const indentPerDepth = 2.5;
 
 export const indicatorZIndex = 50;
 
