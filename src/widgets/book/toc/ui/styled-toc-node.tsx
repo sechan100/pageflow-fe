@@ -1,7 +1,7 @@
 'use client'
 import { Article, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
-import { FolderIcon, FolderOpenIcon } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { memo } from "react";
 import { indentPerDepth } from "../config";
 import { TocFolder, TocSection } from "../model/toc.type";
@@ -27,10 +27,12 @@ export const StyledFolderNode = memo(function Folder({
     <>
       <ListItemButton
         onClick={() => onClick?.(folder)}
-        sx={{ pl: 2 + depth * indentPerDepth }}
+        sx={{
+          pl: 2 + depth * indentPerDepth,
+        }}
       >
         <ListItemIcon>
-          {isOpen ? <FolderOpenIcon /> : <FolderIcon />}
+          {isOpen ? <ChevronDown /> : <ChevronRight />}
         </ListItemIcon>
         <ListItemText
           primary={folder.title}
@@ -59,7 +61,9 @@ export const StyledSectionNode = memo(function Section({
   return (
     <ListItemButton
       key={section.id}
-      sx={{ pl: 2 + depth * indentPerDepth }}
+      sx={{
+        pl: 2 + depth * indentPerDepth,
+      }}
     >
       <ListItemIcon>
         <Article />

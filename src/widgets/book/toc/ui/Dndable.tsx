@@ -50,7 +50,7 @@ export const Dndable = memo(function Dndable({
   sx
 }: Props) {
   const { indicator } = useIndicator(node.id);
-  const { getIsOpen } = useFolderOpen(node.id, { disabled: NodeTypeGuard.isSection(node) });
+  const { getIsOpen } = useFolderOpen(node.id, NodeTypeGuard.isSection(node));
 
   const data = useMemo<TocNodeDndData>(() => {
     if (NodeTypeGuard.isFolder(node)) {
