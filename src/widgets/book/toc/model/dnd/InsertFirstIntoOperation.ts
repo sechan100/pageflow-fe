@@ -1,9 +1,8 @@
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { TocOperations } from "../toc-operations";
-import { Toc } from "../toc.type";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
-import { DndOperation, DndOperationContext } from "./dnd-operation";
+import { DndOperation, DndOperationContext, RelocateResult } from "./dnd-operation";
 import { RectUtils } from "./rect-utils";
 
 /**
@@ -45,13 +44,26 @@ export class InsertFirstIntoOperation implements DndOperation {
     }
   }
   
-  resolve({ active, over, toc }: DndOperationContext): Toc {
-    const overNodeData = extractTocNodeDndData(over);
-    const activeNodeData = extractTocNodeDndData(active);
-    return produce(toc, draft => {
-      const parent = TocOperations.findFolder(draft, overNodeData.id);
-      const activeNode = TocOperations.findNode(draft, activeNodeData.id);
-      parent.children.unshift(activeNode);
-    })
+  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+    const { id: overId } = extractTocNodeDndData(over);
+    const { id: activeId } = extractTocNodeDndData(active);
+
+    const destFolderId: string = overId;
+
+    const newToc = produce(toc, draft => {
+      const parent = TocOperations.findFolder(draft, overId);
+      const target = TocOperations.removeNodeMutable(draft, activeId);
+      parent.children.unshift(target);
+    });
+
+    return {
+      toc: newToc,
+      form: {
+        bookId: toc.bookId,
+        targetNodeId: activeId,
+        destFolderId,
+        destIndex: 0,
+      }
+    }
   }
 }

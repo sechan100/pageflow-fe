@@ -1,9 +1,9 @@
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { TocOperations } from "../toc-operations";
-import { Toc, TocFolder } from "../toc.type";
+import { TocFolder } from "../toc.type";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
-import { DndOperation, DndOperationContext } from "./dnd-operation";
+import { DndOperation, DndOperationContext, RelocateResult } from "./dnd-operation";
 import { RectUtils } from "./rect-utils";
 
 /**
@@ -44,13 +44,34 @@ export class InsertBelowOperation implements DndOperation {
     }
   }
 
-  resolve({ active, over, toc }: DndOperationContext): Toc {
-    const overNodeData = extractTocNodeDndData(over);
-    const activeNodeData = extractTocNodeDndData(active);
-    return produce(toc, draft => {
-      const { parent, index } = TocOperations.findParent(draft, overNodeData.id);
-      const activeNode = TocOperations.findNode(draft, activeNodeData.id);
-      parent.children.splice(index + 1, 0, activeNode);
-    })
+  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+    const { id: overId } = extractTocNodeDndData(over);
+    const { id: activeId } = extractTocNodeDndData(active);
+
+    let destFolderId: string | null = null;
+    let destIndex: number | null = null;
+
+    const newToc = produce(toc, draft => {
+      const parent = TocOperations.findParent(draft, overId);
+      const target = TocOperations.removeNodeMutable(draft, activeId);
+      destIndex = parent.children.findIndex(child => child.id === overId) + 1;
+      parent.children.splice(destIndex, 0, target);
+      
+      destFolderId = parent.id;
+    });
+
+    if(!destFolderId || destIndex === null) {
+      throw new Error("destFolderId 또는 destIndex를 찾을 수 없습니다.");
+    }
+
+    return {
+      toc: newToc,
+      form: {
+        bookId: toc.bookId,
+        targetNodeId: activeId,
+        destFolderId,
+        destIndex,
+      }
+    }
   }
 }

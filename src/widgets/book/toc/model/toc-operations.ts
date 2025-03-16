@@ -32,15 +32,11 @@ const mutateAllFolder = (children: TocNode[], mutate: (folder: TocFolder) => voi
   });
 }
 
-type FindParentResult = {
-  parent: TocFolder
-  index: number
-}
-const findParent = (parent: TocFolder, nodeId: string): FindParentResult | null => {
+const findParent = (parent: TocFolder, nodeId: string): TocFolder | null => {
   for(let i = 0; i < parent.children.length; i++) {
     const child = parent.children[i];
     if(child.id === nodeId) {
-      return { parent, index: i };
+      return parent;
     }
 
     if(NodeTypeGuard.isFolder(child)) {
@@ -82,12 +78,24 @@ export const TocOperations = {
     }
   },
 
-  findParent: (toc: Toc, nodeId: string): FindParentResult => {
+  findParent: (toc: Toc, nodeId: string): TocFolder => {
     const found = findParent(toc.root, nodeId);
     if(found) {
       return found;
     } else {
       throw new Error(`Parent not found: ${nodeId}`);
+    }
+  },
+
+  removeNodeMutable: (toc: Toc, nodeId: string): TocNode => {
+    const newRoot = { ...toc.root };
+    const found = findParent(newRoot, nodeId);
+    if(found) {
+      const index = found.children.findIndex(child => child.id === nodeId);
+      const removed = found.children.splice(index, 1)[0];
+      return removed;
+    } else {
+      throw new Error(`Node not found: ${nodeId}`);
     }
   },
 

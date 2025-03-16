@@ -6,6 +6,7 @@ import { TocOperations } from "./toc-operations";
 
 type UseToc = {
   toc: Toc;
+  setToc: (toc: Toc) => void;
   findNode: (nodeId: string) => TocNode;
   findFolder: (folderId: string) => TocFolder;
   findSection: (sectionId: string) => TocSection;
@@ -22,6 +23,8 @@ type UseToc = {
 
 export const [UseTocProvider, useToc] = createStoreContext<Toc, UseToc>((toc, set, get) => ({
   toc,
+
+  setToc: (toc) => set({ toc }),
 
   findNode: (nodeId) => TocOperations.findNode(toc, nodeId),
 

@@ -1,6 +1,6 @@
+import { FieldError, ServerFieldValidationResult } from "../field";
 import { ApiResponse } from "./api-response";
 import { ApiResponseError } from "./ApiResponseError";
-import { FieldError, ServerFieldValidationResult } from "../field";
 
 
 const toFieldErrors = (f: ServerFieldValidationResult): FieldError[] => {
@@ -58,6 +58,14 @@ export class ApiResponseResolver<D, R> {
   SUCCESS(handler: (data: D) => R): ApiResponseResolver<D, R> {
     this.on("SUCCESS", handler);
     return this;
+  }
+
+  DATA_NOT_FOUND(handler: () => R): ApiResponseResolver<D, R> {
+    return this.on("DATA_NOT_FOUND", handler);
+  }
+
+  RESOURCE_PERMISSION_DENIED(handler: () => R): ApiResponseResolver<D, R> {
+    return this.on("RESOURCE_PERMISSION_DENIED", handler);
   }
 
   FIELD_VALIDATION_ERROR(
