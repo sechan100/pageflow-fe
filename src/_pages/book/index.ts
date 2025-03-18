@@ -1,3 +1,3 @@
 export { MyBooksPage as MyBooks } from "./mybooks";
-export { WritePage } from "./write";
+export { WritePageLayout as WritePage } from "./write";
 

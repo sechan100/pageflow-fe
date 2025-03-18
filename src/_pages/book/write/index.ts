@@ -1,1 +1,1 @@
-export { WritePage } from './ui/WritePage';
+export { WritePageLayout } from './ui/WritePageLayout';

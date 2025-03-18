@@ -10,10 +10,12 @@ import { SideDrawer } from "./SideDrawer"
 
 type Props = {
   bookId: string
+  children: React.ReactNode
   sx?: SxProps
 }
-export const WritePage = ({
+export const WritePageLayout = ({
   bookId,
+  children,
   sx
 }: Props) => {
   const { data, isError, isLoading } = useQuery({
@@ -39,9 +41,7 @@ export const WritePage = ({
         display: 'flex',
       }}>
         <SideDrawer />
-        <Box>
-          {book.title}
-        </Box>
+        {children}
       </Box>
     </UseBookProvider >
   )
