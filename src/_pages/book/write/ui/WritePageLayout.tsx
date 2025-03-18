@@ -3,7 +3,7 @@ import { BookWithAuthor } from "@/entities/book"
 import { Box, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { getBookApi } from "../api/get-book"
-import { UseBookProvider } from "../model/use-book"
+import { BookStoreProvider } from "../model/use-book"
 import { SideDrawer } from "./SideDrawer"
 
 
@@ -33,7 +33,7 @@ export const WritePageLayout = ({
   const book = data as BookWithAuthor;
 
   return (
-    <UseBookProvider
+    <BookStoreProvider
       data={book}
       onDataChange={(s, book) => s.setState({ book })}
     >
@@ -43,6 +43,6 @@ export const WritePageLayout = ({
         <SideDrawer />
         {children}
       </Box>
-    </UseBookProvider >
+    </BookStoreProvider >
   )
 }

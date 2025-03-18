@@ -8,7 +8,7 @@ import { dndConfig } from "../config"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
 import { DndOperationDispatcher } from "../model/dnd/dnd-operation"
 import { useIndicatorStore } from "../model/dnd/use-indicator"
-import { useToc } from "../model/use-toc"
+import { useTocStore } from "../model/use-toc"
 import { OverlayProvider } from "./OverlayProvider"
 import { renderTocNode } from "./render-toc-node"
 
@@ -20,8 +20,8 @@ type Props = {
 export const TocRoot = ({
   sx
 }: Props) => {
-  const toc = useToc(s => s.toc);
-  const setToc = useToc(s => s.setToc);
+  const toc = useTocStore(s => s.toc);
+  const setToc = useTocStore(s => s.setToc);
   const notification = useNotification();
   const setIndicator = useIndicatorStore(s => s.setIndicator);
   const clearIndicator = useIndicatorStore(s => s.clearIndicator);

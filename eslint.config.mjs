@@ -1,7 +1,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
+import fsdImportPlugin from 'eslint-plugin-fsd-import';
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import fsdImportPlugin from 'eslint-plugin-fsd-import';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,7 +36,6 @@ const eslintConfig = [
       // public API import 규칙
       'fsd-import/public-api-imports': ['error', {
         alias: '@',
-        testFilesPatterns: ['**/*.test.*', '**/*.stories.*', '**/StoreDecorator.tsx']
       }]
     },
   },

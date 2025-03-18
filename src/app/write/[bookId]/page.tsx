@@ -1,6 +1,6 @@
 'use client';
 
-import { BookEditPage } from "@/_pages/book/write/ui/BookEditPage";
+import { BookEditPage } from '@/pages/book';
 
 
 

@@ -1,10 +1,14 @@
 'use client'
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { SxProps } from "@mui/material";
 import { memo } from "react";
 import { TocSection } from "../model/toc.type";
+import { useTocStore } from "../model/use-toc";
 import { Dndable } from "./Dndable";
 import { StyledSectionNode } from "./styled-toc-node";
 
+
+const sectionEditPageLink = (bookId: string, sectionId: string) => `/write/${bookId}/sections/${sectionId}`;
 
 
 type Props = {
@@ -17,6 +21,9 @@ export const DndTocSection = memo(function DroppableSection({
   depth,
   sx
 }: Props) {
+  const { bookId } = useTocStore(s => s.toc);
+  const { router } = useNextRouter();
+
 
   return (
     <Dndable
@@ -26,6 +33,7 @@ export const DndTocSection = memo(function DroppableSection({
       <StyledSectionNode
         section={section}
         depth={depth}
+        onClick={() => router.push(sectionEditPageLink(bookId, section.id))}
       />
     </Dndable>
   );

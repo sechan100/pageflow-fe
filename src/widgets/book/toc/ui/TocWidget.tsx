@@ -4,7 +4,7 @@ import { Box, SxProps } from "@mui/material";
 import { useEffect, useState } from "react";
 import { mergeServerToc } from "../model/merge-toc";
 import { Toc } from "../model/toc.type";
-import { UseTocProvider } from "../model/use-toc";
+import { UseTocStoreProvider } from "../model/use-toc";
 import { TocRoot } from "./TocRoot";
 import { TocToolBar } from "./TocToolBar";
 
@@ -30,7 +30,7 @@ export const TocWidget = ({
   }
 
   return (
-    <UseTocProvider data={toc} onDataChange={(s, toc) => s.setState({ toc })}>
+    <UseTocStoreProvider data={toc} onDataChange={(s, toc) => s.setState({ toc })}>
       <TocToolBar />
       <Box
         sx={{
@@ -40,6 +40,6 @@ export const TocWidget = ({
       >
         <TocRoot />
       </Box>
-    </UseTocProvider>
+    </UseTocStoreProvider>
   )
 }

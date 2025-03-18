@@ -1,6 +1,6 @@
 "use client";
 
-import { SignupPage } from '@/_pages/user';
+import { SignupPage } from '@/pages/user';
 
 
 export default function Page() {

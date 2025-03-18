@@ -1,6 +1,6 @@
-import React from "react";
+import { SettingMenu } from '@/pages/settings';
 import { Box } from "@mui/material";
-import { SettingMenu } from '@/_pages/settings';
+import React from "react";
 
 
 export default function SettingsPageLayout({

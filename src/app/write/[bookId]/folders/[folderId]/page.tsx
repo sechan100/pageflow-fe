@@ -1,4 +1,5 @@
-import { FolderEditPage } from "@/_pages/book/write/ui/FolderEditPage";
+'use client';
+import { FolderEditPage } from '@/pages/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 

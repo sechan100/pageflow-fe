@@ -4,10 +4,10 @@ import { createStoreContext } from "@/shared/zustand/create-store-context";
 
 
 
-type UseBook = {
+type BookStore = {
   book: BookWithAuthor;
 }
 
-export const [UseBookProvider, useBook] = createStoreContext<BookWithAuthor, UseBook>((book, set) => ({
+export const [BookStoreProvider, useBookStore] = createStoreContext<BookWithAuthor, BookStore>((book, set) => ({
   book,
 }))

@@ -11,7 +11,7 @@ import {
   Typography
 } from "@mui/material";
 import { useState } from "react";
-import { useBook } from "../model/use-book";
+import { useBookStore } from "../model/use-book";
 
 const drawerWidth = 240;
 
@@ -22,7 +22,7 @@ type Props = {
 export const SideDrawer = ({
   sx,
 }: Props) => {
-  const { book } = useBook();
+  const { book } = useBookStore();
   const { toc, isError, isLoading } = useTocQuery(book.id);
   const [open, setOpen] = useState(true);
 

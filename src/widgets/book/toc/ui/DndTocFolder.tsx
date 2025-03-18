@@ -1,4 +1,5 @@
 'use client'
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { Box, Collapse, List, Tooltip } from "@mui/material";
 import { memo, useCallback, useRef } from "react";
@@ -6,11 +7,13 @@ import { useIndicator } from "../model/dnd/use-indicator";
 import { useIsOver } from "../model/dnd/use-is-over";
 import { TocFolder } from "../model/toc.type";
 import { useFolderOpen } from "../model/use-folder-open";
+import { useTocStore } from "../model/use-toc";
 import { Dndable } from "./Dndable";
 import { renderTocNode } from "./render-toc-node";
 import { StyledFolderNode } from "./styled-toc-node";
 
 
+const folderEditPageLink = (bookId: string, folderId: string) => `/write/${bookId}/folders/${folderId}`;
 
 type Props = {
   folder: TocFolder;
@@ -20,7 +23,9 @@ export const DndTocFolder = memo(function DroppableFolder({
   folder,
   depth,
 }: Props) {
+  const { bookId } = useTocStore(s => s.toc);
   const { isOpen, toggle } = useFolderOpen(folder.id);
+  const { router } = useNextRouter();
   const isOver = useIsOver(folder.id);
   const { indicator } = useIndicator(folder.id);
   const isIntoFolderOperation = indicator?.mode === "box" && isOver;
@@ -59,7 +64,8 @@ export const DndTocFolder = memo(function DroppableFolder({
           folder={folder}
           isOpen={isOpen}
           depth={depth}
-          onClick={() => toggle()}
+          onClick={() => router.push(folderEditPageLink(bookId, folder.id))}
+          onIconClick={() => toggle()}
         />
         <Tooltip
           title={`'${folder.title}'에 추가`}

@@ -1,3 +1,8 @@
-export { MyBooksPage as MyBooks } from "./mybooks";
-export { WritePageLayout as WritePage } from "./write";
+export { MyBooksPage } from "./mybooks";
+export {
+  BookEditPage,
+  FolderEditPage,
+  SectionEditPage,
+  WritePageLayout
+} from "./write";
 

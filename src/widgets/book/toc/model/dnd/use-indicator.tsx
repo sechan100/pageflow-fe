@@ -6,13 +6,13 @@ import { IndicatorMode } from "../../ui/Indicator";
 
 
 
-type UseIndicatorStore = {
+type IndicatorStore = {
   nodeId: string | null;
   mode: IndicatorMode | null;
   clearIndicator: () => void;
   setIndicator: (nodeId: string, mode: IndicatorMode) => void;
 }
-export const useIndicatorStore = createWithEqualityFn<UseIndicatorStore>(set => ({
+export const useIndicatorStore = createWithEqualityFn<IndicatorStore>(set => ({
   nodeId: null,
   mode: null,
   clearIndicator: () => set({ nodeId: null, mode: null }),

@@ -4,7 +4,7 @@ import { Toc, TocFolder, TocNode, TocSection } from "../model/toc.type";
 import { TocOperations } from "./toc-operations";
 
 
-type UseToc = {
+type TocStore = {
   toc: Toc;
   setToc: (toc: Toc) => void;
   findNode: (nodeId: string) => TocNode;
@@ -21,7 +21,7 @@ type UseToc = {
   collapseAllFolders: () => void;
 }
 
-export const [UseTocProvider, useToc] = createStoreContext<Toc, UseToc>((toc, set, get) => ({
+export const [UseTocStoreProvider, useTocStore] = createStoreContext<Toc, TocStore>((toc, set, get) => ({
   toc,
 
   setToc: (toc) => set({ toc }),

@@ -2,7 +2,7 @@
 import { Box, Button, Divider, SxProps } from "@mui/material"
 import { Maximize2, Minimize2 } from "lucide-react"
 import React from "react"
-import { useToc } from "../model/use-toc"
+import { useTocStore } from "../model/use-toc"
 
 
 
@@ -39,8 +39,8 @@ type Props = {
 export const TocToolBar = ({
   sx
 }: Props) => {
-  const expendAll = useToc(s => s.expendAllFolders);
-  const collapseAll = useToc(s => s.collapseAllFolders);
+  const expendAll = useTocStore(s => s.expendAllFolders);
+  const collapseAll = useTocStore(s => s.collapseAllFolders);
 
   return (
     <>

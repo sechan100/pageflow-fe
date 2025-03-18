@@ -1,6 +1,6 @@
 "use client";
 import { useSessionQuery } from '@/entities/user';
-import { ProfileSettingsPage } from '@/_pages/settings';
+import { ProfileSettingsPage } from '@/pages/settings';
 
 
 export default function Page() {

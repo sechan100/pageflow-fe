@@ -1,10 +1,10 @@
 'use client';
 
-import { MyBooks } from "@/_pages/book";
+import { MyBooksPage } from "@/pages/book";
 
 
 export default function Page() {
   return (
-    <MyBooks />
+    <MyBooksPage />
   )
 }

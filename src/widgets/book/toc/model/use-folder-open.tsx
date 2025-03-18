@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { defaultFolderOpen } from "../config";
-import { useToc } from "./use-toc";
+import { useTocStore } from "./use-toc";
 
 
 
@@ -8,8 +8,8 @@ import { useToc } from "./use-toc";
 
 
 export const useFolderOpen = (folderId: string, disabled = false) => {
-  const folderOpenRegistry = useToc(s => s.folderOpenRegistry);
-  const syncFolderOpenState = useToc(s => s.syncFolderOpenState);
+  const folderOpenRegistry = useTocStore(s => s.folderOpenRegistry);
+  const syncFolderOpenState = useTocStore(s => s.syncFolderOpenState);
   const syncedIsOpen = useMemo<boolean>(() => {
     const synced = folderOpenRegistry.get(folderId);
     if (synced !== undefined) {

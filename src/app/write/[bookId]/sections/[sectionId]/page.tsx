@@ -1,4 +1,6 @@
-import { SectionEditPage } from "@/_pages/book/write/ui/SectionEditPage";
+'use client';
+
+import { SectionEditPage } from '@/pages/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 
