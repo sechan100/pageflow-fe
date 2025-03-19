@@ -1,5 +1,5 @@
 'use client'
-import { SxProps } from "@mui/material"
+import { Box, SxProps } from "@mui/material"
 import { SectionEditor } from "./SectionEditor"
 
 
@@ -35,8 +35,10 @@ export const SectionEditPage = ({
 }: Props) => {
 
   return (
-    <>
-      <SectionEditor htmlContent={htmlContent} />
-    </>
+    <Box sx={{
+      px: 3,
+    }}>
+      <SectionEditor height={800} htmlContent={htmlContent} />
+    </Box>
   )
 }

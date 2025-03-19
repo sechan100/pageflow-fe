@@ -19,7 +19,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const LowPriority = 1;
 
-export const ToolbarPlugin = () => {
+
+type Props = {
+  height: number,
+}
+export const ToolbarPlugin = ({ height }: Props) => {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState(false);
@@ -77,7 +81,12 @@ export const ToolbarPlugin = () => {
   }, [editor, $updateToolbar]);
 
   return (
-    <Box ref={toolbarRef}>
+    <Box
+      ref={toolbarRef}
+      sx={{
+        height
+      }}
+    >
       <IconButton
         disabled={!canUndo}
         onClick={() => {

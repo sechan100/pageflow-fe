@@ -8,8 +8,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { Box, SxProps } from "@mui/material";
-import "../config/editor-style.css";
-import { SectionEditorTheme } from '../config/editor-theme';
+import { getEditorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
 import { ToolbarPlugin } from './ToolbarPlugin';
@@ -32,10 +31,12 @@ const editorConfig = {
 const placeholder = "Enter some text...";
 
 type Props = {
+  height: number,
   htmlContent?: string,
   sx?: SxProps
 }
 export const SectionEditor = ({
+  height,
   htmlContent,
   sx
 }: Props) => {
@@ -43,11 +44,16 @@ export const SectionEditor = ({
   return (
     <Box
       sx={{
-        p: 3,
+        ...getEditorStyle({
+          height: height * 0.8
+        }),
+        height,
       }}
     >
       <LexicalComposer initialConfig={editorConfig}>
-        <ToolbarPlugin />
+        <ToolbarPlugin
+          height={height * 0.2}
+        />
         <RichTextPlugin
           contentEditable={
             <ContentEditable

@@ -1,5 +1,4 @@
-
-
+import { SxProps } from "@mui/material";
 
 
 export const SectionEditorTheme = {
@@ -37,3 +36,26 @@ export const SectionEditorTheme = {
     underlineStrikethrough: 'editor-text-underlineStrikethrough',
   },
 };
+
+
+
+type EditorStyleOptions = {
+  height: number
+}
+export const getEditorStyle = (opt: EditorStyleOptions): SxProps => ({
+  // Editor Root
+  "[data-lexical-editor='true']": {
+    outline: "none", // focus되었을 때 파란색 테두리 제거
+    lineHeight: 2,
+    columnCount: 2,
+    // columnGap: 60,
+    columnFill: 'auto',
+    height: opt.height,
+    // /* column-rule: 1px dotted rgba(255, 255, 255, 0.693) !important; */
+  },
+
+  // Paragraph
+  ".editor-paragraph": {
+    m: 0,
+  }
+})
