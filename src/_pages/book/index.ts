@@ -1,8 +1,4 @@
 export { MyBooksPage } from "./mybooks";
-export {
-  BookEditPage,
-  FolderEditPage,
-  SectionEditPage,
-  WritePageLayout
-} from "./write";
+export { BookEditPage, FolderEditPage, WritePageLayout } from "./write";
+export { SectionEditPage } from "./section-edit";
 
