@@ -1,6 +1,5 @@
 'use client';
 
-import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createHeadingNode, $isHeadingNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
@@ -26,6 +25,7 @@ import {
   Undo
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { $formatList } from '../model/format-list';
 
 
 const LowPriority = 1;
@@ -39,6 +39,7 @@ const $isH = (selection: BaseSelection, headingSize: 'h1' | 'h2' | 'h3'): boolea
     return false;
   }
 }
+
 
 type Props = {
   sx?: SxProps;
@@ -72,6 +73,7 @@ export const ToolbarPlugin = ({
     }
   }, []);
 
+  // hn으로 변환하거나, 이미 hn인 경우 paragraph로 변환
   const formatHeading = useCallback((headingSize: 'h1' | 'h2' | 'h3') => {
     editor.update(() => {
       const selection = $getSelection();
@@ -91,6 +93,11 @@ export const ToolbarPlugin = ({
         }
       }
     });
+  }, [editor]);
+
+  // listType이 ol인 경우 ol로 변환, ul인 경우 ul로 변환, 이미 list인 경우 list를 제거
+  const formatList = useCallback((listType: 'ol' | 'ul') => {
+    editor.update(() => $formatList(listType));
   }, [editor]);
 
   // updateToolbar, canUndo, canRedo등을 다양한 editor command 발생과 동기화
@@ -202,16 +209,12 @@ export const ToolbarPlugin = ({
       </IconButton>
       <Divider />
       <IconButton
-        onClick={() => {
-          editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-        }}
+        onClick={() => formatList('ol')}
       >
         <ListOrdered />
       </IconButton>
       <IconButton
-        onClick={() => {
-          editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-        }}
+        onClick={() => formatList('ul')}
       >
         <List />
       </IconButton>
