@@ -15,8 +15,7 @@ import { Container, SxProps } from "@mui/material";
 import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
-import { ToolbarPlugin } from './ToolbarPlugin';
-import { TreeViewPlugin } from './TreeViewPlugin';
+import { PopperToolbarPlugin } from './PopperToolbarPlugin';
 
 
 
@@ -45,12 +44,14 @@ export const SectionEditor = ({
 }: Props) => {
 
   return (
-    <Container
-      maxWidth="md"
-      sx={editorStyle}
-    >
-      <LexicalComposer initialConfig={editorConfig}>
-        <ToolbarPlugin />
+    <LexicalComposer initialConfig={editorConfig}>
+      <Container
+        maxWidth="md"
+        sx={{
+          my: 10,
+          ...editorStyle,
+        }}
+      >
         <RichTextPlugin
           contentEditable={
             <ContentEditable
@@ -62,14 +63,15 @@ export const SectionEditor = ({
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <PopperToolbarPlugin />
         <LexicalBaseSettingPlugin />
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
         <ListPlugin />
         <MarkdownShortcutPlugin />
         {/* <AutoFocusPlugin /> */}
-        <TreeViewPlugin />
-      </LexicalComposer>
-    </Container>
+        {/* <TreeViewPlugin /> */}
+      </Container>
+    </LexicalComposer>
   )
 }
