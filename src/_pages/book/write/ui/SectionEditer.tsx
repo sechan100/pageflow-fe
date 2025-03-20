@@ -1,6 +1,6 @@
 'use client'
+import { SectionEditor as SectionEditorWidget } from '@/widgets/book'
 import { Box, SxProps } from "@mui/material"
-import { SectionEditor } from "./SectionEditor"
 
 
 // const htmlContent = `<p class="pf-p" dir="ltr">
@@ -93,7 +93,7 @@ type Props = {
   sectionId: string,
   sx?: SxProps
 }
-export const SectionEditPage = ({
+export const SectionEditer = ({
   sectionId,
   sx
 }: Props) => {
@@ -102,7 +102,8 @@ export const SectionEditPage = ({
     <Box sx={{
       px: 3,
     }}>
-      <SectionEditor
+      <SectionEditorWidget
+        sectionId={sectionId}
         htmlContent={htmlContent}
       />
     </Box>

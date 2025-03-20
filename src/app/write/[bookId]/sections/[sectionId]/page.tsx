@@ -1,6 +1,6 @@
 'use client';
 
-import { SectionEditPage } from '@/pages/book';
+import { SectionEditer } from '@/pages/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 
@@ -18,7 +18,7 @@ export default function Page() {
   const sectionId = params.sectionId;
   return (
     <>
-      <SectionEditPage sectionId={sectionId} />
+      <SectionEditer sectionId={sectionId} />
     </>
   )
 }

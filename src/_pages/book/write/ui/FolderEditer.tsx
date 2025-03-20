@@ -1,20 +1,20 @@
 'use client'
 import { SxProps } from "@mui/material"
-import { useBookStore } from "../model/use-book"
 
 
 
 type Props = {
+  folderId: string,
   sx?: SxProps
 }
-export const BookEditPage = ({
+export const FolderEditer = ({
+  folderId,
   sx
 }: Props) => {
-  const book = useBookStore(s => s.book)
 
   return (
     <>
-      {book.title}
+
     </>
   )
 }

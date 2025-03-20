@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
-import { Alert, Badge, Button, IconButton, Snackbar, SnackbarContent, SnackbarOrigin, SnackbarProps } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Alert, Badge, Button, IconButton, Paper, Snackbar, SnackbarContent, SnackbarOrigin } from '@mui/material';
+import * as React from 'react';
 import { useNotificationsStore } from './notificationsStore';
 import type { ShowNotificationOptions } from './types';
 
@@ -12,18 +12,21 @@ export interface NotificationsProviderProps {
   anchorOrigin?: SnackbarOrigin;
 }
 
+const anchorOrigin: SnackbarOrigin = {
+  vertical: 'top',
+  horizontal: 'right'
+};
+
 function Notification({
   id,
   message,
   options,
   badge,
-  anchorOrigin
 }: {
   id: string;
   message: React.ReactNode;
   options: ShowNotificationOptions;
   badge: string | null;
-  anchorOrigin?: SnackbarOrigin;
 }) {
   const close = useNotificationsStore(state => state.close);
   const {
@@ -32,18 +35,18 @@ function Notification({
     onAction,
     autoHideDuration
   } = options;
-  
+
   const handleClose = React.useCallback((event: React.SyntheticEvent | Event, reason?: string) => {
-    if(reason === 'clickaway') {
+    if (reason === 'clickaway') {
       return;
     }
     close(id);
   }, [id, close]);
-  
+
   const action = (
     <React.Fragment>
       {onAction ? (
-        <Button 
+        <Button
           color="inherit"
           size="small"
           onClick={onAction}
@@ -60,7 +63,7 @@ function Notification({
       </IconButton>
     </React.Fragment>
   );
-  
+
   return (
     <Snackbar
       open={true}
@@ -69,57 +72,53 @@ function Notification({
       action={action}
       anchorOrigin={anchorOrigin}
     >
-      <Badge
-        badgeContent={badge}
-        color="primary"
-        sx={{ width: '100%' }}
-      >
-        {severity ? (
-          <Alert
-            severity={severity}
-            sx={{ width: '100%' }}
-            action={action}
-          >
-            {message}
-          </Alert>
-        ) : (
-          <SnackbarContent
-            message={message}
-            action={action}
-          />
-        )}
-      </Badge>
+      <Paper elevation={3}>
+        <Badge
+          badgeContent={badge}
+          color="primary"
+          sx={{ width: '100%' }}
+        >
+          {severity ? (
+            <Alert
+              severity={severity}
+              sx={{ width: '100%' }}
+              action={action}
+            >
+              {message}
+            </Alert>
+          ) : (
+            <SnackbarContent
+              message={message}
+              action={action}
+            />
+          )}
+        </Badge>
+      </Paper>
     </Snackbar>
   );
 }
 
-function Notifications({
-  anchorOrigin
-}: {
-  anchorOrigin?: SnackbarOrigin;
-}) {
+const Notifications = () => {
   const queue = useNotificationsStore(state => state.queue);
   const currentNotification = queue[0] ?? null;
-  
+
   return currentNotification ? (
     <Notification
       id={currentNotification.id}
       message={currentNotification.message}
       options={currentNotification.options}
       badge={queue.length > 1 ? String(queue.length) : null}
-      anchorOrigin={anchorOrigin}
     />
   ) : null;
 }
 
-export function NotificationProvider({
+export const NotificationProvider = ({
   children,
-  anchorOrigin
-}: NotificationsProviderProps): React.JSX.Element {
+}: NotificationsProviderProps) => {
   return (
     <>
       {children}
-      <Notifications anchorOrigin={anchorOrigin} />
+      <Notifications />
     </>
   );
 }

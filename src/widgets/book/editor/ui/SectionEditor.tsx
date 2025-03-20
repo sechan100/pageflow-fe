@@ -14,9 +14,10 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
+import { EditorDial } from './EditorDial';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
-import { PopperToolbarPlugin } from './PopperToolbarPlugin';
+import { PopperToolbar } from './PopperToolbar';
 
 
 
@@ -36,10 +37,12 @@ const editorConfig = {
 const placeholder = "내용을 입력해주세요.";
 
 type Props = {
+  sectionId: string,
   htmlContent?: string,
   sx?: SxProps
 }
 export const SectionEditor = ({
+  sectionId,
   htmlContent,
   sx
 }: Props) => {
@@ -50,6 +53,7 @@ export const SectionEditor = ({
         maxWidth="md"
         sx={{
           my: 10,
+          position: 'relative',
           ...editorStyle,
         }}
       >
@@ -69,7 +73,7 @@ export const SectionEditor = ({
           }
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <PopperToolbarPlugin />
+        <PopperToolbar />
         <LexicalBaseSettingPlugin />
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
@@ -78,6 +82,7 @@ export const SectionEditor = ({
         {/* <AutoFocusPlugin /> */}
         {/* <TreeViewPlugin /> */}
       </Container>
+      <EditorDial sectionId={sectionId} />
     </LexicalComposer>
   )
 }

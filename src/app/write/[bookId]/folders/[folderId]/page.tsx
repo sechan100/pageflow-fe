@@ -1,5 +1,5 @@
 'use client';
-import { FolderEditPage } from '@/pages/book';
+import { FolderEditer } from '@/pages/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 
@@ -17,7 +17,7 @@ export default function Page() {
   const folderId = params.folderId;
   return (
     <>
-      <FolderEditPage folderId={folderId} />
+      <FolderEditer folderId={folderId} />
     </>
   )
 }

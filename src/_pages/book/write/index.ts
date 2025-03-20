@@ -1,4 +1,5 @@
-export { BookEditPage } from './ui/BookEditPage';
-export { FolderEditPage } from './ui/FolderEditPage';
+export { BookEditer } from './ui/BookEditer';
+export { FolderEditer } from './ui/FolderEditer';
+export { SectionEditer } from './ui/SectionEditer';
 export { WritePageLayout } from './ui/WritePageLayout';
 

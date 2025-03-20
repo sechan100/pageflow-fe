@@ -63,7 +63,7 @@ type ToolbarState = {
 type Props = {
   sx?: SxProps;
 }
-export const PopperToolbarPlugin = ({
+export const PopperToolbar = ({
   sx,
 }: Props) => {
   const [editor] = useLexicalComposerContext();
