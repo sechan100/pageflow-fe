@@ -53,5 +53,9 @@ export const editorStyle: SxProps = {
   ".pf-p": {
     m: 0,
     textAlign: 'justify',
+  },
+
+  "h1, h2, h3, h4, h5, h6": {
+    my: 1,
   }
 }

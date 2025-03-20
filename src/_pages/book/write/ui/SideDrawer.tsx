@@ -1,56 +1,37 @@
 'use client'
 import { useTocQuery } from "@/entities/book";
+import { TooltipIconButton } from "@/shared/components/TootipIconButton";
 import { TocWidget } from "@/widgets/book";
 import {
-  ChevronLeft as ChevronLeftIcon, Menu as MenuIcon
-} from "@mui/icons-material";
-import {
-  Box, Drawer,
-  IconButton, SxProps,
-  Tooltip,
-  Typography
+  Box, Drawer, SxProps, Typography
 } from "@mui/material";
-import { useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { sideDrawerWidth } from "../config/side-drawer-width";
 import { useBookStore } from "../model/use-book";
 
-const drawerWidth = 240;
-
 type Props = {
+  open: boolean;
+  onClose: () => void;
+  onOpen: () => void;
   sx?: SxProps;
 }
 
 export const SideDrawer = ({
+  open,
+  onClose,
+  onOpen,
   sx,
 }: Props) => {
   const { book } = useBookStore();
   const { toc, isError, isLoading } = useTocQuery(book.id);
-  const [open, setOpen] = useState(true);
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    onOpen();
   };
-
-  if (!open) {
-    return (
-      <Box sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1200 }}>
-        <Tooltip title="목차 열기">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
-    );
-  }
 
   if (isLoading) {
     return <div>loading...</div>
@@ -60,45 +41,51 @@ export const SideDrawer = ({
   }
 
   return (
-    <Drawer
-      slotProps={{
-        paper: {
-          sx: {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            borderRight: '1px solid rgba(0, 0, 0, 0.12)',
-          }
-        },
-      }}
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-        },
-        ...(sx || {})
-      }}
-      variant="persistent"
-      anchor="left"
-      open={open}
-    >
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: 2,
-        justifyContent: 'space-between',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
-      }}>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          {book.title}
-        </Typography>
-        <IconButton onClick={handleDrawerClose}>
-          <ChevronLeftIcon />
-        </IconButton>
-      </Box>
-      <TocWidget
-        svToc={toc}
-      />
-    </Drawer>
+    <>
+      {!open && <Box sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1200 }}>
+        <TooltipIconButton
+          icon={<ChevronRightIcon />}
+          tooltip="목차 열기"
+          onClick={handleDrawerOpen}
+        />
+      </Box>}
+      <Drawer
+        slotProps={{
+          paper: {
+            sx: {
+              width: sideDrawerWidth,
+              boxSizing: 'border-box',
+              borderRight: '1px solid rgba(0, 0, 0, 0.12)',
+            }
+          },
+        }}
+        sx={{
+          width: sideDrawerWidth,
+        }}
+        variant="persistent"
+        anchor="left"
+        open={open}
+      >
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          padding: 2,
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+        }}>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            {book.title}
+          </Typography>
+          <TooltipIconButton
+            icon={<ChevronLeftIcon />}
+            tooltip="목차 닫기"
+            onClick={handleDrawerClose}
+          />
+        </Box>
+        <TocWidget
+          svToc={toc}
+        />
+      </Drawer >
+    </>
   );
 };
