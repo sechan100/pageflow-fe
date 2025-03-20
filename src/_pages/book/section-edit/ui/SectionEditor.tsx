@@ -1,17 +1,22 @@
 'use client'
+import { CodeNode } from '@lexical/code';
+import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { Box, SxProps } from "@mui/material";
-import { getEditorStyle, SectionEditorTheme } from '../config/editor-theme';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { Container, SxProps } from "@mui/material";
+import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
 import { ToolbarPlugin } from './ToolbarPlugin';
+import { TreeViewPlugin } from './TreeViewPlugin';
 
 
 
@@ -21,7 +26,7 @@ const editorConfig = {
   //   import: constructImportMap(),
   // },
   namespace: 'Section Editor',
-  nodes: [ListNode, ListItemNode],
+  nodes: [ListNode, ListItemNode, HorizontalRuleNode, HeadingNode, QuoteNode, CodeNode, LinkNode],
   onError(error: Error) {
     throw error;
   },
@@ -31,29 +36,21 @@ const editorConfig = {
 const placeholder = "Enter some text...";
 
 type Props = {
-  height: number,
   htmlContent?: string,
   sx?: SxProps
 }
 export const SectionEditor = ({
-  height,
   htmlContent,
   sx
 }: Props) => {
 
   return (
-    <Box
-      sx={{
-        ...getEditorStyle({
-          height: height * 0.8
-        }),
-        height,
-      }}
+    <Container
+      maxWidth="md"
+      sx={editorStyle}
     >
       <LexicalComposer initialConfig={editorConfig}>
-        <ToolbarPlugin
-          height={height * 0.2}
-        />
+        <ToolbarPlugin />
         <RichTextPlugin
           contentEditable={
             <ContentEditable
@@ -69,9 +66,10 @@ export const SectionEditor = ({
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
         <ListPlugin />
-        <AutoFocusPlugin />
-        {/* <TreeViewPlugin /> */}
+        <MarkdownShortcutPlugin />
+        {/* <AutoFocusPlugin /> */}
+        <TreeViewPlugin />
       </LexicalComposer>
-    </Box>
+    </Container>
   )
 }

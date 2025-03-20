@@ -2,60 +2,56 @@ import { SxProps } from "@mui/material";
 
 
 export const SectionEditorTheme = {
-  code: 'editor-code',
+  code: 'pf-code',
   heading: {
-    h1: 'editor-heading-h1',
-    h2: 'editor-heading-h2',
-    h3: 'editor-heading-h3',
-    h4: 'editor-heading-h4',
-    h5: 'editor-heading-h5',
+    h1: 'pf-h1',
+    h2: 'pf-h2',
+    h3: 'pf-h3',
+    h4: 'pf-h4',
+    h5: 'pf-h5',
   },
-  image: 'editor-image',
-  link: 'editor-link',
+  image: 'pf-image',
+  link: 'pf-link',
   list: {
-    listitem: 'editor-listitem',
+    listitem: 'pf-li',
     nested: {
-      listitem: 'editor-nested-listitem',
+      listitem: 'pf-nested-listitem',
     },
-    ol: 'editor-list-ol',
-    ul: 'editor-list-ul',
+    ol: 'pf-ol',
+    ul: 'pf-ul',
   },
   ltr: 'ltr',
-  paragraph: 'editor-paragraph',
-  placeholder: 'editor-placeholder',
-  quote: 'editor-quote',
+  paragraph: 'pf-p',
+  placeholder: 'pf-placeholder',
+  quote: 'pf-quote',
   rtl: 'rtl',
   text: {
-    bold: 'editor-text-bold',
-    code: 'editor-text-code',
-    hashtag: 'editor-text-hashtag',
-    italic: 'editor-text-italic',
-    overflowed: 'editor-text-overflowed',
-    strikethrough: 'editor-text-strikethrough',
-    underline: 'editor-text-underline',
-    underlineStrikethrough: 'editor-text-underlineStrikethrough',
+    bold: 'pf-text-bold',
+    code: 'pf-text-code',
+    hashtag: 'pf-text-hashtag',
+    italic: 'pf-text-italic',
+    overflowed: 'pf-text-overflowed',
+    strikethrough: 'pf-text-strikethrough',
+    underline: 'pf-text-underline',
+    underlineStrikethrough: 'pf-text-underlineStrikethrough',
   },
 };
 
 
-
-type EditorStyleOptions = {
-  height: number
-}
-export const getEditorStyle = (opt: EditorStyleOptions): SxProps => ({
+export const editorStyle: SxProps = {
   // Editor Root
   "[data-lexical-editor='true']": {
     outline: "none", // focus되었을 때 파란색 테두리 제거
     lineHeight: 2,
-    columnCount: 2,
+    // columnCount: 2,
     // columnGap: 60,
-    columnFill: 'auto',
-    height: opt.height,
-    // /* column-rule: 1px dotted rgba(255, 255, 255, 0.693) !important; */
+    // columnFill: 'auto',
+    // height: opt.height,
   },
 
   // Paragraph
-  ".editor-paragraph": {
+  ".pf-p": {
     m: 0,
+    textAlign: 'justify',
   }
-})
+}

@@ -38,7 +38,7 @@ export const WritePageLayout = ({
       onDataChange={(s, book) => s.setState({ book })}
     >
       <Box sx={{
-        display: 'flex',
+        // display: 'flex',
       }}>
         <SideDrawer />
         {children}
