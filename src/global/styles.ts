@@ -23,6 +23,8 @@ const primary = {
   l: 48
 }
 
+const borderHsla = "hsla(0, 0%, 0%, 0.12)"
+
 export const STYLES = { 
   color: {
     // background
@@ -31,5 +33,9 @@ export const STYLES = {
     primary: `hsl(${primary.h}, ${primary.s}%, ${primary.l}%)`,
     primaryHsla: (hsla: HSLA) => `hsla(${primary.h + (hsla.h ?? 0)}, ${primary.s + (hsla.s ?? 0)}%, ${primary.l + (hsla.l ?? 0)}%, ${hsla.a ?? 1})`,
     secondary: "hsl(93, 33%, 60%)",
+    border: borderHsla,
+  },
+  border: {
+    solid: `1px solid ${borderHsla}`,
   }
 }

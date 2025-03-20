@@ -1,4 +1,5 @@
 'use client'
+import { STYLES } from '@/global/styles';
 import { CodeNode } from '@lexical/code';
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';
@@ -11,7 +12,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { Container, SxProps } from "@mui/material";
+import { Box, Container, SxProps } from "@mui/material";
 import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
@@ -32,7 +33,7 @@ const editorConfig = {
   theme: SectionEditorTheme,
 };
 
-const placeholder = "Enter some text...";
+const placeholder = "내용을 입력해주세요.";
 
 type Props = {
   htmlContent?: string,
@@ -57,7 +58,12 @@ export const SectionEditor = ({
             <ContentEditable
               aria-placeholder={placeholder}
               placeholder={
-                <div className="editor-placeholder">{placeholder}</div>
+                <Box sx={{
+                  display: 'inline-block',
+                  borderTop: STYLES.border.solid,
+                }}>
+                  {placeholder}
+                </Box>
               }
             />
           }
