@@ -13,11 +13,12 @@ import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPl
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
+import { useCallback } from 'react';
 import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { EditorDial } from './EditorDial';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
-import { PopperToolbar } from './PopperToolbar';
+import { PopperToolbar, useToolbarStore } from './PopperToolbar';
 
 
 
@@ -46,6 +47,12 @@ export const SectionEditor = ({
   htmlContent,
   sx
 }: Props) => {
+  const setOpen = useToolbarStore(s => s.setOpen);
+
+  const onContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(true);
+  }, [setOpen]);
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
@@ -60,6 +67,7 @@ export const SectionEditor = ({
         <RichTextPlugin
           contentEditable={
             <ContentEditable
+              onContextMenu={onContextMenu}
               aria-placeholder={placeholder}
               placeholder={
                 <Box sx={{

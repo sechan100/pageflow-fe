@@ -1,7 +1,7 @@
 'use client'
 import { useTocQuery } from "@/entities/book";
 import { TooltipIconButton } from "@/shared/components/TootipIconButton";
-import { TocWidget } from "@/widgets/book";
+import { TocTree } from "@/widgets/book";
 import {
   Box, Drawer, SxProps, Typography
 } from "@mui/material";
@@ -82,7 +82,7 @@ export const SideDrawer = ({
             onClick={handleDrawerClose}
           />
         </Box>
-        <TocWidget
+        <TocTree
           svToc={toc}
         />
       </Drawer >

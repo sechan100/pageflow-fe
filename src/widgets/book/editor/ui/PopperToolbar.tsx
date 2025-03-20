@@ -18,6 +18,7 @@ import {
   Underline
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { create } from 'zustand';
 import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
 
@@ -25,7 +26,14 @@ import { $formatList } from '../model/format-list';
 const LowPriority = 1;
 const iconSize = 20;
 
-
+type ToolbarStore = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+export const useToolbarStore = create<ToolbarStore>((set) => ({
+  open: false,
+  setOpen: (open) => set({ open }),
+}));
 
 
 type ToolBoxProps = {
@@ -67,7 +75,7 @@ export const PopperToolbar = ({
   sx,
 }: Props) => {
   const [editor] = useLexicalComposerContext();
-  const [isOpen, setIsOpen] = useState(true);
+  const { open, setOpen } = useToolbarStore();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [{
     isBold,
@@ -104,9 +112,9 @@ export const PopperToolbar = ({
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
       const isRange = selection.anchor.offset !== selection.focus.offset;
-      setIsOpen(isRange);
+      setOpen(isRange);
     } else {
-      setIsOpen(false);
+      setOpen(false);
     }
   }, []);
 
@@ -118,7 +126,7 @@ export const PopperToolbar = ({
       if (el instanceof HTMLElement && el.closest('.pf-editor-toolbar') !== null) {
         return;
       }
-      setIsOpen(false);
+      setOpen(false);
     }
     const rootEl = editor.getRootElement();
     if (rootEl === null) return;
@@ -180,7 +188,7 @@ export const PopperToolbar = ({
 
   return (
     <Popper
-      open={isOpen}
+      open={open}
       anchorEl={anchorEl}
       placement="top"
       className='pf-editor-toolbar'

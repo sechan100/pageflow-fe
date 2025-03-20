@@ -1,1 +1,1 @@
-export { TocWidget } from "./ui/TocWidget";
+export { TocTree } from "./ui/TocTree";

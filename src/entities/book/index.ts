@@ -3,4 +3,5 @@ export type { Book, BookWithAuthor } from "./model/book.type";
 export { SvNodeTypeGuard } from "./model/toc.type";
 export type { SvToc, SvTocFolder, SvTocNode, SvTocSection } from "./model/toc.type";
 
-export { useTocQuery } from "./model/use-toc-query";
+export { GET_TOC_QUERY_KEY, useTocQuery } from "./model/use-toc-query";
+

@@ -67,7 +67,9 @@ export const TocRoot = ({
       setToc(newToc);
       // api 요청
       relocateNodeApi(form).then((result) => {
-        if (result.code === "error") {
+        if (result.code === "success") {
+          // 성공
+        } else {
           setToc(prevToc);
           notification.error(result.message);
         }

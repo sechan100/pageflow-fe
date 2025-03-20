@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { useNotificationsStore } from './notificationsStore';
-import type { CloseNotification, ShowNotification, UseNotifications } from './types';
+import type { CloseNotification, ShowNotification } from './types';
 
 
 export type UseNotification = {
@@ -14,7 +14,7 @@ export type UseNotification = {
   error: (message?: string) => void;
 };
 
-export const AUTO_HIDE_DURATION = 10000;
+export const AUTO_HIDE_DURATION = 7000;
 
 export const useNotification = create<UseNotification>((set, get) => ({
   show: useNotificationsStore.getState().show,
