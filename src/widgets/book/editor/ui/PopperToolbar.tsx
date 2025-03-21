@@ -5,22 +5,22 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { mergeRegister } from '@lexical/utils';
 import { Box, Divider, IconButton, Paper, Popper, SxProps } from '@mui/material';
 import {
-  $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND
+  $getSelection, $isRangeSelection, $selectAll, $setSelection, ElementNode, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND
 } from 'lexical';
 import {
   Bold,
   Heading1,
   Heading2,
-  Heading3,
-  Italic,
+  Heading3, Italic,
   List,
-  ListOrdered, Strikethrough,
+  ListOrdered, Paperclip, Strikethrough,
   Underline
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
+import { INSERT_IMAGE_COMMAND } from './ImagePlugin';
 
 
 const LowPriority = 1;
@@ -116,7 +116,7 @@ export const PopperToolbar = ({
     } else {
       setOpen(false);
     }
-  }, []);
+  }, [setOpen]);
 
   // editor focus가 out되면 toolbar를 닫아준다.
   useEffect(() => {
@@ -134,7 +134,7 @@ export const PopperToolbar = ({
     return () => {
       rootEl.removeEventListener('focusout', closeToolbar);
     }
-  }, [editor]);
+  }, [editor, setOpen]);
 
   // toolbar의 상태들을 업데이트한다.
   const $updateToolbar = useCallback(() => {
@@ -186,6 +186,33 @@ export const PopperToolbar = ({
     );
   }, [editor, $updateToolbar, $updateAnchorWithSelection, $updateIsOpen]);
 
+  // image command
+  const handleImageCommand = useCallback(() => {
+    editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+      src: "http://localhost:8888/public/files/2025/2/17/36548c65-45e8-4439-bb1f-e8dbfbcea886.jpeg",
+    });
+  }, [editor]);
+
+
+  // TODO: 개발 util 코드 지우기
+  useEffect(() => {
+    const insertImage = () => editor.update(() => {
+      $selectAll();
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        const nodes = selection.getNodes();
+        const lastNode = nodes[nodes.length - 1];
+        const sl = (lastNode as ElementNode).selectEnd();
+        $setSelection(sl);
+        handleImageCommand();
+        console.log('handleImageCommand');
+      }
+    });
+    const timeout = setTimeout(insertImage, 500);
+    return () => clearTimeout(timeout);
+  }, [editor, handleImageCommand]);
+  // ]]
+
   return (
     <Popper
       open={open}
@@ -200,6 +227,14 @@ export const PopperToolbar = ({
           background: STYLES.color.background,
         }}
       >
+        {/* Insert Image */}
+        <ToolBox>
+          <IconButton
+            onClick={handleImageCommand}
+          >
+            <Paperclip />
+          </IconButton>
+        </ToolBox>
         {/* text format */}
         <ToolBox>
           <IconButton

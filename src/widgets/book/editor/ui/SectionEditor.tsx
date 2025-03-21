@@ -16,6 +16,8 @@ import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
 import { EditorDial } from './EditorDial';
+import { ImageNode } from './ImageNode';
+import { ImagesPlugin } from './ImagePlugin';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
 import { PopperToolbar, useToolbarStore } from './PopperToolbar';
@@ -28,7 +30,7 @@ const editorConfig = {
   //   import: constructImportMap(),
   // },
   namespace: 'Section Editor',
-  nodes: [ListNode, ListItemNode, HorizontalRuleNode, HeadingNode, QuoteNode, CodeNode, LinkNode],
+  nodes: [ListNode, ListItemNode, HorizontalRuleNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
   onError(error: Error) {
     throw error;
   },
@@ -86,6 +88,7 @@ export const SectionEditor = ({
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
         <ListPlugin />
+        <ImagesPlugin />
         <MarkdownShortcutPlugin />
         {/* <AutoFocusPlugin /> */}
         {/* <TreeViewPlugin /> */}
