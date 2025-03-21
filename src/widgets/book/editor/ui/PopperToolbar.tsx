@@ -5,7 +5,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { mergeRegister } from '@lexical/utils';
 import { Box, Divider, IconButton, Paper, Popper, SxProps } from '@mui/material';
 import {
-  $getSelection, $isRangeSelection, $selectAll, $setSelection, ElementNode, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND
+  $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND
 } from 'lexical';
 import {
   Bold,
@@ -195,22 +195,22 @@ export const PopperToolbar = ({
 
 
   // TODO: 개발 util 코드 지우기
-  useEffect(() => {
-    const insertImage = () => editor.update(() => {
-      $selectAll();
-      const selection = $getSelection();
-      if ($isRangeSelection(selection)) {
-        const nodes = selection.getNodes();
-        const lastNode = nodes[nodes.length - 1];
-        const sl = (lastNode as ElementNode).selectEnd();
-        $setSelection(sl);
-        handleImageCommand();
-        console.log('handleImageCommand');
-      }
-    });
-    const timeout = setTimeout(insertImage, 500);
-    return () => clearTimeout(timeout);
-  }, [editor, handleImageCommand]);
+  // useEffect(() => {
+  //   const insertImage = () => editor.update(() => {
+  //     $selectAll();
+  //     const selection = $getSelection();
+  //     if ($isRangeSelection(selection)) {
+  //       const nodes = selection.getNodes();
+  //       const lastNode = nodes[nodes.length - 1];
+  //       const sl = (lastNode as ElementNode).selectEnd();
+  //       $setSelection(sl);
+  //       handleImageCommand();
+  //       console.log('handleImageCommand');
+  //     }
+  //   });
+  //   const timeout = setTimeout(insertImage, 500);
+  //   return () => clearTimeout(timeout);
+  // }, [editor, handleImageCommand]);
   // ]]
 
   return (

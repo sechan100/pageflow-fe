@@ -7,9 +7,7 @@
  */
 
 import type {
-  BaseSelection,
-  LexicalEditor,
-  NodeKey
+  BaseSelection, NodeKey
 } from 'lexical'
 import type { Position } from './ImageNode'
 import './image-node.css'
@@ -18,6 +16,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 import { mergeRegister } from '@lexical/utils'
 
+import { STYLES } from '@/global/styles'
+import { Box, IconButton, SxProps } from '@mui/material'
 import {
   $getNodeByKey,
   $getSelection,
@@ -25,10 +25,11 @@ import {
   COMMAND_PRIORITY_LOW,
   DRAGSTART_COMMAND,
   KEY_BACKSPACE_COMMAND,
-  KEY_DELETE_COMMAND, SELECTION_CHANGE_COMMAND
+  KEY_DELETE_COMMAND
 } from 'lexical'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import NextImage from 'next/image'
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode'
 
 
@@ -103,6 +104,45 @@ import { $isImageNode } from './ImageNode'
 // }
 
 
+type PositionMoveButtonProps = {
+  direction: "left" | "right";
+  position: Position;
+  hover: boolean;
+  onClick: (role: "left" | "right") => void;
+  sx?: SxProps
+}
+const PositionMoveButton = ({
+  direction,
+  position,
+  hover,
+  onClick,
+  sx
+}: PositionMoveButtonProps) => {
+
+  // left일 때 left 버튼은 보이지 않아야함.
+  if (position === direction) {
+    return <></>
+  }
+
+  return (
+    <IconButton
+      sx={{
+        position: 'absolute',
+        top: "50%",
+        transform: "translateY(-50%)",
+        left: direction === "left" ? 0 : undefined,
+        right: direction === "right" ? 0 : undefined,
+        visibility: hover ? 'visible' : 'hidden',
+        zIndex: 20,
+        color: 'white',
+      }}
+      onClick={() => onClick(direction)}
+    >
+      {direction === "left" ? <ChevronLeft /> : <ChevronRight />}
+    </IconButton>
+  )
+}
+
 type Props = {
   src: string;
   position: Position;
@@ -119,31 +159,57 @@ export const LexicalImageDecorator = ({
   caption,
   nodeKey,
 }: Props) => {
-  const [open, setOpen] = useState(false);
-  const imageRef = useRef<null | HTMLImageElement>(null)
-  const buttonRef = useRef<HTMLButtonElement | null>(null)
-  const [isSelected, setSelected, clearSelection] =
-    useLexicalNodeSelection(nodeKey)
-  const [editor] = useLexicalComposerContext()
-  const [captionText, setCaptionText] = useState('')
-  const [selection, setSelection] = useState<BaseSelection | null>(null)
-  const activeEditorRef = useRef<LexicalEditor | null>(null)
+  const [hover, setHover] = useState(false);
+  const ref = useRef<null | HTMLElement>(null);
+  const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
+  const [editor] = useLexicalComposerContext();
+  const [captionText, setCaptionText] = useState('');
+  const [selection, setSelection] = useState<BaseSelection | null>(null);
 
-  const onDelete = useCallback(
-    (payload: KeyboardEvent) => {
-      if (isSelected && $isNodeSelection($getSelection())) {
-        const event: KeyboardEvent = payload
-        event.preventDefault()
-        const node = $getNodeByKey(nodeKey)
-        if ($isImageNode(node)) {
-          node?.remove()
-        }
-        setSelected(false)
+  // 사진 지우기
+  const onDelete = useCallback((payload: KeyboardEvent) => {
+    if (isSelected && $isNodeSelection($getSelection())) {
+      const event: KeyboardEvent = payload
+      event.preventDefault();
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node)) {
+        node?.remove();
       }
-      return false
-    },
-    [isSelected, nodeKey, setSelected],
-  )
+      setSelected(false)
+    }
+    return false
+  }, [isSelected, nodeKey, setSelected])
+
+  // Image의 Position 변경
+  const changePosition = useCallback((to: "left" | "right") => {
+    // 현재 position을 기준으로 왼쪽으로 가냐 오른쪽으로 가냐를 기준으로 최종 position을 결정
+    let newPosition: Position;
+    if (position === "full") {
+      // 현재 full position이라면 왼쪽이면 left position으로, 오른쪽이면 right position으로 그대로 가면 된다.
+      newPosition = to;
+    } else {
+      // 현재 left position에서 right로 이동하면 full position
+      if (position === "left" && to === "right") {
+        newPosition = "full";
+      }
+      // 현재 right position에서 left로 이동하면 full position
+      else if (position === "right" && to === "left") {
+        newPosition = "full";
+      }
+      // left position에서 left, right position에서 right로 이동하면 현재 상태를 유지한다.
+      else {
+        // 이동 안함.
+        newPosition = position;
+      }
+    }
+
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey)
+      if ($isImageNode(node)) {
+        node.update({ position: newPosition })
+      }
+    })
+  }, [editor, nodeKey, position])
 
   // const onEnter = useCallback(
   //   (event: KeyboardEvent) => {
@@ -195,6 +261,8 @@ export const LexicalImageDecorator = ({
   //   [caption, editor, setSelected],
   // )
 
+  // Editor Registration
+
   useEffect(() => {
     let isMounted = true
     const unregister = mergeRegister(
@@ -203,19 +271,11 @@ export const LexicalImageDecorator = ({
           setSelection(editorState.read(() => $getSelection()))
         }
       }),
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        (_, activeEditor) => {
-          activeEditorRef.current = activeEditor
-          return false
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
       editor.registerCommand<MouseEvent>(
         CLICK_COMMAND,
         (payload) => {
           const event = payload
-          if (event.target === imageRef.current) {
+          if (event.target === ref.current) {
             if (event.shiftKey) {
               setSelected(!isSelected)
             } else {
@@ -232,7 +292,7 @@ export const LexicalImageDecorator = ({
       editor.registerCommand(
         DRAGSTART_COMMAND,
         (event) => {
-          if (event.target === imageRef.current) {
+          if (event.target === ref.current) {
             // TODO This is just a temporary workaround for FF to behave like other browsers.
             // Ideally, this handles drag & drop too (and all browsers).
             event.preventDefault()
@@ -242,16 +302,9 @@ export const LexicalImageDecorator = ({
         },
         COMMAND_PRIORITY_LOW,
       ),
-      editor.registerCommand(
-        KEY_DELETE_COMMAND,
-        onDelete,
-        COMMAND_PRIORITY_LOW,
-      ),
-      editor.registerCommand(
-        KEY_BACKSPACE_COMMAND,
-        onDelete,
-        COMMAND_PRIORITY_LOW,
-      ),
+      // 사진 지우기 이벤트 등록
+      editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
+      editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
       // editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
       // editor.registerCommand(
       //   KEY_ESCAPE_COMMAND,
@@ -265,52 +318,73 @@ export const LexicalImageDecorator = ({
     }
   }, [clearSelection, editor, isSelected, nodeKey, onDelete, setSelected])
 
-  const draggable = isSelected && $isNodeSelection(selection)
-  const isFocused = isSelected
+  const draggable = isSelected && $isNodeSelection(selection);
   return (
-    <Suspense fallback={null}>
-      <>
-        {/* <UpdateImageDialog
+    <>
+      {/* <UpdateImageDialog
           activeEditor={editor}
           nodeKey={nodeKey}
           open={open}
           onClose={() => setOpen(false)}
         /> */}
-        <div draggable={draggable}>
-          {/* <button
-            className="image-edit-button"
-            ref={buttonRef}
-            onClick={() => setOpen(true)}>
-            Edit
-          </button> */}
-          <NextImage
-            className={
-              isFocused
-                ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}`
-                : undefined
-            }
-            src={src}
-            alt={caption}
-            ref={imageRef}
-            data-position={position}
-            width={width}
-            height={height}
-            style={{
-              height,
-              width,
-              display: 'block',
-            }}
-            draggable="false"
-          />
-        </div>
-        {/* {showCaption && (
+      <Box
+        ref={ref}
+        draggable={draggable}
+        // onClick={() => selectThisNode()}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        sx={{
+          position: 'relative',
+          display: 'inline-block',
+          cursor: 'pointer',
+          border: isSelected ? `3px dashed ${STYLES.color.primary}` : 'none',
+          borderRadius: '4px',
+          "&::after": (hover ? {
+            content: '""',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            position: 'absolute',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 10,
+          } : {})
+        }}
+      >
+        <PositionMoveButton
+          direction='left'
+          hover={hover}
+          position={position}
+          onClick={changePosition}
+        />
+        <NextImage
+          src={src}
+          className={isSelected ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : undefined}
+          alt={caption}
+          data-position={position}
+          width={width}
+          height={height}
+          style={{
+            height,
+            width,
+            display: 'block',
+          }}
+          draggable="false"
+        />
+        <PositionMoveButton
+          direction='right'
+          hover={hover}
+          position={position}
+          onClick={changePosition}
+        />
+      </Box>
+      {/* {showCaption && (
           <TextField
             label="Caption"
             value={captionText}
             onChange={(e) => setCaptionText(e.target.value)}
           />
         )} */}
-      </>
-    </Suspense>
+    </>
   )
 }

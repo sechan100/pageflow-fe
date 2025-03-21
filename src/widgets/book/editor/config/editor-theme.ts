@@ -58,4 +58,24 @@ export const editorStyle: SxProps = {
   "h1, h2, h3, h4, h5, h6": {
     my: 1,
   },
+
+  ".pf-image": {
+    display: 'inline-block',
+  },
+
+  ".image-position-full": {
+    display: 'block',
+    textAlign: 'center',
+    margin: '1em 0 1em 0',
+  },
+  
+  ".image-position-left": {
+    float: "left",
+    margin: "1em 1em 0 0",
+  },
+  
+  ".image-position-right": {
+    float: "right",
+    margin: "1em 0 0 1em",
+  },
 }
