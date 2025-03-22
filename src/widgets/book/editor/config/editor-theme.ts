@@ -1,7 +1,7 @@
 import { SxProps } from "@mui/material";
 
 
-export const SectionEditorTheme = {
+export const sectionEditorTheme = {
   code: 'pf-code',
   heading: {
     h1: 'pf-h1',

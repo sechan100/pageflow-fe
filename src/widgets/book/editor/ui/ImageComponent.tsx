@@ -6,102 +6,35 @@
  *
  */
 
+import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
+import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin'
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
+import { mergeRegister } from '@lexical/utils'
 import type {
   BaseSelection, NodeKey
 } from 'lexical'
 import type { Position } from './ImageNode'
 import './image-node.css'
 
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
-import { mergeRegister } from '@lexical/utils'
-
 import { STYLES } from '@/global/styles'
-import { Box, IconButton, SxProps } from '@mui/material'
+import { OverflowNode } from '@lexical/overflow'
+import { LexicalComposer } from '@lexical/react/LexicalComposer'
+import { ContentEditable } from '@lexical/react/LexicalContentEditable'
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
+import { Box, Button, IconButton, SxProps } from '@mui/material'
 import {
   $getNodeByKey,
   $getSelection,
   $isNodeSelection, CLICK_COMMAND,
-  COMMAND_PRIORITY_LOW,
-  DRAGSTART_COMMAND,
-  KEY_BACKSPACE_COMMAND,
+  COMMAND_PRIORITY_LOW, KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND
 } from 'lexical'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import NextImage from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode'
-
-
-// export function UpdateImageDialog({
-//   activeEditor,
-//   nodeKey,
-//   onClose,
-//   open,
-// }: {
-//   activeEditor: LexicalEditor;
-//   nodeKey: NodeKey;
-//   open: boolean;
-//   onClose: () => void;
-// }) {
-//   const editorState = activeEditor.getEditorState()
-//   const node = editorState.read(() => $getNodeByKey(nodeKey) as ImageNode)
-//   const [altText, setAltText] = useState(node.getAltText())
-//   const [showCaption, setShowCaption] = useState(node.getShowCaption())
-//   const [position, setPosition] = useState<Position>(node.getPosition())
-
-//   const handleShowCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setShowCaption(e.target.checked)
-//   }
-
-//   const handlePositionChange = (e: SelectChangeEvent<"left" | "right" | "full">) => {
-//     setPosition(e.target.value as Position)
-//   }
-
-//   const handleOnConfirm = () => {
-//     const payload = { altText, showCaption, position }
-//     if (node) {
-//       activeEditor.update(() => { node.update(payload) })
-//     }
-//     onClose()
-//   }
-
-//   return (
-//     <Modal open={open} onClose={onClose}>
-//       <>
-//         <div style={{ marginBottom: '1em' }}>
-//           <TextField
-//             label="Alt Text"
-//             placeholder="Descriptive alternative text"
-//             onChange={(e) => setAltText(e.target.value)}
-//             value={altText}
-//           />
-//         </div>
-
-//         <Select
-//           style={{ marginBottom: '1em', width: '208px' }}
-//           value={position}
-//           label="Position"
-//           name="position"
-//           onChange={handlePositionChange}>
-//           <MenuItem value="left">Left</MenuItem>
-//           <MenuItem value="right">Right</MenuItem>
-//           <MenuItem value="full">Full Width</MenuItem>
-//         </Select>
-
-//         <div className="Input__wrapper">
-//           <input id="caption" type="checkbox" checked={showCaption} onChange={handleShowCaptionChange} />
-//           <label htmlFor="caption">Show Caption</label>
-//         </div>
-
-//         <Button
-//           onClick={() => handleOnConfirm()}>
-//           Confirm
-//         </Button>
-//       </>
-//     </Modal>
-//   )
-// }
 
 
 type PositionMoveButtonProps = {
@@ -143,6 +76,62 @@ const PositionMoveButton = ({
   )
 }
 
+export const captionEditorTheme = {
+  ltr: 'ltr',
+  paragraph: 'pf-caption-p',
+};
+
+type CaptionLexicalEditor = {
+  sx?: SxProps
+}
+const CaptionLexicalEditor = ({
+  sx
+}: CaptionLexicalEditor) => {
+
+  return (
+    <Box sx={{
+      "& .pf-caption-p": {
+        m: 0,
+        textAlign: 'center',
+        fontSize: '12px',
+        color: STYLES.color.description
+      },
+    }}>
+      <LexicalComposer
+        initialConfig={{
+          namespace: 'Section Editor',
+          nodes: [OverflowNode],
+          onError(error: Error) {
+            throw error;
+          },
+          theme: captionEditorTheme,
+        }}
+      >
+        <PlainTextPlugin
+          contentEditable={<ContentEditable style={{ width: "100%" }} />}
+          placeholder={<Box sx={{ borderTop: STYLES.border.solid }}>설명을 입력해주세요.</Box>}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <CharacterLimitPlugin
+          charset='UTF-16'
+          maxLength={100}
+          renderer={({ remainingCharacters, }: {
+            remainingCharacters: number;
+          }) => (
+            <Box sx={{
+              borderTop: '1px solid hsla(0, 0%, 0%, 0.1)',
+              fontSize: '12px',
+            }}>
+              {remainingCharacters}자 남음
+            </Box>
+          )}
+        />
+        <HistoryPlugin />
+      </LexicalComposer>
+    </Box>
+  )
+}
+
 type Props = {
   src: string;
   position: Position;
@@ -163,8 +152,11 @@ export const LexicalImageDecorator = ({
   const ref = useRef<null | HTMLElement>(null);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
-  const [captionText, setCaptionText] = useState('');
   const [selection, setSelection] = useState<BaseSelection | null>(null);
+  // DEV: 아래 주석으로 변경
+  const [enableCaption, setEnableCaption] = useState(true);
+  // const [enableCaption, setEnableCaption] = useState(caption !== '');
+  const [captionText, setCaptionText] = useState(caption);
 
   // 사진 지우기
   const onDelete = useCallback((payload: KeyboardEvent) => {
@@ -211,106 +203,53 @@ export const LexicalImageDecorator = ({
     })
   }, [editor, nodeKey, position])
 
-  // const onEnter = useCallback(
-  //   (event: KeyboardEvent) => {
-  //     const latestSelection = $getSelection()
-  //     const buttonElem = buttonRef.current
-  //     if (
-  //       isSelected &&
-  //       $isNodeSelection(latestSelection) &&
-  //       latestSelection.getNodes().length === 1
-  //     ) {
-  //       if (showCaption) {
-  //         // Move focus into nested editor
-  //         $setSelection(null)
-  //         event.preventDefault()
-  //         caption.focus()
-  //         return true
-  //       } else if (
-  //         buttonElem !== null &&
-  //         buttonElem !== document.activeElement
-  //       ) {
-  //         event.preventDefault()
-  //         buttonElem.focus()
-  //         return true
-  //       }
-  //     }
-  //     return false
-  //   },
-  //   [caption, isSelected, showCaption],
-  // )
-
-  // const onEscape = useCallback(
-  //   (event: KeyboardEvent) => {
-  //     if (
-  //       activeEditorRef.current === caption ||
-  //       buttonRef.current === event.target
-  //     ) {
-  //       $setSelection(null)
-  //       editor.update(() => {
-  //         setSelected(true)
-  //         const parentRootElement = editor.getRootElement()
-  //         if (parentRootElement !== null) {
-  //           parentRootElement.focus()
-  //         }
-  //       })
-  //       return true
-  //     }
-  //     return false
-  //   },
-  //   [caption, editor, setSelected],
-  // )
-
   // Editor Registration
-
   useEffect(() => {
     let isMounted = true
     const unregister = mergeRegister(
+      // 에디터가 업데이트되면 현재 selection을 상태로 받아옴.
       editor.registerUpdateListener(({ editorState }) => {
         if (isMounted) {
-          setSelection(editorState.read(() => $getSelection()))
+          setSelection(editorState.read(() => $getSelection()));
         }
       }),
+
+      // 사진을 클릭하면 Selection을 사진위치로 설정하는 커멘드를 등록
       editor.registerCommand<MouseEvent>(
         CLICK_COMMAND,
         (payload) => {
-          const event = payload
+          const event = payload;
           if (event.target === ref.current) {
             if (event.shiftKey) {
-              setSelected(!isSelected)
+              setSelected(!isSelected);
             } else {
-              clearSelection()
-              setSelected(true)
+              clearSelection();
+              setSelected(true);
             }
-            return true
+            return true;
           }
 
-          return false
+          return false;
         },
         COMMAND_PRIORITY_LOW,
       ),
-      editor.registerCommand(
-        DRAGSTART_COMMAND,
-        (event) => {
-          if (event.target === ref.current) {
-            // TODO This is just a temporary workaround for FF to behave like other browsers.
-            // Ideally, this handles drag & drop too (and all browsers).
-            event.preventDefault()
-            return true
-          }
-          return false
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
-      // 사진 지우기 이벤트 등록
-      editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-      editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
-      // editor.registerCommand(KEY_ENTER_COMMAND, onEnter, COMMAND_PRIORITY_LOW),
       // editor.registerCommand(
-      //   KEY_ESCAPE_COMMAND,
-      //   onEscape,
+      //   DRAGSTART_COMMAND,
+      //   (event) => {
+      //     if (event.target === ref.current) {
+      //       // TODO This is just a temporary workaround for FF to behave like other browsers.
+      //       // Ideally, this handles drag & drop too (and all browsers).
+      //       event.preventDefault()
+      //       return true
+      //     }
+      //     return false
+      //   },
       //   COMMAND_PRIORITY_LOW,
       // ),
+
+      // 사진 삭제를 위한 커멘드 등록
+      editor.registerCommand(KEY_DELETE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
+      editor.registerCommand(KEY_BACKSPACE_COMMAND, onDelete, COMMAND_PRIORITY_LOW),
     )
     return () => {
       isMounted = false
@@ -320,71 +259,81 @@ export const LexicalImageDecorator = ({
 
   const draggable = isSelected && $isNodeSelection(selection);
   return (
-    <>
-      {/* <UpdateImageDialog
-          activeEditor={editor}
-          nodeKey={nodeKey}
-          open={open}
-          onClose={() => setOpen(false)}
-        /> */}
-      <Box
-        ref={ref}
-        draggable={draggable}
-        // onClick={() => selectThisNode()}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        sx={{
-          position: 'relative',
-          display: 'inline-block',
-          cursor: 'pointer',
-          border: isSelected ? `3px dashed ${STYLES.color.primary}` : 'none',
-          borderRadius: '4px',
-          "&::after": (hover ? {
-            content: '""',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            position: 'absolute',
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
-            zIndex: 10,
-          } : {})
-        }}
-      >
-        <PositionMoveButton
-          direction='left'
-          hover={hover}
-          position={position}
-          onClick={changePosition}
-        />
-        <NextImage
-          src={src}
-          className={isSelected ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : undefined}
-          alt={caption}
-          data-position={position}
-          width={width}
-          height={height}
-          style={{
-            height,
-            width,
-            display: 'block',
+    <Box sx={{
+      display: 'inline-flex',
+      flexDirection: 'column',
+    }}>
+      <Box>
+        <Box
+          ref={ref}
+          draggable={draggable}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          sx={{
+            position: 'relative',
+            display: 'inline-block',
+            cursor: 'pointer',
+            border: isSelected ? `3px dashed ${STYLES.color.primary}` : 'none',
+            borderRadius: '4px',
+            "&::after": (hover ? {
+              content: '""',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              position: 'absolute',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+              zIndex: 10,
+            } : {})
           }}
-          draggable="false"
-        />
-        <PositionMoveButton
-          direction='right'
-          hover={hover}
-          position={position}
-          onClick={changePosition}
-        />
-      </Box>
-      {/* {showCaption && (
-          <TextField
-            label="Caption"
-            value={captionText}
-            onChange={(e) => setCaptionText(e.target.value)}
+        >
+          <PositionMoveButton
+            direction='left'
+            hover={hover}
+            position={position}
+            onClick={changePosition}
           />
-        )} */}
-    </>
+          <NextImage
+            src={src}
+            className={isSelected ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : undefined}
+            alt={caption}
+            data-position={position}
+            width={width}
+            height={height}
+            style={{
+              display: 'block',
+            }}
+            draggable="false"
+          />
+          <PositionMoveButton
+            direction='right'
+            hover={hover}
+            position={position}
+            onClick={changePosition}
+          />
+          {/* Caption Enable Button */}
+          <Button
+            onClick={() => setEnableCaption(!enableCaption)}
+            sx={{
+              position: 'absolute',
+              bottom: '0',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 20,
+              visibility: hover ? 'visible' : 'hidden',
+              color: 'white',
+              borderTop: '1px solid white',
+              width: "100%",
+              fontSize: '12px',
+            }}
+          >
+            {enableCaption ? "사진 설명 삭제" : "사진 설명 추가"}
+          </Button>
+        </Box>
+      </Box>
+      {enableCaption && (
+        <CaptionLexicalEditor />
+      )}
+    </Box>
   )
 }

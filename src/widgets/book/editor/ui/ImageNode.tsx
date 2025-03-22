@@ -58,18 +58,22 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
 
   constructor(
     src: string,
-    position: Position,
-    width: number,
-    height: number,
-    caption: string,
+    position?: Position,
+    width?: number,
+    height?: number,
+    caption?: string,
     key?: NodeKey,
   ) {
     super(key);
     this.__src = src;
+    this.__position = position || 'full';
+    // width, height validation
+    if ((width && width < 100) || (height && height < 100)) {
+      throw new Error('Image width and height must be greater than 100px')
+    }
     this.__width = width || 100;
     this.__height = height || 100;
     this.__caption = caption || '';
-    this.__position = position || 'full';
   }
 
   static getType(): string {
@@ -225,10 +229,10 @@ export const $createImageNode = (payload: ImagePayload): ImageNode => {
   return $applyNodeReplacement(
     new ImageNode(
       payload.src,
-      payload.position || 'full',
-      payload.width || 100,
-      payload.height || 100,
-      payload.caption || '',
+      payload.position,
+      payload.width,
+      payload.height,
+      payload.caption,
       payload.key,
     ),
   )

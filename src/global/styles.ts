@@ -23,7 +23,7 @@ const primary = {
   l: 48
 }
 
-const borderHsla = "hsla(0, 0%, 0%, 0.12)"
+const descriptionHsla = "hsla(0, 0%, 0%, 0.7)"
 
 export const STYLES = { 
   color: {
@@ -33,9 +33,9 @@ export const STYLES = {
     primary: `hsl(${primary.h}, ${primary.s}%, ${primary.l}%)`,
     primaryHsla: (hsla: HSLA) => `hsla(${primary.h + (hsla.h ?? 0)}, ${primary.s + (hsla.s ?? 0)}%, ${primary.l + (hsla.l ?? 0)}%, ${hsla.a ?? 1})`,
     secondary: "hsl(93, 33%, 60%)",
-    border: borderHsla,
+    description: descriptionHsla,
   },
   border: {
-    solid: `1px solid ${borderHsla}`,
+    solid: `1px solid hsla(0, 0%, 0%, 0.12)`,
   }
 }

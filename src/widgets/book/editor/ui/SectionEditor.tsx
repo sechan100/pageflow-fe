@@ -14,7 +14,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
-import { editorStyle, SectionEditorTheme } from '../config/editor-theme';
+import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
 import { EditorDial } from './EditorDial';
 import { ImageNode } from './ImageNode';
 import { ImagesPlugin } from './ImagePlugin';
@@ -25,16 +25,12 @@ import { PopperToolbar, useToolbarStore } from './PopperToolbar';
 
 
 const editorConfig = {
-  // html: {
-  //   export: exportMap,
-  //   import: constructImportMap(),
-  // },
   namespace: 'Section Editor',
   nodes: [ListNode, ListItemNode, HorizontalRuleNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
   onError(error: Error) {
     throw error;
   },
-  theme: SectionEditorTheme,
+  theme: sectionEditorTheme,
 };
 
 const placeholder = "내용을 입력해주세요.";
