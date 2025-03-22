@@ -2,7 +2,7 @@
 import { STYLES } from "@/global/styles";
 import { ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { ChevronDown, ChevronRight, FilePen } from "lucide-react";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { indentPerDepth } from "../config";
 import { TocFolder, TocSection } from "../model/toc.type";
 
@@ -25,6 +25,11 @@ const NodeButton = ({
   sx
 }: NodeButtonProps) => {
 
+  const handleIconClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onIconClick?.();
+  }, [onIconClick])
+
   return (
     <ListItemButton
       dense
@@ -35,7 +40,7 @@ const NodeButton = ({
       }}
     >
       <ListItemIcon
-        onClick={onIconClick}
+        onClick={handleIconClick}
         sx={{
           minWidth: 0,
           mr: 1,
