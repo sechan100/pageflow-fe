@@ -6,7 +6,7 @@
  *
  */
 
-import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin'
+import { OverflowNode } from '@lexical/overflow'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin'
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
@@ -18,22 +18,30 @@ import type { Position } from './ImageNode'
 import './image-node.css'
 
 import { STYLES } from '@/global/styles'
-import { OverflowNode } from '@lexical/overflow'
-import { LexicalComposer } from '@lexical/react/LexicalComposer'
+import { LexicalPlaceholder } from '@/shared/components/LexicalPlaceholder'
+import { $generateNodesFromDOM } from '@lexical/html'
+import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
+import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer'
 import { Box, Button, IconButton, SxProps } from '@mui/material'
 import {
   $getNodeByKey,
+  $getRoot,
   $getSelection,
-  $isNodeSelection, CLICK_COMMAND,
-  COMMAND_PRIORITY_LOW, KEY_BACKSPACE_COMMAND,
-  KEY_DELETE_COMMAND
+  $insertNodes,
+  $isNodeSelection, $isParagraphNode, CLICK_COMMAND,
+  COMMAND_PRIORITY_LOW, createEditor, KEY_BACKSPACE_COMMAND,
+  KEY_DELETE_COMMAND,
+  LexicalEditor,
+  LineBreakNode,
+  RootNode
 } from 'lexical'
+import { debounce } from 'lodash'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import NextImage from 'next/image'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode'
 
 
@@ -76,17 +84,63 @@ const PositionMoveButton = ({
   )
 }
 
+
+
 export const captionEditorTheme = {
   ltr: 'ltr',
   paragraph: 'pf-caption-p',
 };
 
 type CaptionLexicalEditor = {
-  sx?: SxProps
+  caption: string;
+  onChange?: (caption: string) => void;
+  sx?: SxProps;
 }
 const CaptionLexicalEditor = ({
+  caption,
+  onChange,
   sx
 }: CaptionLexicalEditor) => {
+  const editorRef = useRef<LexicalEditor>(createEditor());
+
+  const $onChangeDebounce = useMemo(() => debounce((html: string) => {
+    onChange?.(html);
+  }, 1000), [onChange]);
+
+  useEffect(() => mergeRegister(
+    // 줄바꿈 금지
+    editorRef.current.registerNodeTransform(RootNode, (rootNode: RootNode) => {
+      if (rootNode.getChildrenSize() <= 1) return;
+      rootNode.getLastChild()?.remove();
+    }),
+    // 줄바꿈 금지
+    editorRef.current.registerNodeTransform(LineBreakNode, (node) => {
+      node.remove();
+    }),
+    // overflow된 경우 글자 제거
+    editorRef.current.registerNodeTransform(OverflowNode, (overflowNode) => {
+      overflowNode.remove();
+    }),
+    editorRef.current.registerUpdateListener(({ editorState }) => editorState.read(() => {
+      const singleParagraph = $getRoot().getChildren()[0];
+      if ($isParagraphNode(singleParagraph)) {
+        const text = singleParagraph.getTextContent();
+        $onChangeDebounce(text);
+      }
+    })),
+  ), [$onChangeDebounce]);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    editor.update(() => {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(caption, 'text/html');
+      const nodes = $generateNodesFromDOM(editor, dom);
+      $getRoot().clear();
+      $insertNodes(nodes);
+    });
+  }, [caption]);
+
 
   return (
     <Box sx={{
@@ -97,38 +151,52 @@ const CaptionLexicalEditor = ({
         color: STYLES.color.description
       },
     }}>
-      <LexicalComposer
-        initialConfig={{
-          namespace: 'Section Editor',
-          nodes: [OverflowNode],
-          onError(error: Error) {
-            throw error;
-          },
-          theme: captionEditorTheme,
-        }}
+      <LexicalNestedComposer
+        initialEditor={editorRef.current}
+        initialNodes={[OverflowNode]}
+        initialTheme={captionEditorTheme}
       >
-        <PlainTextPlugin
-          contentEditable={<ContentEditable style={{ width: "100%" }} />}
-          placeholder={<Box sx={{ borderTop: STYLES.border.solid }}>설명을 입력해주세요.</Box>}
-          ErrorBoundary={LexicalErrorBoundary}
-        />
+        <Box sx={{ position: 'relative' }}>
+          <PlainTextPlugin
+            contentEditable={<ContentEditable />}
+            placeholder={
+              <LexicalPlaceholder
+                sx={{
+                  color: STYLES.color.description,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  fontSize: '12px',
+                }}
+                text="설명을 입력해주세요."
+              />
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+        </Box>
         <CharacterLimitPlugin
           charset='UTF-16'
-          maxLength={100}
+          maxLength={500}
           renderer={({ remainingCharacters, }: {
             remainingCharacters: number;
-          }) => (
-            <Box sx={{
-              borderTop: '1px solid hsla(0, 0%, 0%, 0.1)',
-              fontSize: '12px',
-            }}>
-              {remainingCharacters}자 남음
-            </Box>
-          )}
+          }) => {
+            if (remainingCharacters <= 0) {
+              return (
+                <Box sx={{
+                  borderTop: '1px solid hsla(0, 0%, 0%, 0.1)',
+                  fontSize: '12px',
+                  color: 'red',
+                }}>
+                  글자수 제한을 초과했습니다.
+                </Box>
+              )
+            } else {
+              return <></>;
+            }
+          }}
         />
         <HistoryPlugin />
-      </LexicalComposer>
-    </Box>
+      </LexicalNestedComposer>
+    </Box >
   )
 }
 
@@ -138,6 +206,7 @@ type Props = {
   width: number;
   height: number;
   caption: string;
+  showCaption: boolean;
   nodeKey: NodeKey;
 }
 export const LexicalImageDecorator = ({
@@ -146,6 +215,7 @@ export const LexicalImageDecorator = ({
   width,
   height,
   caption,
+  showCaption,
   nodeKey,
 }: Props) => {
   const [hover, setHover] = useState(false);
@@ -153,10 +223,6 @@ export const LexicalImageDecorator = ({
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<BaseSelection | null>(null);
-  // DEV: 아래 주석으로 변경
-  const [enableCaption, setEnableCaption] = useState(true);
-  // const [enableCaption, setEnableCaption] = useState(caption !== '');
-  const [captionText, setCaptionText] = useState(caption);
 
   // 사진 지우기
   const onDelete = useCallback((payload: KeyboardEvent) => {
@@ -202,6 +268,26 @@ export const LexicalImageDecorator = ({
       }
     })
   }, [editor, nodeKey, position])
+
+  // Caption 변경
+  const changeCaption = useCallback((caption: string) => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node)) {
+        node.update({ caption })
+      }
+    })
+  }, [editor, nodeKey])
+
+  // showCaption 변경
+  const changeShowCaption = useCallback((showCaption: boolean) => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node)) {
+        node.update({ showCaption })
+      }
+    })
+  }, [editor, nodeKey])
 
   // Editor Registration
   useEffect(() => {
@@ -262,8 +348,13 @@ export const LexicalImageDecorator = ({
     <Box sx={{
       display: 'inline-flex',
       flexDirection: 'column',
+      gap: 1,
     }}>
-      <Box>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
         <Box
           ref={ref}
           draggable={draggable}
@@ -313,7 +404,7 @@ export const LexicalImageDecorator = ({
           />
           {/* Caption Enable Button */}
           <Button
-            onClick={() => setEnableCaption(!enableCaption)}
+            onClick={() => changeShowCaption(!showCaption)}
             sx={{
               position: 'absolute',
               bottom: '0',
@@ -327,12 +418,16 @@ export const LexicalImageDecorator = ({
               fontSize: '12px',
             }}
           >
-            {enableCaption ? "사진 설명 삭제" : "사진 설명 추가"}
+            {showCaption ? "사진 설명 삭제" : "사진 설명 추가"}
           </Button>
         </Box>
       </Box>
-      {enableCaption && (
-        <CaptionLexicalEditor />
+      {showCaption && (
+        <Box sx={{
+          width: width * 2.5,
+        }}>
+          <CaptionLexicalEditor caption={caption} onChange={changeCaption} />
+        </Box>
       )}
     </Box>
   )

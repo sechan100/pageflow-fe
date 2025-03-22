@@ -1,5 +1,5 @@
 'use client'
-import { STYLES } from '@/global/styles';
+import { LexicalPlaceholder } from '@/shared/components/LexicalPlaceholder';
 import { CodeNode } from '@lexical/code';
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';
@@ -62,23 +62,22 @@ export const SectionEditor = ({
           ...editorStyle,
         }}
       >
-        <RichTextPlugin
-          contentEditable={
-            <ContentEditable
-              onContextMenu={onContextMenu}
-              aria-placeholder={placeholder}
-              placeholder={
-                <Box sx={{
-                  display: 'inline-block',
-                  borderTop: STYLES.border.solid,
-                }}>
-                  {placeholder}
-                </Box>
-              }
-            />
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        />
+        <Box sx={{ position: 'relative' }}>
+          <RichTextPlugin
+            contentEditable={
+              <ContentEditable
+                onContextMenu={onContextMenu}
+                aria-placeholder={placeholder}
+                placeholder={
+                  <LexicalPlaceholder
+                    text={placeholder}
+                  />
+                }
+              />
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+        </Box>
         <PopperToolbar />
         <LexicalBaseSettingPlugin />
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />

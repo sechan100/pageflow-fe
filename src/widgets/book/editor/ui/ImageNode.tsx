@@ -28,11 +28,13 @@ export type ImagePayload = {
   width?: number;
   height?: number;
   caption?: string;
+  showCaption?: boolean;
   key?: NodeKey;
 }
 
 export interface UpdateImagePayload {
   caption?: string;
+  showCaption?: boolean;
   position?: Position;
 }
 
@@ -43,6 +45,7 @@ export type SerializedImageNode = Spread<
     width: number;
     height: number;
     caption: string;
+    showCaption: boolean;
     position: Position;
   },
   SerializedLexicalNode
@@ -52,8 +55,8 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
   __src: string;
   __width: number;
   __height: number;
-  // caption이 빈 문자열 '' 이면 없는 것으로 간주한다.
   __caption: string;
+  __showCaption: boolean;
   __position: Position;
 
   constructor(
@@ -62,6 +65,7 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
     width?: number,
     height?: number,
     caption?: string,
+    showCaption?: boolean,
     key?: NodeKey,
   ) {
     super(key);
@@ -74,6 +78,7 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
     this.__width = width || 100;
     this.__height = height || 100;
     this.__caption = caption || '';
+    this.__showCaption = showCaption !== undefined ? showCaption : true;
   }
 
   static getType(): string {
@@ -87,6 +92,7 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
       node.__width,
       node.__height,
       node.__caption,
+      node.__showCaption,
       node.__key,
     )
   }
@@ -104,7 +110,8 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
           if (domNode instanceof HTMLImageElement) {
             const { alt: caption, src, width, height, dataset } = domNode
             const position = dataset.position as Position;
-            const node = $createImageNode({ caption, height, src, width, position })
+            const showCaption = dataset.showCaption === 'true';
+            const node = $createImageNode({ caption, height, src, width, position, showCaption })
             return { node }
           }
           return null
@@ -121,17 +128,19 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
     element.setAttribute('data-position', this.__position);
+    element.setAttribute('data-show-caption', this.__showCaption.toString());
     return { element }
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { height, width, caption, src, position } = serializedNode;
+    const { height, width, caption, src, position, showCaption } = serializedNode;
     return $createImageNode({
       caption,
       height,
       src,
       width,
       position,
+      showCaption
     })
   }
 
@@ -142,6 +151,7 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
       width: this.__width,
       height: this.__height,
       caption: this.__caption,
+      showCaption: this.__showCaption,
       type: ImageNode.getType(),
       version: 1,
     }
@@ -179,9 +189,12 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
 
   update(payload: UpdateImagePayload): void {
     const writable = this.getWritable();
-    const { caption, position } = payload;
+    const { caption, showCaption, position } = payload;
     if (caption !== undefined) {
       writable.__caption = caption;
+    }
+    if (showCaption !== undefined) {
+      writable.__showCaption = showCaption;
     }
     if (position !== undefined) {
       writable.__position = position;
@@ -220,6 +233,7 @@ export class ImageNode extends DecoratorNode<React.ReactNode> {
         nodeKey={this.getKey()}
         caption={this.__caption}
         position={this.__position}
+        showCaption={this.__showCaption}
       />
     )
   }
@@ -233,6 +247,7 @@ export const $createImageNode = (payload: ImagePayload): ImageNode => {
       payload.width,
       payload.height,
       payload.caption,
+      payload.showCaption,
       payload.key,
     ),
   )
