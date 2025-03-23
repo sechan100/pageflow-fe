@@ -1,11 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import { OverflowNode } from '@lexical/overflow'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin'
@@ -14,6 +6,7 @@ import { mergeRegister } from '@lexical/utils'
 import type {
   BaseSelection, NodeKey
 } from 'lexical'
+import { Resizable } from 're-resizable'
 import type { Position } from './ImageNode'
 import './image-node.css'
 
@@ -223,6 +216,7 @@ export const LexicalImageDecorator = ({
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<BaseSelection | null>(null);
+  const [size, setSize] = useState({ width, height });
 
   // position에 따른 caption width 값을 결정
   const captionWidth = useMemo(() => {
@@ -230,10 +224,13 @@ export const LexicalImageDecorator = ({
       // 전체 에디터 width 기준
       return "75%";
     } else {
-      // 사진 width 기준
-      return width * 2.5;
+      if (size.width < 200) {
+        return size.width * 2;
+      } else {
+        return size.width * 1.2;
+      }
     }
-  }, [position, width])
+  }, [position, size.width])
 
   // 사진 지우기
   const onDelete = useCallback((payload: KeyboardEvent) => {
@@ -395,18 +392,39 @@ export const LexicalImageDecorator = ({
             position={position}
             onClick={changePosition}
           />
-          <NextImage
-            src={src}
-            className={isSelected ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : undefined}
-            alt={caption}
-            data-position={position}
-            width={width}
-            height={height}
-            style={{
-              display: 'block',
+          <Resizable
+            defaultSize={{ width, height }}
+            minWidth={100}
+            minHeight={100}
+            lockAspectRatio
+            onResize={(e, direction, ref, d) => {
+              setSize({
+                width: width + d.width,
+                height: height + d.height,
+              })
             }}
-            draggable="false"
-          />
+            onResizeStop={(e, direction, ref, d) => {
+              editor.update(() => {
+                const node = $getNodeByKey(nodeKey);
+                if ($isImageNode(node)) {
+                  node.setSize(size)
+                }
+              })
+            }}
+          >
+            <NextImage
+              src={src}
+              className={isSelected ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}` : undefined}
+              alt={caption}
+              data-position={position}
+              width={size.width}
+              height={size.height}
+              style={{
+                display: 'block',
+              }}
+              draggable="false"
+            />
+          </Resizable>
           <PositionMoveButton
             direction='right'
             hover={hover}
