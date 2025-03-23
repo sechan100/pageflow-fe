@@ -29,7 +29,8 @@ import {
   KEY_DELETE_COMMAND,
   LexicalEditor,
   LineBreakNode,
-  RootNode
+  RootNode,
+  SELECTION_CHANGE_COMMAND
 } from 'lexical'
 import { debounce } from 'lodash'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -100,6 +101,7 @@ const CaptionLexicalEditor = ({
     onChange?.(html);
   }, 1000), [onChange]);
 
+  // editor registration
   useEffect(() => mergeRegister(
     // 줄바꿈 금지
     editorRef.current.registerNodeTransform(RootNode, (rootNode: RootNode) => {
@@ -121,8 +123,17 @@ const CaptionLexicalEditor = ({
         $onChangeDebounce(text);
       }
     })),
+    // 상위 SELECTION_CHANGE_COMMAND에 영향을 받지 않도록(PopperToolbar와 충돌함.)
+    editorRef.current.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload, _newEditor) => {
+        return true;
+      },
+      COMMAND_PRIORITY_LOW,
+    )
   ), [$onChangeDebounce]);
 
+  // props로 받아온 caption을 editor에 반영
   useEffect(() => {
     const editor = editorRef.current;
     editor.update(() => {

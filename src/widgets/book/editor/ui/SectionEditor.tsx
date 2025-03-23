@@ -16,11 +16,11 @@ import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
 import { EditorDial } from './EditorDial';
+import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { ImageNode } from './ImageNode';
 import { ImagesPlugin } from './ImagePlugin';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
 import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
-import { PopperToolbar, useToolbarStore } from './PopperToolbar';
 
 
 
@@ -78,7 +78,7 @@ export const SectionEditor = ({
             ErrorBoundary={LexicalErrorBoundary}
           />
         </Box>
-        <PopperToolbar />
+        <FloatingToolbar />
         <LexicalBaseSettingPlugin />
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
