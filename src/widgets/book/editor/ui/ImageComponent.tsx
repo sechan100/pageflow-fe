@@ -144,35 +144,35 @@ const CaptionLexicalEditor = ({
 
   return (
     <Box sx={{
+      position: 'relative',
       "& .pf-caption-p": {
         m: 0,
         textAlign: 'center',
         fontSize: '12px',
         color: STYLES.color.description
       },
+      ...sx
     }}>
       <LexicalNestedComposer
         initialEditor={editorRef.current}
         initialNodes={[OverflowNode]}
         initialTheme={captionEditorTheme}
       >
-        <Box sx={{ position: 'relative' }}>
-          <PlainTextPlugin
-            contentEditable={<ContentEditable />}
-            placeholder={
-              <LexicalPlaceholder
-                sx={{
-                  color: STYLES.color.description,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  fontSize: '12px',
-                }}
-                text="설명을 입력해주세요."
-              />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-        </Box>
+        <PlainTextPlugin
+          contentEditable={<ContentEditable />}
+          placeholder={
+            <LexicalPlaceholder
+              sx={{
+                color: STYLES.color.description,
+                left: "50%",
+                transform: "translateX(-50%)",
+                fontSize: '12px',
+              }}
+              text="설명을 입력해주세요."
+            />
+          }
+          ErrorBoundary={LexicalErrorBoundary}
+        />
         <CharacterLimitPlugin
           charset='UTF-16'
           maxLength={500}
@@ -223,6 +223,17 @@ export const LexicalImageDecorator = ({
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<BaseSelection | null>(null);
+
+  // position에 따른 caption width 값을 결정
+  const captionWidth = useMemo(() => {
+    if (position === "full") {
+      // 전체 에디터 width 기준
+      return "75%";
+    } else {
+      // 사진 width 기준
+      return width * 2.5;
+    }
+  }, [position, width])
 
   // 사진 지우기
   const onDelete = useCallback((payload: KeyboardEvent) => {
@@ -424,9 +435,17 @@ export const LexicalImageDecorator = ({
       </Box>
       {showCaption && (
         <Box sx={{
-          width: width * 2.5,
+          width: "100%",
+          display: 'flex',
+          justifyContent: 'center',
         }}>
-          <CaptionLexicalEditor caption={caption} onChange={changeCaption} />
+          <CaptionLexicalEditor
+            sx={{
+              width: captionWidth,
+            }}
+            caption={caption}
+            onChange={changeCaption}
+          />
         </Box>
       )}
     </Box>
