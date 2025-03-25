@@ -4,6 +4,7 @@ import { STYLES } from '@/global/styles';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
 import { Box, Divider, IconButton, Paper, SxProps } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import {
   $getSelection, $isRangeSelection,
   COMMAND_PRIORITY_LOW,
@@ -82,6 +83,18 @@ const ToolBox = ({
     </Box>
   )
 }
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 // 툴바 상태 타입
 type ToolbarState = {
@@ -319,7 +332,8 @@ export const FloatingToolbar = ({
   }, [editor]);
 
   // 이미지 삽입 커맨드
-  const handleImageCommand = useCallback(() => {
+  const handleImageCommand = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
     editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
       src: "http://localhost:8888/public/files/2025/2/17/36548c65-45e8-4439-bb1f-e8dbfbcea886.jpeg",
     });
@@ -375,9 +389,16 @@ export const FloatingToolbar = ({
         {/* Insert Image */}
         <ToolBox>
           <IconButton
-            onClick={handleImageCommand}
+            component="label"
+            role={undefined}
+            tabIndex={-1}
           >
             <Paperclip size={iconSize} />
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleImageCommand}
+              multiple
+            />
           </IconButton>
         </ToolBox>
         {/* text format */}

@@ -8,7 +8,6 @@ import type {
 } from 'lexical'
 import { Resizable } from 're-resizable'
 import type { Position } from './ImageNode'
-import './image-node.css'
 
 import { STYLES } from '@/global/styles'
 import { LexicalPlaceholder } from '@/shared/components/LexicalPlaceholder'
