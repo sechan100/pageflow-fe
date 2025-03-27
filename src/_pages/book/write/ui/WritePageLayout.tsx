@@ -1,5 +1,4 @@
 'use client'
-import { BookWithAuthor } from "@/entities/book"
 import { Box, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -20,20 +19,20 @@ export const WritePageLayout = ({
   children,
   sx
 }: Props) => {
-  const { data, isError, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: () => getBookApi(bookId)
   });
   const [open, setOpen] = useState(true);
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (<div>Loading...</div>)
   }
-  if (isError) {
-    return (<div>Error...</div>)
+  if (data.code === 'error') {
+    return (<div>{data.message}</div>)
   }
 
-  const book = data as BookWithAuthor;
+  const book = data.book;
 
   return (
     <BookStoreProvider
