@@ -1,6 +1,8 @@
 'use client';
 
+import { useBookStore } from '@/_pages/book/write/model/use-book';
 import { STYLES } from '@/global/styles';
+import { useNotification } from '@/shared/notification';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
 import { Box, Divider, IconButton, Paper, SxProps } from '@mui/material';
@@ -21,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
+import { uploadImageApi } from '../api/upload-image';
 import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
 import { INSERT_IMAGE_COMMAND } from './ImagePlugin';
@@ -108,13 +111,17 @@ type ToolbarState = {
 }
 
 type Props = {
+  sectionId: string;
   sx?: SxProps;
 }
 
 export const FloatingToolbar = ({
+  sectionId,
   sx,
 }: Props) => {
+  const book = useBookStore(s => s.book);
   const [editor] = useLexicalComposerContext();
+  const notification = useNotification();
   const { open, setOpen, position, setPosition } = useToolbarStore();
   const toolbarRef = useRef<HTMLDivElement | null>(null);
 
@@ -332,12 +339,23 @@ export const FloatingToolbar = ({
   }, [editor]);
 
   // 이미지 삽입 커맨드
-  const handleImageCommand = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageCommand = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-      src: "http://localhost:8888/public/files/2025/2/17/36548c65-45e8-4439-bb1f-e8dbfbcea886.jpeg",
-    });
-  }, [editor]);
+    if (!files) return;
+    const file = files[0];
+    const result = await uploadImageApi({
+      bookId: book.id,
+      sectionId,
+      image: file,
+    })
+    if (result.success) {
+      editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+        src: result.url,
+      });
+    } else {
+      notification.error(result.message);
+    }
+  }, [book.id, editor, notification, sectionId]);
 
   // 에디터 업데이트와 선택 변경 감지
   useEffect(() => {

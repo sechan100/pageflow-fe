@@ -78,7 +78,7 @@ export const SectionEditor = ({
             ErrorBoundary={LexicalErrorBoundary}
           />
         </Box>
-        <FloatingToolbar />
+        <FloatingToolbar sectionId={sectionId} />
         <LexicalBaseSettingPlugin />
         <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
