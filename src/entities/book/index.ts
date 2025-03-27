@@ -5,3 +5,5 @@ export type { SvToc, SvTocFolder, SvTocNode, SvTocSection } from "./model/toc.ty
 
 export { GET_TOC_QUERY_KEY, useTocQuery } from "./model/use-toc-query";
 
+export { BookStoreProvider, useBookStore } from "./model/use-book";
+

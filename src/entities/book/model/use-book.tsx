@@ -1,5 +1,5 @@
-import { BookWithAuthor } from "@/entities/book";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
+import { BookWithAuthor } from "./book.type";
 
 
 

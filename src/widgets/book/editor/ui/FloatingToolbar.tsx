@@ -1,7 +1,8 @@
 'use client';
 
-import { useBookStore } from '@/_pages/book/write/model/use-book';
+import { useBookStore } from '@/entities/book';
 import { STYLES } from '@/global/styles';
+import { getImageDimensions } from '@/shared/image-dimensions';
 import { useNotification } from '@/shared/notification';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
@@ -349,8 +350,11 @@ export const FloatingToolbar = ({
       image: file,
     })
     if (result.success) {
+      const { width, height } = await getImageDimensions(result.url);
       editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
         src: result.url,
+        width,
+        height,
       });
     } else {
       notification.error(result.message);

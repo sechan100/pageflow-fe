@@ -1,10 +1,10 @@
 'use client'
+import { BookStoreProvider } from '@/entities/book'
 import { Box, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { getBookApi } from "../api/get-book"
 import { sideDrawerWidth } from "../config/side-drawer-width"
-import { BookStoreProvider } from "../model/use-book"
 import { SideDrawer } from "./SideDrawer"
 
 

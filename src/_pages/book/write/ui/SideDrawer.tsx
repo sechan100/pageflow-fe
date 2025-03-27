@@ -6,8 +6,8 @@ import {
   Box, Drawer, SxProps, Typography
 } from "@mui/material";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useBookStore } from "../../../../entities/book/model/use-book";
 import { sideDrawerWidth } from "../config/side-drawer-width";
-import { useBookStore } from "../model/use-book";
 
 type Props = {
   open: boolean;

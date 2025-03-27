@@ -5,8 +5,8 @@ import { Field, FieldErrorDispatcher } from "@/shared/field"
 import { useNotification } from "@/shared/notification"
 import { Box, Button, Stack } from "@mui/material"
 import { useCallback, useMemo, useState } from "react"
-import { SettingTitle } from "./SettingTitle"
 import { changePasswordApi } from "../api/change-password"
+import { SettingTitle } from "./SettingTitle"
 
 
 const fieldNames = {

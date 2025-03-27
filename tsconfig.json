@@ -23,11 +23,26 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
+      "@/app/*": [
+        "./src/app/*"
       ],
       "@/pages/*": [
         "./src/_pages/*"
+      ],
+      "@/widgets/*": [
+        "./src/widgets/*"
+      ],
+      "@/features/*": [
+        "./src/features/*"
+      ],
+      "@/entities/*": [
+        "./src/entities/*"
+      ],
+      "@/shared/*": [
+        "./src/shared/*"
+      ],
+      "@/global/*": [
+        "./src/global/*"
       ],
     }
   },
