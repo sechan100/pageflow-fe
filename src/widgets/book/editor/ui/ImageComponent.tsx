@@ -98,7 +98,7 @@ const CaptionLexicalEditor = ({
 
   const $onChangeDebounce = useMemo(() => debounce((html: string) => {
     onChange?.(html);
-  }, 1000), [onChange]);
+  }, 300), [onChange]);
 
   // editor registration
   useEffect(() => mergeRegister(

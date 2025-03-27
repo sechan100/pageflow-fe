@@ -1,6 +1,6 @@
 import { $generateHtmlFromNodes } from '@lexical/html';
 import { $getEditor } from "lexical";
-import { LexicalHtmlSerializedState } from "../api/save-section-content";
+import { LexicalHtmlSerializedState } from "../api/save-content";
 
 
 

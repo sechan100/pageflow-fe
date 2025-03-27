@@ -1,3 +1,3 @@
-export { SectionEditor } from "./editor";
+export { SectionEditor, useSectionContentRepository } from "./editor";
 export { TocTree } from "./toc";
 

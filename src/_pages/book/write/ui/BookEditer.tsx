@@ -1,6 +1,6 @@
 'use client'
+import { useBookStore } from '@/entities/book'
 import { SxProps } from "@mui/material"
-import { useBookStore } from "../../../../entities/book/model/use-book"
 
 
 

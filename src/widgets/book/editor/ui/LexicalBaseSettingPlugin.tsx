@@ -15,6 +15,12 @@ export const LexicalBaseSettingPlugin = ({
 }: Props) => {
   const [editor] = useLexicalComposerContext();
 
+  // editor의 모든 노드를 출력
+  // useEffect(() => {
+  //   const nodes = editor._nodes.values().map(n => n.klass).toArray();
+  //   console.log(nodes);
+  // }, [editor]);
+
   useEffect(() => mergeRegister(
     // FORMAT_ELEMENT_COMMAND Command를 해제
     editor.registerCommand(FORMAT_ELEMENT_COMMAND,

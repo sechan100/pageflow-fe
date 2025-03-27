@@ -1,12 +1,11 @@
 'use client'
-import { useTocQuery } from "@/entities/book";
+import { useBookStore, useTocQuery } from "@/entities/book";
 import { TooltipIconButton } from "@/shared/components/TootipIconButton";
 import { TocTree } from "@/widgets/book";
 import {
   Box, Drawer, SxProps, Typography
 } from "@mui/material";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useBookStore } from "../../../../entities/book/model/use-book";
 import { sideDrawerWidth } from "../config/side-drawer-width";
 
 type Props = {
