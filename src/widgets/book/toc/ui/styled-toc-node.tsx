@@ -1,8 +1,9 @@
 'use client'
 import { STYLES } from "@/global/styles";
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { ChevronDown, ChevronRight, FilePen } from "lucide-react";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { indentPerDepth } from "../config";
 import { TocFolder, TocSection } from "../model/toc.type";
 
@@ -12,6 +13,7 @@ type NodeButtonProps = {
   depth: number;
   icon: React.ReactNode;
   text: string;
+  isSelected?: boolean;
   onClick?: () => void;
   onIconClick?: () => void;
   sx?: SxProps
@@ -20,6 +22,7 @@ const NodeButton = ({
   depth,
   icon,
   onClick,
+  isSelected,
   onIconClick,
   text,
   sx
@@ -37,6 +40,11 @@ const NodeButton = ({
       sx={{
         pl: 1 + depth * indentPerDepth,
         position: 'relative',
+        backgroundColor: isSelected ? STYLES.color.primaryHsla({ a: 0.7 }) : undefined,
+        ":hover": {
+          color: "white",
+          backgroundColor: isSelected ? STYLES.color.primaryHsla({ a: 0.8 }) : STYLES.color.primaryHsla({ a: 0.7 })
+        },
       }}
     >
       <ListItemIcon
@@ -85,9 +93,12 @@ export const StyledFolderNode = memo(function Folder({
   onClick,
   sx
 }: StyledFolderNodeProps) {
+  const { params } = useNextRouter();
+  const isEditing = useMemo(() => params?.folderId === folder.id, [params, folder.id]);
 
   return (
     <NodeButton
+      isSelected={isEditing}
       depth={depth}
       onClick={() => onClick?.(folder)}
       onIconClick={() => onIconClick?.(folder)}
@@ -109,9 +120,12 @@ export const StyledSectionNode = memo(function Section({
   onClick,
   sx
 }: StyledSectionNodeProps) {
+  const { params } = useNextRouter();
+  const isEditing = useMemo(() => params?.sectionId === section.id, [params, section.id]);
 
   return (
     <NodeButton
+      isSelected={isEditing}
       depth={depth}
       onClick={() => onClick?.(section)}
       icon={<FilePen size={20} />}

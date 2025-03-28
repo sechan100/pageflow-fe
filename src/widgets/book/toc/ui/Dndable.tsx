@@ -86,7 +86,7 @@ export const Dndable = memo(function Dndable({
       sx={{
         position: "relative",
         touchAction: "none",
-        backgroundColor: isDragging ? STYLES.color.primaryHsla({ l: 10, a: 0.5 }) : undefined,
+        backgroundColor: isDragging ? STYLES.color.backgroundHsla({ l: -20, a: 0.7 }) : undefined,
       }}
     >
       <Box
