@@ -17,7 +17,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer'
-import { Box, Button, IconButton, SxProps } from '@mui/material'
+import { Box, Button, IconButton, SxProps, Tooltip } from '@mui/material'
 import {
   $getNodeByKey,
   $getRoot,
@@ -31,12 +31,18 @@ import {
   RootNode,
   SELECTION_CHANGE_COMMAND
 } from 'lexical'
-import { debounce } from 'lodash'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import NextImage from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode'
 
+
+const captionTextStyle = {
+  m: 0,
+  textAlign: 'center',
+  fontSize: '12px',
+  color: STYLES.color.description
+}
 
 type PositionMoveButtonProps = {
   direction: "left" | "right";
@@ -86,19 +92,25 @@ export const captionEditorTheme = {
 
 type CaptionLexicalEditor = {
   caption: string;
-  onChange?: (caption: string) => void;
+  onSave?: (caption: string) => void;
   sx?: SxProps;
 }
 const CaptionLexicalEditor = ({
   caption,
-  onChange,
+  onSave,
   sx
 }: CaptionLexicalEditor) => {
   const editorRef = useRef<LexicalEditor>(createEditor());
 
-  const $onChangeDebounce = useMemo(() => debounce((html: string) => {
-    onChange?.(html);
-  }, 300), [onChange]);
+  const save = useCallback(() => {
+    editorRef.current.read(() => {
+      const singleParagraph = $getRoot().getChildren()[0];
+      if ($isParagraphNode(singleParagraph)) {
+        const text = singleParagraph.getTextContent();
+        onSave?.(text);
+      }
+    })
+  }, [onSave])
 
   // editor registration
   useEffect(() => mergeRegister(
@@ -115,13 +127,6 @@ const CaptionLexicalEditor = ({
     editorRef.current.registerNodeTransform(OverflowNode, (overflowNode) => {
       overflowNode.remove();
     }),
-    editorRef.current.registerUpdateListener(({ editorState }) => editorState.read(() => {
-      const singleParagraph = $getRoot().getChildren()[0];
-      if ($isParagraphNode(singleParagraph)) {
-        const text = singleParagraph.getTextContent();
-        $onChangeDebounce(text);
-      }
-    })),
     // 상위 SELECTION_CHANGE_COMMAND에 영향을 받지 않도록(PopperToolbar와 충돌함.)
     editorRef.current.registerCommand(
       SELECTION_CHANGE_COMMAND,
@@ -130,7 +135,7 @@ const CaptionLexicalEditor = ({
       },
       COMMAND_PRIORITY_LOW,
     )
-  ), [$onChangeDebounce]);
+  ), []);
 
   // props로 받아온 caption을 editor에 반영
   useEffect(() => {
@@ -148,12 +153,7 @@ const CaptionLexicalEditor = ({
   return (
     <Box sx={{
       position: 'relative',
-      "& .pf-caption-p": {
-        m: 0,
-        textAlign: 'center',
-        fontSize: '12px',
-        color: STYLES.color.description
-      },
+      "& .pf-caption-p": captionTextStyle,
       ...sx
     }}>
       <LexicalNestedComposer
@@ -199,6 +199,16 @@ const CaptionLexicalEditor = ({
         />
         <HistoryPlugin />
       </LexicalNestedComposer>
+      <Button
+        variant='contained'
+        sx={{
+          py: 0.3,
+          px: 0,
+        }}
+        onClick={save}
+      >
+        저장
+      </Button>
     </Box >
   )
 }
@@ -226,6 +236,7 @@ export const LexicalImageDecorator = ({
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<BaseSelection | null>(null);
+  const [captionEditMode, setCaptionEditMode] = useState(false);
   const [size, setSize] = useState({ width, height });
 
   // position에 따른 caption width 값을 결정
@@ -467,15 +478,46 @@ export const LexicalImageDecorator = ({
           display: 'flex',
           justifyContent: 'center',
         }}>
-          <CaptionLexicalEditor
-            sx={{
+          {captionEditMode ?
+            <>
+              <CaptionLexicalEditor
+                sx={{
+                  width: captionWidth,
+                }}
+                caption={caption}
+                onSave={(caption) => {
+                  changeCaption(caption);
+                  setCaptionEditMode(false);
+                }}
+              />
+            </>
+            :
+            <Box sx={{
               width: captionWidth,
-            }}
-            caption={caption}
-            onChange={changeCaption}
-          />
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}>
+              <Tooltip
+                slotProps={{
+                  tooltip: {
+                    onClick: () => setCaptionEditMode(true),
+                    sx: {
+                      cursor: 'pointer',
+                    }
+                  }
+                }}
+                title="수정하기"
+              >
+                <Box sx={captionTextStyle}>
+                  {caption}
+                </Box>
+              </Tooltip>
+            </Box>
+          }
         </Box>
-      )}
-    </Box>
+      )
+      }
+    </Box >
   )
 }

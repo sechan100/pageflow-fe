@@ -14,7 +14,7 @@ export type UseNotification = {
   error: (message?: string) => void;
 };
 
-export const AUTO_HIDE_DURATION = 7000;
+export const AUTO_HIDE_DURATION = 3000;
 
 export const useNotification = create<UseNotification>((set, get) => ({
   show: useNotificationsStore.getState().show,
