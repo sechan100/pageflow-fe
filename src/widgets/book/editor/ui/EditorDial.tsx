@@ -11,7 +11,7 @@ import { useSectionContentRepository } from "../model/use-section-content-reposi
 
 
 
-const AUTO_SAVE_INTERVAL = 1000;
+const AUTO_SAVE_INTERVAL = 4000;
 
 
 type Props = {
@@ -23,7 +23,7 @@ export const EditorDial = ({
   sx
 }: Props) => {
   const [editor] = useLexicalComposerContext();
-  const { load, save, flush } = useSectionContentRepository(sectionId);
+  const { save, sync } = useSectionContentRepository(sectionId);
   const notification = useNotification();
   const actions = useMemo(() => [
     { icon: <FileCopy />, name: 'Copy' },
@@ -32,33 +32,43 @@ export const EditorDial = ({
     { icon: <ShareIcon />, name: 'Share' },
   ], []);
 
-  // editor의 현재 내용을 로컬스토리지에 저장
-  const saveEditorState = useCallback(() => {
-    editor.read(async () => {
-      const html = $getHtmlSerializedEditorState();
-      save(html);
-    })
-  }, [editor, save]);
-
-  // editor의 내용을 서버와 동기화
-  const flushEditorState = useCallback(async () => {
-    saveEditorState();
-    const res = await flush();
+  const saveToServer = useCallback(async () => {
+    // editor의 내용을 서버와 동기화
+    const res = await sync();
     if (res.result === 'success') {
-      notification.success('저장되었습니다.');
+      notification.show('저장되었습니다.', {
+        severity: 'success',
+        autoHideDuration: 1000,
+      });
     } else if (res.result === 'lastest') {
       return;
     } else {
       notification.error('저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
-  }, [flush, notification, saveEditorState]);
+  }, [notification, sync]);
 
-  // flush 단축키 등록
+  const saveToServerDebounce = useMemo(() => debounce(saveToServer, AUTO_SAVE_INTERVAL), [saveToServer]);
+
+  // editor의 현재 내용을 로컬스토리지에 저장
+  const saveEditorState = useCallback(() => {
+    editor.read(async () => {
+      const html = $getHtmlSerializedEditorState();
+      save(html);
+      saveToServerDebounce();
+    })
+  }, [editor, save, saveToServerDebounce]);
+
+  const manualSave = useCallback(() => {
+    saveToServerDebounce.cancel();
+    saveToServer();
+  }, [saveToServer, saveToServerDebounce]);
+
+  // save 단축키 등록
   useEffect(() => {
-    const saveShortcutHandler = (e: KeyboardEvent) => {
+    const saveShortcutHandler = async (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        flushEditorState();
+        manualSave();
       }
     }
     const editorRootEl = editor._rootElement;
@@ -67,14 +77,13 @@ export const EditorDial = ({
     return () => {
       editorRootEl.removeEventListener("keydown", saveShortcutHandler)
     }
-  }, [editor, flushEditorState]);
+  }, [editor, manualSave]);
 
 
   // 자동저장 설정
   useEffect(() => {
-    const debouncedSave = debounce(saveEditorState, AUTO_SAVE_INTERVAL);
     return editor.registerUpdateListener(() => {
-      debouncedSave();
+      saveEditorState();
     })
   }, [editor, saveEditorState]);
 
@@ -84,7 +93,7 @@ export const EditorDial = ({
         ariaLabel="editor dial"
         sx={{ position: 'fixed', bottom: 50, right: 50 }}
         icon={<SpeedDialIcon openIcon={<SaveIcon />} />}
-        onClick={flushEditorState}
+        onClick={manualSave}
         direction="up"
       >
         {actions.map((action) => (

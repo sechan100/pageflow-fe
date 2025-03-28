@@ -2,7 +2,7 @@
 import { $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { SxProps } from "@mui/material";
-import { $getRoot, $getSelection, $insertNodes } from "lexical";
+import { $getRoot, $insertNodes } from "lexical";
 import { useEffect } from "react";
 
 
@@ -21,11 +21,14 @@ export const LoadEditorStatePlugin = ({
   useEffect(() => {
     if (!htmlSerializedState) return;
     editor.update(() => {
-      const selection = $getSelection();
+      const root = $getRoot();
+      const isEmpty = root.getTextContent() === "";
+      if (!isEmpty) return;
+
       const parser = new DOMParser();
       const dom = parser.parseFromString(htmlSerializedState, 'text/html');
       const nodes = $generateNodesFromDOM(editor, dom);
-      $getRoot().clear();
+      root.clear();
       $insertNodes(nodes);
     });
   }, [editor, htmlSerializedState])
