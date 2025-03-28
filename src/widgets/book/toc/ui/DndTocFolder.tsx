@@ -2,7 +2,7 @@
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { Box, Collapse, List, Tooltip } from "@mui/material";
-import { memo, useCallback, useRef } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { useIndicator } from "../model/dnd/use-indicator";
 import { useIsOver } from "../model/dnd/use-is-over";
 import { TocFolder } from "../model/toc.type";
@@ -24,7 +24,7 @@ export const DndTocFolder = memo(function DroppableFolder({
   depth,
 }: Props) {
   const { bookId } = useTocStore(s => s.toc);
-  const { isOpen, toggle } = useFolderOpen(folder.id);
+  const { isOpen, toggle, changeOpen } = useFolderOpen(folder.id);
   const { router } = useNextRouter();
   const isOver = useIsOver(folder.id);
   const { indicator } = useIndicator(folder.id);
@@ -52,7 +52,14 @@ export const DndTocFolder = memo(function DroppableFolder({
   useDndMonitor({
     onDragStart,
     onDragEnd,
-  })
+  });
+
+  // 자식이 없으면 닫음
+  useEffect(() => {
+    if (folder.children.length === 0) {
+      changeOpen(false);
+    }
+  }, [folder.children.length, changeOpen]);
 
   return (
     <Box>

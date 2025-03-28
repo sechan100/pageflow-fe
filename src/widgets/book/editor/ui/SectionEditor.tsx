@@ -16,11 +16,11 @@ import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
 import { EditorDial } from './EditorDial';
+import { EditorStateSyncPlugin } from './EditorStateSyncPlugin';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { ImageNode } from './ImageNode';
 import { ImagesPlugin } from './ImagePlugin';
 import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
-import { LoadEditorStatePlugin } from './LoadEditorStatePlugin';
 
 
 
@@ -45,19 +45,20 @@ export const SectionEditor = ({
   htmlContent,
   sx
 }: Props) => {
-  const setOpen = useToolbarStore(s => s.setOpen);
+  const setToolbarOpen = useToolbarStore(s => s.setOpen);
 
   const onContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    setOpen(true);
-  }, [setOpen]);
+    setToolbarOpen(true);
+  }, [setToolbarOpen]);
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <Container
         maxWidth="md"
         sx={{
-          my: 10,
+          mt: 10,
+          mb: 70,
           position: 'relative',
           ...editorStyle,
         }}
@@ -80,7 +81,7 @@ export const SectionEditor = ({
         </Box>
         <FloatingToolbar sectionId={sectionId} />
         <LexicalBaseSettingPlugin />
-        <LoadEditorStatePlugin htmlSerializedState={htmlContent} />
+        <EditorStateSyncPlugin htmlSerializedState={htmlContent} />
         <HistoryPlugin />
         <ListPlugin />
         <ImagesPlugin />

@@ -57,7 +57,7 @@ const NodeButton = ({
             transition: 'background-color 0.2s',
             ":hover": {
               cursor: 'pointer',
-              backgroundColor: STYLES.color.backgroundHsla({ l: -20 })
+              backgroundColor: STYLES.color.primaryHsla({ l: -10 })
             }
           })
         }}

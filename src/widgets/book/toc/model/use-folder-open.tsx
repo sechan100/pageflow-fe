@@ -33,12 +33,15 @@ export const useFolderOpen = (folderId: string, disabled = false) => {
   }, [folderId, folderOpenRegistry, disabled, isOpen]);
 
   // registry와 동기화된 toggle 함수
-  const toggle = useCallback(() => {
+  const changeOpen = useCallback((newOpen: boolean) => {
     if (disabled) return;
-    const newIsOpen = !isOpen;
-    setIsOpen(newIsOpen);
-    syncFolderOpenState(folderId, newIsOpen);
-  }, [folderId, isOpen, disabled, syncFolderOpenState]);
+    setIsOpen(newOpen);
+    syncFolderOpenState(folderId, newOpen);
+  }, [folderId, disabled, syncFolderOpenState]);
+
+  const toggle = useCallback(() => {
+    changeOpen(!isOpen);
+  }, [changeOpen, isOpen]);
 
   return {
     isOpen,
@@ -50,6 +53,7 @@ export const useFolderOpen = (folderId: string, disabled = false) => {
         throw new Error(`folderId: ${folderId}에 대한 open 상태가 존재하지 않습니다.`);
       }
     },
-    toggle
+    toggle,
+    changeOpen
   };
 }

@@ -10,7 +10,7 @@ type Props = {
   htmlSerializedState?: string,
   sx?: SxProps
 }
-export const LoadEditorStatePlugin = ({
+export const EditorStateSyncPlugin = ({
   htmlSerializedState,
   sx
 }: Props) => {
@@ -19,6 +19,8 @@ export const LoadEditorStatePlugin = ({
   // htmlSerializedState와 editor의 state를 동기화한다.
   useEffect(() => {
     if (htmlSerializedState === undefined) return;
+
+    // update =====================
     editor.update(() => {
       const root = $getRoot();
       const isEmpty = root.getTextContent() === "";

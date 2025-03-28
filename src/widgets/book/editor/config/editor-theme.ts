@@ -43,10 +43,6 @@ export const editorStyle: SxProps = {
   "[data-lexical-editor='true']": {
     outline: "none", // focus되었을 때 파란색 테두리 제거
     lineHeight: 2,
-    // columnCount: 2,
-    // columnGap: 60,
-    // columnFill: 'auto',
-    // height: opt.height,
   },
 
   // Paragraph

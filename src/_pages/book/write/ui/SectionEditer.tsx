@@ -99,6 +99,8 @@ export const SectionEditer = ({
   return (
     <Box sx={{
       px: 3,
+      height: '90vh',
+      overflowY: 'auto',
     }}>
       <SectionEditorWidget
         sectionId={sectionId}
