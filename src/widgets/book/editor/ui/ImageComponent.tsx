@@ -137,6 +137,25 @@ const CaptionLexicalEditor = ({
     )
   ), []);
 
+
+  // enter키 입력시 저장
+  useEffect(() => {
+    const rootEl = editorRef.current._rootElement;
+    if (!rootEl) return;
+
+    const enterHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        save();
+      }
+    }
+
+    rootEl.addEventListener('keydown', enterHandler);
+    return () => {
+      rootEl.removeEventListener('keydown', enterHandler);
+    }
+  }, [save])
+
   // props로 받아온 caption을 editor에 반영
   useEffect(() => {
     const editor = editorRef.current;
@@ -510,7 +529,7 @@ export const LexicalImageDecorator = ({
                 title="수정하기"
               >
                 <Box sx={captionTextStyle}>
-                  {caption}
+                  {caption || "(설명이 없습니다.)"}
                 </Box>
               </Tooltip>
             </Box>

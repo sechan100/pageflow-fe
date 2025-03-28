@@ -6,6 +6,8 @@ import { $getRoot, $insertNodes } from "lexical";
 import { useEffect } from "react";
 
 
+export const SERVER_SYNC_UPDATE_TAG = 'server-sync';
+
 
 type Props = {
   htmlSerializedState?: string,
@@ -30,6 +32,8 @@ export const LoadEditorStatePlugin = ({
       const nodes = $generateNodesFromDOM(editor, dom);
       root.clear();
       $insertNodes(nodes);
+    }, {
+      tag: "씨발련아"
     });
   }, [editor, htmlSerializedState])
 
