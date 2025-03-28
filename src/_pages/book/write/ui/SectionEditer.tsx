@@ -92,7 +92,7 @@ export const SectionEditer = ({
   const { load } = useSectionContentRepository(sectionId);
   const { content, isLoading } = load();
 
-  if (!content || isLoading) {
+  if (content === undefined || isLoading) {
     return <div>loading...</div>
   }
 

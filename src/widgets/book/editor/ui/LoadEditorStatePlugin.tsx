@@ -6,9 +6,6 @@ import { $getRoot, $insertNodes } from "lexical";
 import { useEffect } from "react";
 
 
-export const SERVER_SYNC_UPDATE_TAG = 'server-sync';
-
-
 type Props = {
   htmlSerializedState?: string,
   sx?: SxProps
@@ -21,7 +18,7 @@ export const LoadEditorStatePlugin = ({
 
   // htmlSerializedState와 editor의 state를 동기화한다.
   useEffect(() => {
-    if (!htmlSerializedState) return;
+    if (htmlSerializedState === undefined) return;
     editor.update(() => {
       const root = $getRoot();
       const isEmpty = root.getTextContent() === "";
@@ -32,8 +29,6 @@ export const LoadEditorStatePlugin = ({
       const nodes = $generateNodesFromDOM(editor, dom);
       root.clear();
       $insertNodes(nodes);
-    }, {
-      tag: "씨발련아"
     });
   }, [editor, htmlSerializedState])
 

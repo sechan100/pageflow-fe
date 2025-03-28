@@ -8,7 +8,6 @@ import { PrinterIcon, SaveIcon, ShareIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 import { $getHtmlSerializedEditorState } from "../model/save-editor-state";
 import { useSectionContentRepository } from "../model/use-section-content-repository";
-import { SERVER_SYNC_UPDATE_TAG } from "./LoadEditorStatePlugin";
 
 
 
@@ -84,7 +83,7 @@ export const EditorDial = ({
   // 자동저장 설정
   useEffect(() => {
     return editor.registerUpdateListener(({ tags, dirtyElements, dirtyLeaves }) => {
-      if (tags.has(SERVER_SYNC_UPDATE_TAG), tags.has("history-merge")) return;
+      if (tags.has("history-merge")) return;
 
       if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return;
 
