@@ -6,7 +6,8 @@ import { useCallback, useState } from "react"
 import { indicatorZIndex } from "../config"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
 import { TocFolder, TocNode, TocSection } from "../model/toc.type"
-import { StyledFolderNode, StyledSectionNode } from "./styled-toc-node"
+import { StyledFolderNode } from "./DndTocFolder"
+import { StyledSectionNode } from "./DndTocSection"
 
 type OverlayProviderProps = {
   sx?: SxProps

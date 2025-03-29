@@ -1,7 +1,7 @@
 import { useBookStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EDITOR_SECTION_CONTENT_QUERY_KEY } from "./use-editor-section-content-query";
+import { SECTION_CONTENT_QUERY_KEY } from "./section-content";
 
 
 
@@ -40,7 +40,7 @@ const sectionContentSaveApi = async ({ bookId, sectionId, html }: Form): Promise
 
 export const useSaveContentMutation = (sectionId: string) => {
   const book = useBookStore(s => s.book);
-  const sectionContentQueryKey = EDITOR_SECTION_CONTENT_QUERY_KEY(sectionId);
+  const sectionContentQueryKey = SECTION_CONTENT_QUERY_KEY(sectionId);
   const queryClient = useQueryClient();
 
   return useMutation({

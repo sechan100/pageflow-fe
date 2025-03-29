@@ -1,10 +1,10 @@
+import { SectionWithContent, useSectionQuery } from "@/entities/book";
 import { useSaveContentMutation } from "../api/save-content";
-import { useEditorSectionContentQuery } from "../api/use-editor-section-content-query";
+import { useSectionContentQuery } from "../api/section-content";
 
 
 
-type SectionContentQueryResult = {
-  content: string;
+type SectionContentQueryResult = SectionWithContent & {
   isLoading: boolean;
 }
 
@@ -12,8 +12,9 @@ type FlushResult = {
   result: "success" | "error" | "lastest";
 }
 
-export const useSectionContentRepository = (sectionId: string) => {
-  const query = useEditorSectionContentQuery(sectionId);
+export const useSectionContent = (sectionId: string) => {
+  const sectionQuery = useSectionQuery(sectionId);
+  const contentQuery = useSectionContentQuery(sectionId);
   const { mutateAsync } = useSaveContentMutation(sectionId);
   const sectionLocalStorageKey = `section-${sectionId}`;
 
@@ -35,18 +36,19 @@ export const useSectionContentRepository = (sectionId: string) => {
         return { result: "error" };
       }
     },
-    load: () => {
+    load: (): SectionContentQueryResult => {
+      let content: string | null = null;
+
       const html = localStorage.getItem(sectionLocalStorageKey);
       if(html){
-        return {
-          content: html,
-          isLoading: false
-        }
-      } else {
-        return {
-          content: query.data?.content || "",
-          isLoading: query.isLoading
-        }
+        content = html;
+      }
+
+      return {
+        id: sectionId,
+        title: sectionQuery.data?.title || "",
+        content: content || "",
+        isLoading: sectionQuery.isLoading || contentQuery.isLoading,
       }
     }
   }

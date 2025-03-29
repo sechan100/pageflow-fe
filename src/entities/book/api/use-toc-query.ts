@@ -1,7 +1,7 @@
 import { useAuthentication } from "@/global/authentication/authentication";
 import { useQuery } from "@tanstack/react-query";
-import { getTocApi } from "../api/get-toc";
-import { SvToc } from "./toc.type";
+import { SvToc } from "../model/toc.type";
+import { getTocApi } from "./get-toc";
 
 
 

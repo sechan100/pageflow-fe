@@ -1,1 +1,1 @@
-export { BookTitleField } from "./field"
+export { BookTitleField, NodeTitleField } from "./field";

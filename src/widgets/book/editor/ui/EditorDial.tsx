@@ -6,8 +6,8 @@ import { SpeedDial, SpeedDialAction, SpeedDialIcon, SxProps } from "@mui/materia
 import { debounce } from "lodash";
 import { PrinterIcon, SaveIcon, ShareIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
-import { $getHtmlSerializedEditorState } from "../model/save-editor-state";
-import { useSectionContentRepository } from "../model/use-section-content-repository";
+import { $getHtmlSerializedEditorState } from "../model/$getHtmlSerializedEditorState";
+import { useSectionContent } from "../model/use-section-content";
 
 
 
@@ -23,7 +23,7 @@ export const EditorDial = ({
   sx
 }: Props) => {
   const [editor] = useLexicalComposerContext();
-  const { save, sync } = useSectionContentRepository(sectionId);
+  const { save, sync } = useSectionContent(sectionId);
   const notification = useNotification();
   const actions = useMemo(() => [
     { icon: <FileCopy />, name: 'Copy' },

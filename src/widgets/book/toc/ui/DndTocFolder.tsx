@@ -1,8 +1,9 @@
 'use client'
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
-import { Box, Collapse, List, Tooltip } from "@mui/material";
-import { memo, useCallback, useEffect, useRef } from "react";
+import { Box, Collapse, List, SxProps, Tooltip } from "@mui/material";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useIndicator } from "../model/dnd/use-indicator";
 import { useIsOver } from "../model/dnd/use-is-over";
 import { TocFolder } from "../model/toc.type";
@@ -10,10 +11,42 @@ import { useFolderOpen } from "../model/use-folder-open";
 import { useTocStore } from "../model/use-toc";
 import { Dndable } from "./Dndable";
 import { renderTocNode } from "./render-toc-node";
-import { StyledFolderNode } from "./styled-toc-node";
+import { StyledBaseTocNode } from "./StyledBaseTocNode";
 
 
 const folderEditPageLink = (bookId: string, folderId: string) => `/write/${bookId}/folders/${folderId}`;
+
+type StyledFolderNodeProps = {
+  folder: TocFolder;
+  depth: number;
+  isOpen: boolean;
+  onClick?: (folder: TocFolder) => void;
+  onIconClick?: (folder: TocFolder) => void;
+  sx?: SxProps
+}
+export const StyledFolderNode = memo(function Folder({
+  folder,
+  depth,
+  isOpen,
+  onClick,
+  onIconClick,
+  sx
+}: StyledFolderNodeProps) {
+  const { params } = useNextRouter();
+  const isEditing = useMemo(() => params?.folderId === folder.id, [params, folder.id]);
+
+  return (
+    <StyledBaseTocNode
+      isActive={isEditing}
+      depth={depth}
+      onClick={() => onClick?.(folder)}
+      onIconClick={() => onIconClick?.(folder)}
+      icon={isOpen ? <ChevronDown /> : <ChevronRight />}
+      text={folder.title}
+    />
+  )
+})
+
 
 type Props = {
   folder: TocFolder;
