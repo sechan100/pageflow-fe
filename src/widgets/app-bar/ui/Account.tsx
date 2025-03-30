@@ -165,7 +165,7 @@ export const Account = ({
     )
   }
 
-  const user = (session.toc as Session).user;
+  const user = (session.data as Session).user;
 
   return (
     <Box

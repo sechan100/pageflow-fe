@@ -1,9 +1,8 @@
 import { api } from "@/global/api";
-import { useQuery } from "@tanstack/react-query";
 import { SvToc } from "../model/sv-toc.type";
 
 
-const getTocApi = async (bookId: string): Promise<SvToc> => {
+export const getTocApi = async (bookId: string): Promise<SvToc> => {
   const res = await api
     .user()
     .get<SvToc>(`/user/books/${bookId}/toc`);
@@ -13,15 +12,4 @@ const getTocApi = async (bookId: string): Promise<SvToc> => {
   }
 
   return res.data;
-};
-
-export const TOC_QUERY_KEY = (bookId: string) => ['toc', bookId];
-
-export const useTocQuery = (bookId: string) => {
-  const query = useQuery<SvToc>({
-    queryKey: TOC_QUERY_KEY(bookId),
-    queryFn: () => getTocApi(bookId),
-  });
-
-  return query;
 };

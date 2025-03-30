@@ -1,6 +1,7 @@
 'use client'
-import { TocStoreProvider, useEditorBookStore, useTocQuery } from "@/entities/book";
+import { getTocApi, SvToc, TocStoreProvider, useEditorBookStore } from "@/entities/book";
 import { SxProps } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 
 
 
@@ -13,10 +14,21 @@ export const TocContextProvider = ({
   sx
 }: Props) => {
   const { book } = useEditorBookStore();
-  const { data: svToc, isLoading } = useTocQuery(book.id);
+  const [svToc, setSvToc] = useState<SvToc | null>(null);
 
-  if (isLoading || svToc === undefined) {
-    return <div>loading...</div>
+  const refreshToc = useCallback(async () => {
+    const toc = await getTocApi(book.id);
+    setSvToc(toc);
+  }, [book.id]);
+
+  useEffect(() => {
+    if (svToc === null) {
+      refreshToc();
+    }
+  }, [book.id, refreshToc, svToc]);
+
+  if (svToc === null) {
+    return <div>Loading...</div>
   }
   return (
     <TocStoreProvider svToc={svToc}>

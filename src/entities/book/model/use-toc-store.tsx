@@ -72,7 +72,9 @@ export const TocStoreProvider = memo(function TocStoreProvider({
 
   // 새로운 svToc가 들어오면, 기존 toc와 병합하여 새로운 toc를 만든다.
   useEffect(() => {
-    setToc(mergeServerToc(svToc, toc));
+    if (toc === null) {
+      setToc(mergeServerToc(svToc, toc));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [svToc]);
 
@@ -81,7 +83,7 @@ export const TocStoreProvider = memo(function TocStoreProvider({
   }
 
   return (
-    <Provider data={toc} onDataChange={(s, toc) => s.setState({ toc })}>
+    <Provider data={toc} onDataChange={(s, newToc) => s.setState({ toc: newToc })}>
       {children}
     </Provider>
   )

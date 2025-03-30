@@ -14,19 +14,19 @@ type Props = {
 export const MyBooksPage = ({
   sx
 }: Props) => {
-  const { toc, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['mybooks'],
     queryFn: myBooksApi,
   })
 
 
   // 로딩중 화면
-  if (isLoading || !toc) {
+  if (isLoading || !data) {
     return <>로딩중...</>
   }
 
   // 에러시 화면
-  if (toc.code !== "success") {
+  if (data.code !== "success") {
     return (
       <>
         내 책들을 가져오는 중 에러가 발생했습니다.
@@ -34,7 +34,7 @@ export const MyBooksPage = ({
     )
   }
 
-  const myBooks = toc.myBooks;
+  const myBooks = data.myBooks;
 
   return (
     <Container maxWidth="lg" sx={{

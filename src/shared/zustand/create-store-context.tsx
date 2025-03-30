@@ -61,7 +61,8 @@ export const createStoreContext = <D, S>(initializer: Initializer<D, S>): [
       if (onDataChange && storeRef.current) {
         onDataChange(storeRef.current, data);
       }
-    }, [data, onDataChange]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
     return <>{children}</>;
   });

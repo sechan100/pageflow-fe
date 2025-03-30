@@ -6,9 +6,9 @@ import { ProfileSettingsPage } from '@/pages/settings';
 export default function Page() {
   const sessionQuery = useSessionQuery();
 
-  if (!sessionQuery.toc) {
+  if (!sessionQuery.data) {
     return <div>Loading...</div>;
   }
 
-  return <ProfileSettingsPage session={sessionQuery.toc} />;
+  return <ProfileSettingsPage session={sessionQuery.data} />;
 }

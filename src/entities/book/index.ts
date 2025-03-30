@@ -1,7 +1,7 @@
 // api
 export { SECTION_QUERY_KEY, useSectionQuery } from "./api/section";
 export { getSectionContentApi } from "./api/section-content";
-export { TOC_QUERY_KEY, useTocQuery } from "./api/toc";
+export { getTocApi } from "./api/toc";
 
 // config
 export { defaultFolderOpen } from "./config/default-folder-open";
