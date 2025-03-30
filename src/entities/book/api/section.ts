@@ -1,7 +1,7 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { Section } from "../model/section.type";
-import { useBookStore } from "../model/use-book-store";
+import { useEditorBookStore } from "../model/use-editor-book-store";
 
 
 
@@ -19,7 +19,7 @@ const getSectionApi = async ({bookId, sectionId}: {bookId: string, sectionId: st
 export const SECTION_QUERY_KEY = (sectionId: string) => ['section', sectionId];
 
 export const useSectionQuery = (sectionId: string) => {
-  const book = useBookStore(s => s.book);
+  const book = useEditorBookStore(s => s.book);
   const query = useQuery<Section>({
     queryKey: SECTION_QUERY_KEY(sectionId),
     queryFn: () => getSectionApi({

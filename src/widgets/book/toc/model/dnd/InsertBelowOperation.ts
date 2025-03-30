@@ -1,7 +1,6 @@
+import { TocFolder, TocOperations } from '@/entities/book';
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
-import { TocOperations } from "../toc-operations";
-import { TocFolder } from "../toc.type";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
 import { DndOperation, DndOperationContext, RelocateResult } from "./dnd-operation";
 import { RectUtils } from "./rect-utils";

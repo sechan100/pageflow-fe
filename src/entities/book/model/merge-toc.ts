@@ -1,4 +1,4 @@
-import { SvToc, SvTocFolder, SvTocNode, SvTocSection } from "@/entities/book";
+import { SvToc, SvTocFolder, SvTocNode, SvTocSection } from '..';
 import { NodeTypeGuard, Toc, TocFolder, TocNode, TocNodeType, TocSection } from "./toc.type";
 
 

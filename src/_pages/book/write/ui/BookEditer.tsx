@@ -1,5 +1,5 @@
 'use client'
-import { useBookStore } from '@/entities/book'
+import { useEditorBookStore } from '@/entities/book'
 import { SxProps } from "@mui/material"
 
 
@@ -10,7 +10,7 @@ type Props = {
 export const BookEditer = ({
   sx
 }: Props) => {
-  const book = useBookStore(s => s.book)
+  const book = useEditorBookStore(s => s.book)
 
   return (
     <>

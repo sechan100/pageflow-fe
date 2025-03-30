@@ -1,8 +1,8 @@
 'use client'
+import { useTocStore } from '@/entities/book'
 import { Box, Button, Divider, SxProps } from "@mui/material"
 import { Maximize2, Minimize2 } from "lucide-react"
 import React from "react"
-import { useTocStore } from "../model/use-toc"
 
 
 

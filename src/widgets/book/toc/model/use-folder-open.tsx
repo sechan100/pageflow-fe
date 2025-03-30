@@ -1,6 +1,5 @@
+import { defaultFolderOpen, useTocStore } from '@/entities/book';
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { defaultFolderOpen } from "../config";
-import { useTocStore } from "./use-toc";
 
 
 
@@ -9,7 +8,7 @@ import { useTocStore } from "./use-toc";
 
 export const useFolderOpen = (folderId: string, disabled = false) => {
   const folderOpenRegistry = useTocStore(s => s.folderOpenRegistry);
-  const syncFolderOpenState = useTocStore(s => s.syncFolderOpenState);
+  const syncFolderOpenState = useTocStore(s => s.setFolderOpen);
   const syncedIsOpen = useMemo<boolean>(() => {
     const synced = folderOpenRegistry.get(folderId);
     if (synced !== undefined) {

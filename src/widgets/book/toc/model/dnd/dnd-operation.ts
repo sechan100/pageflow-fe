@@ -1,7 +1,7 @@
+import { Toc } from '@/entities/book';
 import { Active, Over } from "@dnd-kit/core";
 import { RelocateForm } from "../../api/relocate-node";
 import { IndicatorMode } from "../../ui/Indicator";
-import { Toc } from "../toc.type";
 import { InsertAboveOperation } from "./InsertAboveOperation";
 import { InsertBelowOperation } from "./InsertBelowOperation";
 import { InsertFirstIntoOperation } from "./InsertFirstIntoOperation";

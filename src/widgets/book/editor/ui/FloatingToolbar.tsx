@@ -1,6 +1,6 @@
 'use client';
 
-import { useBookStore } from '@/entities/book';
+import { useEditorBookStore } from '@/entities/book';
 import { STYLES } from '@/global/styles';
 import { getImageDimensions } from '@/shared/image-dimensions';
 import { useNotification } from '@/shared/notification';
@@ -120,7 +120,7 @@ export const FloatingToolbar = ({
   sectionId,
   sx,
 }: Props) => {
-  const book = useBookStore(s => s.book);
+  const book = useEditorBookStore(s => s.book);
   const [editor] = useLexicalComposerContext();
   const notification = useNotification();
   const { open, setOpen, position, setPosition } = useToolbarStore();

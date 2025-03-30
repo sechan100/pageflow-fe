@@ -1,4 +1,5 @@
 'use client'
+import { useTocStore } from '@/entities/book'
 import { useNotification } from "@/shared/notification"
 import { closestCenter, DndContext, DragEndEvent, DragMoveEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { List, SxProps } from "@mui/material"
@@ -8,7 +9,6 @@ import { dndConfig } from "../config"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
 import { DndOperationDispatcher } from "../model/dnd/dnd-operation"
 import { useIndicatorStore } from "../model/dnd/use-indicator"
-import { useTocStore } from "../model/use-toc"
 import { OverlayProvider } from "./OverlayProvider"
 import { renderTocNode } from "./render-toc-node"
 

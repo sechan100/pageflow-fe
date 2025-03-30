@@ -1,11 +1,11 @@
 'use client'
+import { NodeTypeGuard, TocNode } from '@/entities/book';
 import { STYLES } from "@/global/styles";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, SxProps } from "@mui/material";
 import { memo, useMemo } from "react";
 import { TocFolderDndData, TocNodeDndData, TocSectionDndData } from "../model/dnd/dnd-data";
 import { useIndicator } from "../model/dnd/use-indicator";
-import { NodeTypeGuard, TocNode } from "../model/toc.type";
 import { useFolderOpen } from "../model/use-folder-open";
 import { Indicator } from "./Indicator";
 

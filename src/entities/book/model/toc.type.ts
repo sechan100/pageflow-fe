@@ -1,38 +1,38 @@
-
 /**
- * 서버에서 받아온 Toc 데이터와 완벽히 동일한 타입들로, prefix인 Sv는 Server의 약자이다.
+ * 클라이언트에서 사용하는 Toc 타입들을 정의.
+ * SvToc 타입들과는 다르다.
  */
 
-export type SvTocNodeType = "FOLDER" | "SECTION";
+export type TocNodeType = "folder" | "section";
 
-export type SvTocNode = {
+export type TocNode = {
   id: string; // UUID
   title: string;
-  type: SvTocNodeType;
+  type: TocNodeType;
 }
 
-export type SvTocFolder = SvTocNode & {
-  type: "FOLDER";
-  children: SvTocNode[];
+export type TocFolder = TocNode & {
+  type: "folder";
+  children: TocNode[];
 }
 
-export type SvTocSection = SvTocNode & {
-  type: "SECTION";
+export type TocSection = TocNode & {
+  type: "section";
 }
 
-export type SvToc = {
+export type Toc = {
   bookId: string; // UUID
-  root: SvTocFolder;
+  root: TocFolder;
 }
 
-export const SvNodeTypeGuard = {
-  isSvTocNode: (obj: any): obj is SvTocNode => {
-    return obj && typeof obj.id === "string" && typeof obj.title === "string" && (obj.type === "FOLDER" || obj.type === "SECTION");
+export const NodeTypeGuard = {
+  isTocNode: (obj: any): obj is TocNode => {
+    return obj && typeof obj.id === "string" && typeof obj.title === "string" && (obj.type === "folder" || obj.type === "section");
   },
-  isSvFolder(node: any): node is SvTocFolder {
-    return this.isSvTocNode(node) && node.type === "FOLDER";
+  isFolder(node: any): node is TocFolder {
+    return this.isTocNode(node) && node.type === "folder";
   },
-  isSvSection(node: any): node is SvTocSection {
-    return this.isSvTocNode(node) && node.type === "SECTION";
+  isSection(node: any): node is TocSection {
+    return this.isTocNode(node) && node.type === "section";
   }
 }

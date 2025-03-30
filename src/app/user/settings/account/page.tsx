@@ -6,9 +6,9 @@ import { AccountSettingsPage } from "@/pages/settings";
 export default function Page() {
   const sessionQuery = useSessionQuery();
 
-  if (!sessionQuery.data) {
+  if (!sessionQuery.toc) {
     return <div>Loading...</div>;
   }
 
-  return <AccountSettingsPage session={sessionQuery.data} />;
+  return <AccountSettingsPage session={sessionQuery.toc} />;
 }

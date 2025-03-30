@@ -1,10 +1,9 @@
 'use client'
+import { TocSection, useTocStore } from '@/entities/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { SxProps } from "@mui/material";
 import { FilePen } from "lucide-react";
 import { memo, useMemo } from "react";
-import { TocSection } from "../model/toc.type";
-import { useTocStore } from "../model/use-toc";
 import { Dndable } from "./Dndable";
 import { StyledBaseTocNode } from "./StyledBaseTocNode";
 

@@ -1,5 +1,5 @@
+import { TocFolder, TocNode, TocNodeType, TocSection } from '@/entities/book';
 import { Active, Collision, Over, Translate } from "@dnd-kit/core";
-import { TocFolder, TocNode, TocNodeType, TocSection } from "../toc.type";
 
 
 
@@ -31,7 +31,7 @@ export interface DragEvent {
 
 export const extractTocNodeDndData = (activeOrOver: Active | Over): TocNodeDndData => {
   const dataRef = activeOrOver.data;
-  if(!dataRef.current) {
+  if (!dataRef.current) {
     throw new Error("Active 또는 Over에 dnd data가 없습니다.");
   }
   return dataRef.current as TocNodeDndData;

@@ -1,10 +1,20 @@
-export { getSectionContentApi } from "./api/get-section-content";
-export { SECTION_QUERY_KEY, useSectionQuery } from "./api/use-section-query";
-export { GET_TOC_QUERY_KEY, useTocQuery } from "./api/use-toc-query";
-export type { Author } from "./model/author.type";
-export type { Book, BookWithAuthor } from "./model/book.type";
-export type { SectionWithContent } from "./model/section.type";
-export { SvNodeTypeGuard } from "./model/toc.type";
-export type { SvToc, SvTocFolder, SvTocNode, SvTocSection } from "./model/toc.type";
-export { BookStoreProvider, useBookStore } from "./model/use-book-store";
+// api
+export { SECTION_QUERY_KEY, useSectionQuery } from "./api/section";
+export { getSectionContentApi } from "./api/section-content";
+export { TOC_QUERY_KEY, useTocQuery } from "./api/toc";
+
+// config
+export { defaultFolderOpen } from "./config/default-folder-open";
+
+// model
+export * from "./model/author.type";
+export * from "./model/book.type";
+export { mergeServerToc } from "./model/merge-toc";
+export * from "./model/section.type";
+export * from "./model/sv-toc.type";
+export { SvNodeTypeGuard } from "./model/sv-toc.type";
+export { TocOperations } from "./model/toc-operations";
+export * from "./model/toc.type";
+export { EditorBookStoreProvider, useEditorBookStore } from "./model/use-editor-book-store";
+export { TocStoreProvider, useTocStore } from "./model/use-toc-store";
 

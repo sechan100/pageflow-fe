@@ -1,11 +1,11 @@
 'use client'
+import { TocFolder, TocNode, TocSection } from '@/entities/book'
 import { STYLES } from "@/global/styles"
 import { DragEndEvent, DragOverlay, useDndMonitor } from "@dnd-kit/core"
 import { Box, SxProps } from "@mui/material"
 import { useCallback, useState } from "react"
 import { indicatorZIndex } from "../config"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
-import { TocFolder, TocNode, TocSection } from "../model/toc.type"
 import { StyledFolderNode } from "./DndTocFolder"
 import { StyledSectionNode } from "./DndTocSection"
 

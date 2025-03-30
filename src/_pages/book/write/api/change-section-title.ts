@@ -1,6 +1,7 @@
-import { SECTION_QUERY_KEY, useBookStore } from "@/entities/book";
+import { SECTION_QUERY_KEY, useEditorBookStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTocNodeTitleChange } from "../model/use-toc-node-title-change";
 
 
 
@@ -32,18 +33,20 @@ const changeSectionTitleApi = async ({ bookId, sectionId, title}: Form) => {
 }
 
 export const useSectionTitleMutation = (sectionId: string) => {
-  const book = useBookStore(s => s.book);
+  const { id: bookId } = useEditorBookStore(s => s.book);
   const queryClient = useQueryClient();
+  const { changeNodeTitle } = useTocNodeTitleChange();
 
   return useMutation({
     mutationFn: (title: string) => changeSectionTitleApi({
-      bookId: book.id,
+      bookId,
       sectionId,
       title
     }),
-    onSuccess: (res) => {
+    onSuccess: (res, title) => {
       if(res.success){
         queryClient.invalidateQueries({ queryKey: SECTION_QUERY_KEY(sectionId) });
+        changeNodeTitle(sectionId, title);
       }
     }
   });

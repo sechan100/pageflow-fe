@@ -4,10 +4,10 @@ import { BookWithAuthor } from "./book.type";
 
 
 
-type BookStore = {
+type EditorBookStore = {
   book: BookWithAuthor;
 }
 
-export const [BookStoreProvider, useBookStore] = createStoreContext<BookWithAuthor, BookStore>((book, set) => ({
+export const [EditorBookStoreProvider, useEditorBookStore] = createStoreContext<BookWithAuthor, EditorBookStore>((book, set) => ({
   book,
 }))

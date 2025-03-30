@@ -1,4 +1,5 @@
 'use client'
+import { TocFolder, useTocStore } from '@/entities/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { Box, Collapse, List, SxProps, Tooltip } from "@mui/material";
@@ -6,9 +7,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useIndicator } from "../model/dnd/use-indicator";
 import { useIsOver } from "../model/dnd/use-is-over";
-import { TocFolder } from "../model/toc.type";
 import { useFolderOpen } from "../model/use-folder-open";
-import { useTocStore } from "../model/use-toc";
 import { Dndable } from "./Dndable";
 import { renderTocNode } from "./render-toc-node";
 import { StyledBaseTocNode } from "./StyledBaseTocNode";

@@ -4,7 +4,7 @@ import { useNotification } from '@/shared/notification'
 import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/book'
 import { Box, SxProps } from "@mui/material"
 import { useCallback } from 'react'
-import { useSectionTitleMutation } from '../api/use-section-title-mutation'
+import { useSectionTitleMutation } from '../api/change-section-title'
 
 
 // const htmlContent = `<p class="pf-p" dir="ltr">

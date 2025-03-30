@@ -1,4 +1,4 @@
-import { NodeTypeGuard, TocNode } from "../model/toc.type";
+import { NodeTypeGuard, TocNode } from '@/entities/book';
 import { DndTocFolder } from "./DndTocFolder";
 import { DndTocSection } from "./DndTocSection";
 

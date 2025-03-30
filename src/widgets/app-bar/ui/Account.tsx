@@ -2,12 +2,12 @@
 
 import { Session, SessionUser, useSessionQuery } from "@/entities/user"
 import { useNextRouter } from "@/shared/hooks/useNextRouter"
-import { useLoginLogout } from "../model/use-login-logout"
 import { Logout } from "@mui/icons-material"
 import { Avatar, Box, Button, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Typography } from "@mui/material"
 import { Cog, LibraryBig, Pencil } from "lucide-react"
 import { useCallback, useRef } from "react"
 import { create } from "zustand"
+import { useLoginLogout } from "../model/use-login-logout"
 
 
 type UseAccountPopoverStore = {
@@ -165,7 +165,7 @@ export const Account = ({
     )
   }
 
-  const user = (session.data as Session).user;
+  const user = (session.toc as Session).user;
 
   return (
     <Box

@@ -1,5 +1,5 @@
 'use client'
-import { useBookStore, useTocQuery } from "@/entities/book";
+import { useEditorBookStore } from "@/entities/book";
 import { TooltipIconButton } from "@/shared/components/TootipIconButton";
 import { TocTree } from "@/widgets/book";
 import {
@@ -21,8 +21,7 @@ export const SideDrawer = ({
   onOpen,
   sx,
 }: Props) => {
-  const { book } = useBookStore();
-  const { toc, isError, isLoading } = useTocQuery(book.id);
+  const { book } = useEditorBookStore();
 
   const handleDrawerClose = () => {
     onClose();
@@ -31,13 +30,6 @@ export const SideDrawer = ({
   const handleDrawerOpen = () => {
     onOpen();
   };
-
-  if (isLoading) {
-    return <div>loading...</div>
-  }
-  if (isError) {
-    return <div>error...</div>
-  }
 
   return (
     <>
@@ -81,9 +73,7 @@ export const SideDrawer = ({
             onClick={handleDrawerClose}
           />
         </Box>
-        <TocTree
-          svToc={toc}
-        />
+        <TocTree />
       </Drawer >
     </>
   );
