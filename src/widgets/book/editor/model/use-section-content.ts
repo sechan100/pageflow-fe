@@ -40,8 +40,10 @@ export const useSectionContent = (sectionId: string) => {
       let content: string | null = null;
 
       const html = localStorage.getItem(sectionLocalStorageKey);
-      if(html){
+      if(html !== null){
         content = html;
+      } else {
+        content = contentQuery.data?.content || "";
       }
 
       return {

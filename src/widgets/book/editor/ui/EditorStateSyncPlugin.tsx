@@ -5,6 +5,7 @@ import { SxProps } from "@mui/material";
 import { $getRoot, $insertNodes } from "lexical";
 import { useEffect } from "react";
 
+export const editorStateSyncUpdateTag = 'editor-state-sync';
 
 type Props = {
   htmlSerializedState?: string,
@@ -31,6 +32,8 @@ export const EditorStateSyncPlugin = ({
       const nodes = $generateNodesFromDOM(editor, dom);
       root.clear();
       $insertNodes(nodes);
+    }, {
+      tag: editorStateSyncUpdateTag,
     });
   }, [editor, htmlSerializedState])
 

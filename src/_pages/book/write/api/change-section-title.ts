@@ -1,7 +1,7 @@
-import { SECTION_QUERY_KEY, useEditorBookStore } from "@/entities/book";
+import { SECTION_QUERY_KEY, Toc, TocOperations, useEditorBookStore, useTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTocNodeTitleChange } from "../model/use-toc-node-title-change";
+import { produce } from "immer";
 
 
 
@@ -35,7 +35,17 @@ const changeSectionTitleApi = async ({ bookId, sectionId, title}: Form) => {
 export const useSectionTitleMutation = (sectionId: string) => {
   const { id: bookId } = useEditorBookStore(s => s.book);
   const queryClient = useQueryClient();
-  const { changeNodeTitle } = useTocNodeTitleChange();
+  const toc = useTocStore(s => s.toc);
+  const setToc = useTocStore(s => s.setToc);
+
+  const changeNodeTitle = (nodeId: string, title: string) => {
+    const newToc = produce<Toc>(toc, draft => {
+      const targetNode = TocOperations.findNode(draft, nodeId);
+      targetNode.title = title;
+      return draft;
+    });
+    setToc(newToc);
+  }
 
   return useMutation({
     mutationFn: (title: string) => changeSectionTitleApi({
