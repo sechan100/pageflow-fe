@@ -1,5 +1,5 @@
 'use client';
-import { FolderEditer } from '@/pages/book';
+import { FolderEditer } from '@/pages/write';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 

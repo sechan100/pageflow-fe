@@ -1,6 +1,6 @@
 'use client';
 
-import { BookEditer } from '@/pages/book';
+import { BookEditer } from '@/pages/write';
 
 
 

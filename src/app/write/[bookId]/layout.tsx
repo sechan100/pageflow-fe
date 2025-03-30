@@ -1,6 +1,6 @@
 'use client';
 
-import { WritePageLayout } from '@/pages/book';
+import { WritePageLayout } from '@/pages/write';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { AuthGuard } from "../../_utils/AuthGuard";
 

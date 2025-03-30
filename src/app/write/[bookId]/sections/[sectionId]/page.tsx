@@ -1,6 +1,6 @@
 'use client';
 
-import { SectionEditer } from '@/pages/book';
+import { SectionEditer } from '@/pages/write';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 

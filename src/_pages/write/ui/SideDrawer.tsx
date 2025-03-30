@@ -1,7 +1,7 @@
 'use client'
 import { useEditorBookStore } from "@/entities/book";
 import { TooltipIconButton } from "@/shared/components/TootipIconButton";
-import { TocTree } from "@/widgets/book";
+import { TocTree } from "@/widgets/editor-toc";
 import {
   Box, Drawer, SxProps, Typography
 } from "@mui/material";

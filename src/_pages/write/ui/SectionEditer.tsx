@@ -1,7 +1,7 @@
 'use client'
 import { NodeTitleField } from '@/features/book'
 import { useNotification } from '@/shared/notification'
-import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/book'
+import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/editor'
 import { Box, SxProps } from "@mui/material"
 import { useCallback } from 'react'
 import { useSectionTitleMutation } from '../api/change-section-title'
