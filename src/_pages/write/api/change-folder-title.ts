@@ -1,4 +1,4 @@
-import { SECTION_QUERY_KEY, Toc, TocOperations, useEditorBookStore, useTocStore } from "@/entities/book";
+import { FOLDER_QUERY_KEY, Toc, TocOperations, useEditorBookStore, useTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
@@ -8,23 +8,23 @@ import { produce } from "immer";
 
 type Form = {
   bookId: string;
-  sectionId: string;
+  folderId: string;
   title: string;
 }
 
-type ChangeSectionTitleResult = {
+type ChangeFolderTitleResult = {
   success: boolean;
   message: string;
 }
 
-const changeSectionTitleApi = async ({ bookId, sectionId, title}: Form) => {
+const changeFolderTitleApi = async ({ bookId, folderId, title}: Form) => {
   const res = await api
   .user()
   .data({ title })
-  .post(`/user/books/${bookId}/toc/sections/${sectionId}`);
+  .post(`/user/books/${bookId}/toc/folders/${folderId}`);
 
 
-  return res.resolver<ChangeSectionTitleResult>()
+  return res.resolver<ChangeFolderTitleResult>()
   .SUCCESS((data) => ({
     success: true,
     message: res.description
@@ -32,7 +32,7 @@ const changeSectionTitleApi = async ({ bookId, sectionId, title}: Form) => {
   .resolve();
 }
 
-export const useSectionTitleMutation = (sectionId: string) => {
+export const useFolderTitleMutation = (folderId: string) => {
   const { id: bookId } = useEditorBookStore(s => s.book);
   const queryClient = useQueryClient();
   const toc = useTocStore(s => s.toc);
@@ -48,15 +48,15 @@ export const useSectionTitleMutation = (sectionId: string) => {
   }
 
   return useMutation({
-    mutationFn: (title: string) => changeSectionTitleApi({
+    mutationFn: (title: string) => changeFolderTitleApi({
       bookId,
-      sectionId,
+      folderId,
       title
     }),
     onSuccess: (res, title) => {
       if(res.success){
-        queryClient.invalidateQueries({ queryKey: SECTION_QUERY_KEY(sectionId) });
-        changeNodeTitle(sectionId, title);
+        queryClient.invalidateQueries({ queryKey: FOLDER_QUERY_KEY(folderId) });
+        changeNodeTitle(folderId, title);
       }
     }
   });
