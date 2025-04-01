@@ -1,12 +1,13 @@
 'use client'
 import { EditorBookStoreProvider } from '@/entities/book'
-import { Box, SxProps } from "@mui/material"
+import { Box, Container, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { getBookApi } from "../api/book"
 import { sideDrawerWidth } from "../config/side-drawer-width"
 import { SideDrawer } from "./SideDrawer"
 import { TocContextProvider } from './TocContextProvider'
+import { WritePageDialMenu } from './WritePageDialMenu'
 
 
 
@@ -52,7 +53,10 @@ export const WritePageLayout = ({
             transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1)',
           }}
         >
-          {children}
+          <Container sx={{ position: 'relative' }}>
+            {children}
+            <WritePageDialMenu />
+          </Container>
         </Box>
       </TocContextProvider>
     </EditorBookStoreProvider>

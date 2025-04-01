@@ -15,12 +15,10 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
-import { EditorDial } from './EditorDial';
-import { EditorStateSyncPlugin } from './EditorStateSyncPlugin';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { ImageNode } from './ImageNode';
 import { ImagesPlugin } from './ImagePlugin';
-import { LexicalBaseSettingPlugin } from './LexicalBaseSettingPlugin';
+import { LexicalBaseSettingPlugin } from './LexicalContextSettingPlugin';
 
 
 
@@ -80,8 +78,7 @@ export const SectionEditor = ({
           />
         </Box>
         <FloatingToolbar sectionId={sectionId} />
-        <LexicalBaseSettingPlugin />
-        <EditorStateSyncPlugin htmlSerializedState={htmlContent} />
+        <LexicalBaseSettingPlugin sectionId={sectionId} serializedHtml={htmlContent ?? null} />
         <HistoryPlugin />
         <ListPlugin />
         <ImagesPlugin />
@@ -89,7 +86,6 @@ export const SectionEditor = ({
         {/* <AutoFocusPlugin /> */}
         {/* <TreeViewPlugin /> */}
       </Container>
-      <EditorDial sectionId={sectionId} />
     </LexicalComposer>
   )
 }

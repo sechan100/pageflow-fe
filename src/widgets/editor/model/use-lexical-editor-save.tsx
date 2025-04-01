@@ -1,37 +1,26 @@
-'use client'
+import { useWritePageDialMenuStore } from '@/features/book';
 import { useNotification } from "@/shared/notification";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { FileCopy } from "@mui/icons-material";
-import { SpeedDial, SpeedDialAction, SpeedDialIcon, SxProps } from "@mui/material";
+import { SpeedDialIcon } from '@mui/material';
 import { debounce } from "lodash";
-import { PrinterIcon, SaveIcon, ShareIcon } from "lucide-react";
+import { SaveIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from "react";
-import { $getHtmlSerializedEditorState } from "../model/$getHtmlSerializedEditorState";
-import { useSectionContent } from "../model/use-section-content";
-import { editorStateSyncUpdateTag } from "./EditorStateSyncPlugin";
-
+import { $getHtmlSerializedEditorState } from "./$getHtmlSerializedEditorState";
+import { editorStateSyncUpdateTag } from './use-lexical-editor-serialized-html-sync';
+import { useSectionContent } from "./use-section-content";
 
 
 const AUTO_SAVE_INTERVAL = 4000;
 
-
-type Props = {
-  sectionId: string,
-  sx?: SxProps
-}
-export const EditorDial = ({
-  sectionId,
-  sx
-}: Props) => {
+/**
+ * lexical context 안에서 section 내용을 저장하는 기능을 추가한다.
+ * WritePageDial과 단축키, 그리고 자동 저장 기능등
+ */
+export const useLexicalEditorSave = (sectionId: string) => {
   const [editor] = useLexicalComposerContext();
+  const setMainDial = useWritePageDialMenuStore(s => s.setMainDial);
   const { save, sync } = useSectionContent(sectionId);
   const notification = useNotification();
-  const actions = useMemo(() => [
-    { icon: <FileCopy />, name: 'Copy' },
-    { icon: <SaveIcon />, name: 'Save' },
-    { icon: <PrinterIcon />, name: 'Print' },
-    { icon: <ShareIcon />, name: 'Share' },
-  ], []);
 
   const saveToServer = useCallback(async () => {
     // editor의 내용을 서버와 동기화
@@ -91,27 +80,14 @@ export const EditorDial = ({
     })
   }, [editor, saveEditorState]);
 
-  return (
-    <>
-      <SpeedDial
-        ariaLabel="editor dial"
-        sx={{ position: 'fixed', bottom: 50, right: 50 }}
-        icon={<SpeedDialIcon openIcon={<SaveIcon />} />}
-        onClick={manualSave}
-        direction="up"
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            slotProps={{
-              tooltip: {
-                title: action.name
-              }
-            }}
-          />
-        ))}
-      </SpeedDial>
-    </>
-  )
+  // Main Dial에 저장 버튼 등록
+  useEffect(() => {
+    const cleanup = setMainDial({
+      name: '저장',
+      icon: <SpeedDialIcon openIcon={<SaveIcon />} />,
+      cb: manualSave,
+    });
+
+    return cleanup;
+  }, [setMainDial, manualSave]);
 }
