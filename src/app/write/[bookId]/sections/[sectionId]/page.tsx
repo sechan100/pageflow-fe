@@ -1,7 +1,7 @@
 'use client';
 
+import { useCurrentNode } from '@/entities/book';
 import { SectionEditer } from '@/pages/write';
-import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 
 
@@ -10,15 +10,15 @@ import { useNextRouter } from "@/shared/hooks/useNextRouter";
 
 
 export default function Page() {
-  const { params } = useNextRouter();
+  const { nodeType, nodeId } = useCurrentNode();
 
-  if (!params.sectionId || typeof params.sectionId !== 'string') {
-    throw new Error('sectionId가 없습니다.');
+  if (nodeId === null || nodeType !== 'section') {
+    throw new Error('현재 노드가 section이 아닙니다.');
   }
-  const sectionId = params.sectionId;
+
   return (
     <>
-      <SectionEditer sectionId={sectionId} />
+      <SectionEditer sectionId={nodeId} />
     </>
   )
 }

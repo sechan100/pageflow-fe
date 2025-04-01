@@ -4,18 +4,12 @@ import { defaultFolderOpen } from '../config/default-folder-open';
 import { mergeServerToc } from "./merge-toc";
 import { SvToc } from "./sv-toc.type";
 import { TocOperations } from "./toc-operations";
-import { Toc, TocFolder, TocNode, TocSection } from "./toc.type";
+import { Toc } from "./toc.type";
 
 
 type TocStore = {
   toc: Toc;
   setToc: (toc: Toc) => void;
-
-  // find nodes ====================
-  findNode: (nodeId: string) => TocNode;
-  findFolder: (folderId: string) => TocFolder;
-  findSection: (sectionId: string) => TocSection;
-
   /**
    * 전역적으로 folder들의 open 상태를 관리한다. map 객체 자체를 변경하는 동작은 expendAllFolders, collapseAllFolders이다.
    * 기본적으로 folder들 개별로 open 상태를 관리하며, setFolderOpen을 통해 공용 상태에 업데이트하여 전역적으로 저장한다.
@@ -30,12 +24,6 @@ const [Provider, useStore] = createStoreContext<Toc, TocStore>((initialToc, set,
   toc: initialToc,
 
   setToc: (toc) => set({ toc }),
-
-  findNode: (nodeId) => TocOperations.findNode(get().toc, nodeId),
-
-  findFolder: (folderId) => TocOperations.findFolder(get().toc, folderId),
-
-  findSection: (sectionId) => TocOperations.findSection(get().toc, sectionId),
 
   folderOpenRegistry: TocOperations.toMapWith(initialToc, (node) => node.type === "folder", () => defaultFolderOpen),
 

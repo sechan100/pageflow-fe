@@ -1,12 +1,8 @@
 import { BookTitleField } from '@/features/book';
+import { SingleTextFieldModal } from '@/shared/components/SingleTextFieldModal';
 import { Field } from '@/shared/field';
 import {
-  Box,
-  Button,
-  Modal,
-  Stack,
-  SxProps,
-  Typography
+  Button, SxProps
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { createBookApi } from '../api/create-book';
@@ -19,17 +15,13 @@ const getDefaultBookName = () => {
   return `내 책(${yy}.${mm}.${dd})`;
 };
 
-
-type CreateBookModalProps = {
-  sx?: SxProps;
-  open: boolean;
-  onClose: () => void;
+type Props = {
+  sx?: SxProps
 }
-const CreateBookModal = ({
-  sx,
-  open,
-  onClose
-}: CreateBookModalProps) => {
+export const CreateBookButton = ({
+  sx
+}: Props) => {
+  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState<Field>({ value: '', error: null });
 
   // 모달이 열릴 때마다 title 초기화
@@ -48,71 +40,7 @@ const CreateBookModal = ({
 
     const book = await createBookApi({ title: title.value });
     // TODO: 이 책을 가지고 바로 write 페이지로 이동
-    onClose();
-  }, [onClose, title.error, title.value]);
-
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="create-book-modal-title"
-    >
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        borderRadius: 1,
-        boxShadow: 24,
-        p: 4,
-        ...sx
-      }}>
-        <Typography
-          id="create-book-modal-title"
-          variant="h6"
-          component="h2"
-          sx={{ mb: 2 }}
-        >
-          새 책 만들기
-        </Typography>
-
-        <BookTitleField
-          title={title}
-          onChange={setTitle}
-          sx={{ mb: 2 }}
-        />
-
-        <Stack direction="row" spacing={2} justifyContent="flex-end">
-          <Button
-            variant="outlined"
-            onClick={() => onClose()}
-          >
-            취소
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={!!title.error}
-          >
-            생성
-          </Button>
-        </Stack>
-      </Box>
-    </Modal>
-  );
-};
-
-
-type Props = {
-  sx?: SxProps
-}
-export const CreateBookButton = ({
-  sx
-}: Props) => {
-  const [open, setOpen] = useState(false);
+  }, [title.error, title.value]);
 
   return (
     <>
@@ -122,9 +50,20 @@ export const CreateBookButton = ({
       >
         + 새로운 책 집필하기
       </Button>
-      <CreateBookModal
+      <SingleTextFieldModal
         open={open}
         onClose={() => setOpen(false)}
+        fieldComponent={
+          <BookTitleField
+            title={title}
+            onChange={setTitle}
+            sx={{ mb: 2 }}
+          />
+        }
+        onSubmit={handleSubmit}
+        modalTitle='새 책 만들기'
+        submitText='생성'
+        submitDisabled={!!title.error}
       />
     </>
   )

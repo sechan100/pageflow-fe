@@ -4,6 +4,7 @@ import { Field } from "@/shared/field";
 import { InputAdornment, SxProps, TextField } from "@mui/material";
 import { useCallback } from "react";
 // import { useApplicationProperties } from "@/global/properties";
+import { validateNodeTitle } from '@/features/book';
 import { fieldMarginY } from "@/shared/components/field-margin-y";
 import { PencilLine } from "lucide-react";
 
@@ -15,24 +16,17 @@ type Props = {
   fieldName?: string;
   sx?: SxProps;
 }
-export const BookTitleField = ({
+export const CreateNodeTitleField = ({
   title,
   onChange,
   lable = '제목',
   fieldName = 'title',
   sx
 }: Props) => {
-  // const {} = useApplicationProperties();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-
-    let newError: string | null = null;
-    if (newTitle.length < 1) {
-      newError = '제목을 입력해주세요.';
-    } else {
-      newError = null;
-    }
+    const newError = validateNodeTitle(newTitle);
     onChange({ value: newTitle, error: newError });
   }, [onChange]);
 

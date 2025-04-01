@@ -52,6 +52,9 @@ const findParent = (parent: TocFolder, nodeId: string): TocFolder | null => {
 export const TocOperations = {
 
   findNode: (toc: Toc, nodeId: string): TocNode => {
+    if(nodeId === toc.root.id) {
+      return toc.root;
+    }
     const found = findNode(toc.root.children, nodeId);
     if(found) {
       return found;
@@ -61,6 +64,9 @@ export const TocOperations = {
   },
 
   findFolder: (toc: Toc, folderId: string): TocFolder => {
+    if(folderId === toc.root.id) {
+      return toc.root;
+    }
     const found = findNode(toc.root.children, folderId);
     if(NodeTypeGuard.isFolder(found)) {
       return found;

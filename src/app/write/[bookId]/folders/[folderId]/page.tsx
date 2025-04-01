@@ -1,23 +1,20 @@
 'use client';
+import { useCurrentNode } from '@/entities/book';
 import { FolderEditer } from '@/pages/write';
-import { useNextRouter } from "@/shared/hooks/useNextRouter";
-
-
 
 
 
 
 
 export default function Page() {
-  const { params } = useNextRouter();
+  const { nodeType, nodeId } = useCurrentNode();
 
-  if (!params.folderId || typeof params.folderId !== 'string') {
-    throw new Error('folderId가 없습니다.');
+  if (nodeId === null || nodeType !== 'folder') {
+    throw new Error('현재 노드가 folder이 아닙니다.');
   }
-  const folderId = params.folderId;
   return (
     <>
-      <FolderEditer folderId={folderId} />
+      <FolderEditer folderId={nodeId} />
     </>
   )
 }

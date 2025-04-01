@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // import { useApplicationProperties } from "@/global/properties";
 import { fieldMarginY } from "@/shared/components/field-margin-y";
 import { Field } from "@/shared/field";
+import { validateNodeTitle } from "../model/validate-node-title";
 
 
 type Props = {
@@ -52,13 +53,7 @@ export const NodeTitleField = ({
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-
-    let newError: string | null = null;
-    if (newTitle.length < 1) {
-      newError = '제목을 입력해주세요.';
-    } else {
-      newError = null;
-    }
+    const newError = validateNodeTitle(newTitle);
     setTitleState({ value: newTitle, error: newError });
   }, []);
 

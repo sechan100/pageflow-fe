@@ -1,8 +1,14 @@
 'use client'
 import { useTocStore } from '@/entities/book'
+import { SingleTextFieldModal } from '@/shared/components/SingleTextFieldModal'
+import { Field } from '@/shared/field'
+import { useNotification } from '@/shared/notification'
 import { Box, Button, Divider, SxProps } from "@mui/material"
-import { Maximize2, Minimize2 } from "lucide-react"
-import React from "react"
+import { FilePen, FolderPen, Maximize2, Minimize2 } from "lucide-react"
+import React, { useCallback, useEffect, useState } from "react"
+import { useCreateTocNodeMutation } from '../api/create-new-node'
+import { useCreateNodeParentResolve } from '../model/use-create-node-parent-resolve'
+import { CreateNodeTitleField } from './CreateNodeTitleField'
 
 
 
@@ -41,6 +47,36 @@ export const TocToolBar = ({
 }: Props) => {
   const expendAll = useTocStore(s => s.expendAllFolders);
   const collapseAll = useTocStore(s => s.collapseAllFolders);
+  const notification = useNotification();
+
+  const { mutateAsync: createTocNode } = useCreateTocNodeMutation();
+  const { resolveCreateNodeParentNode } = useCreateNodeParentResolve();
+  const [createNodeModalOpen, setCreateNodeModalOpen] = useState(false);
+  const [createNodeType, setCreateNodeType] = useState<'section' | 'folder'>('section');
+  const [title, setTitle] = useState<Field>({ value: '', error: null });
+
+  // create node modal이 열리면 title 필드를 초기화
+  useEffect(() => {
+    if (createNodeModalOpen) {
+      setTitle({ value: '', error: null });
+    }
+  }, [createNodeModalOpen]);
+
+  // createNodeType과 title이 완성되면 서버에 요청
+  const createNewNode = useCallback(async (title: string) => {
+    const parentNode = resolveCreateNodeParentNode(createNodeType);
+    const res = await createTocNode({
+      type: createNodeType,
+      title,
+      parentNodeId: parentNode.id
+    });
+
+    if (!res.success) {
+      notification.error(res.message);
+      return;
+    }
+  }, [createNodeType, createTocNode, notification, resolveCreateNodeParentNode]);
+
 
   return (
     <>
@@ -60,7 +96,34 @@ export const TocToolBar = ({
           icon={<Minimize2 />}
           onClick={collapseAll}
         />
+        <ToolIcon
+          icon={<FolderPen />}
+          onClick={() => {
+            setCreateNodeType('folder');
+            setCreateNodeModalOpen(true);
+          }}
+        />
+        <ToolIcon
+          icon={<FilePen />}
+          onClick={() => {
+            setCreateNodeType('section');
+            setCreateNodeModalOpen(true);
+          }}
+        />
       </Box>
+      <SingleTextFieldModal
+        open={createNodeModalOpen}
+        onClose={() => setCreateNodeModalOpen(false)}
+        fieldComponent={
+          <CreateNodeTitleField
+            title={title}
+            onChange={setTitle}
+          />
+        }
+        modalTitle={`새로운 ${createNodeType === 'folder' ? '폴더' : '섹션'} 추가`}
+        submitDisabled={!!title.error}
+        onSubmit={() => createNewNode(title.value)}
+      />
       <Divider />
     </>
   )
