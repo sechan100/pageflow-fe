@@ -1,4 +1,4 @@
-import { ShowNotificationOptions } from "@/shared/notification";
+import { ShowNotificationOptions } from "@/shared/ui/notification";
 
 
 

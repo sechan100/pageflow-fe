@@ -1,5 +1,5 @@
 'use client'
-import { LexicalPlaceholder } from '@/shared/components/LexicalPlaceholder';
+import { LexicalPlaceholder } from '@/shared/ui/LexicalPlaceholder';
 import { CodeNode } from '@lexical/code';
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';

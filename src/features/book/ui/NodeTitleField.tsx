@@ -3,8 +3,8 @@
 import { Box, Button, SxProps, TextField } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 // import { useApplicationProperties } from "@/global/properties";
-import { fieldMarginY } from "@/shared/components/field-margin-y";
 import { Field } from "@/shared/field";
+import { fieldMarginY } from "@/shared/ui/field-margin-y";
 import { validateNodeTitle } from "../model/validate-node-title";
 
 

@@ -1,5 +1,5 @@
 import { useWritePageDialMenuStore } from '@/features/book';
-import { useNotification } from "@/shared/notification";
+import { useNotification } from "@/shared/ui/notification";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { SpeedDialIcon } from '@mui/material';
 import { debounce } from "lodash";

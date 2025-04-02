@@ -27,9 +27,9 @@ export const useSectionContent = (sectionId: string) => {
     },
     sync: async (): Promise<FlushResult> => {
       const html = localStorage.getItem(sectionLocalStorageKey);
-      if(!html) return { result: "lastest" };
+      if (!html) return { result: "lastest" };
       const res = await mutateAsync({ html });
-      if(res.success){
+      if (res.success) {
         localStorage.removeItem(sectionLocalStorageKey);
         return { result: "success" };
       } else {
@@ -40,7 +40,7 @@ export const useSectionContent = (sectionId: string) => {
       let content: string | null = null;
 
       const html = localStorage.getItem(sectionLocalStorageKey);
-      if(html !== null){
+      if (html !== null) {
         content = html;
       } else {
         content = contentQuery.data?.content || "";

@@ -1,6 +1,6 @@
 import { BookTitleField } from '@/features/book';
-import { SingleTextFieldModal } from '@/shared/components/SingleTextFieldModal';
 import { Field } from '@/shared/field';
+import { SingleTextFieldModal } from '@/shared/ui/SingleTextFieldModal';
 import {
   Button, SxProps
 } from '@mui/material';

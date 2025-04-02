@@ -1,8 +1,8 @@
 'use client'
 import { useTocStore } from '@/entities/book'
-import { SingleTextFieldModal } from '@/shared/components/SingleTextFieldModal'
 import { Field } from '@/shared/field'
-import { useNotification } from '@/shared/notification'
+import { useNotification } from '@/shared/ui/notification'
+import { SingleTextFieldModal } from '@/shared/ui/SingleTextFieldModal'
 import { Box, Button, Divider, SxProps } from "@mui/material"
 import { FilePen, FolderPen, Maximize2, Minimize2 } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"

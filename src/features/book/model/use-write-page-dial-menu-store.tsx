@@ -1,5 +1,3 @@
-import { FileCopy } from "@mui/icons-material";
-import { PrinterIcon, SaveIcon, ShareIcon } from "lucide-react";
 import React from "react";
 import { create } from "zustand";
 
@@ -28,12 +26,7 @@ type WritePageDialMenuStore = {
 export const useWritePageDialMenuStore = create<WritePageDialMenuStore>((set) => ({
   mainDial: fallbackDial,
 
-  dialActions: [
-    { icon: <FileCopy />, name: 'Copy', cb: () => { } },
-    { icon: <SaveIcon />, name: 'Save', cb: () => { } },
-    { icon: <PrinterIcon />, name: 'Print', cb: () => { } },
-    { icon: <ShareIcon />, name: 'Share', cb: () => { } },
-  ],
+  dialActions: [],
 
   setMainDial: (mainDial) => {
     set({ mainDial });

@@ -1,10 +1,11 @@
 'use client'
-import { Folder, useFolderQuery } from '@/entities/book'
+import { useFolderQuery } from '@/entities/book'
 import { NodeTitleField } from '@/features/book'
-import { useNotification } from '@/shared/notification'
+import { useNotification } from '@/shared/ui/notification'
 import { Box, SxProps } from "@mui/material"
 import { useCallback } from 'react'
 import { useFolderTitleMutation } from '../api/change-folder-title'
+import { useFolderDeletion } from '../model/use-folder-deletion'
 
 
 
@@ -16,26 +17,30 @@ export const FolderEditer = ({
   folderId,
   sx
 }: Props) => {
-  const { data, isLoading } = useFolderQuery(folderId);
-  const { mutateAsync } = useFolderTitleMutation(folderId);
+  console.log("FolderEditer", folderId)
+  const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(folderId);
+  const isFolderLoading = folder === undefined || _isFolderLoading
+
+  const { mutateAsync: changeFolderTitleAsync } = useFolderTitleMutation(folderId);
   const notification = useNotification();
+  useFolderDeletion(folderId);
+
 
   const saveTitle = useCallback(async (title: string) => {
-    const res = await mutateAsync(title);
+    const res = await changeFolderTitleAsync(title);
     if (res.success) {
       notification.success("제목을 변경했습니다.");
     } else {
       notification.error("제목 변경에 실패했습니다.");
     }
-  }, [mutateAsync, notification]);
+  }, [changeFolderTitleAsync, notification]);
 
 
-  if (data === undefined || isLoading) {
+
+  if (isFolderLoading) {
     return <div>loading...</div>
   }
 
-
-  const folder = data as Folder;
   return (
     <Box sx={{
       px: 3,

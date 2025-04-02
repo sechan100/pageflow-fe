@@ -2,7 +2,7 @@
 
 import { PasswordField } from "@/features/user"
 import { Field, FieldErrorDispatcher } from "@/shared/field"
-import { useNotification } from "@/shared/notification"
+import { useNotification } from "@/shared/ui/notification"
 import { Box, Button, Stack } from "@mui/material"
 import { useCallback, useMemo, useState } from "react"
 import { changePasswordApi } from "../api/change-password"

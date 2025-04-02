@@ -1,7 +1,7 @@
 'use client'
 
-import { fieldMarginY } from "@/shared/components/field-margin-y"
 import { Field } from "@/shared/field"
+import { fieldMarginY } from "@/shared/ui/field-margin-y"
 import { InputAdornment, SxProps, TextField, Theme } from "@mui/material"
 import { Mail } from "lucide-react"
 import { useCallback } from "react"

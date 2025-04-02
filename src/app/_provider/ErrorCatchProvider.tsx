@@ -1,9 +1,9 @@
 'use client'
 
-import { useNotification } from "@/shared/notification"
 import { ProcessResultError } from "@/global/ProcessResultError"
+import { useNotification } from "@/shared/ui/notification"
+import { AUTO_HIDE_DURATION } from "@/shared/ui/notification/use-notification"
 import { useEffect } from "react"
-import { AUTO_HIDE_DURATION } from "@/shared/notification/use-notification"
 
 
 

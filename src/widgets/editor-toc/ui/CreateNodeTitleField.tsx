@@ -5,7 +5,7 @@ import { InputAdornment, SxProps, TextField } from "@mui/material";
 import { useCallback } from "react";
 // import { useApplicationProperties } from "@/global/properties";
 import { validateNodeTitle } from '@/features/book';
-import { fieldMarginY } from "@/shared/components/field-margin-y";
+import { fieldMarginY } from "@/shared/ui/field-margin-y";
 import { PencilLine } from "lucide-react";
 
 

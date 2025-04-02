@@ -1,11 +1,11 @@
 "use client";
 
 import { EmailField, PasswordField, PennameField, UsernameField } from '@/features/user';
-import { Description } from '@/shared/components/Description';
-import { PageflowLogo } from '@/shared/components/Logo';
 import { Field, FieldErrorDispatcher } from '@/shared/field';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
-import { useNotification } from '@/shared/notification';
+import { Description } from '@/shared/ui/Description';
+import { PageflowLogo } from '@/shared/ui/Logo';
+import { useNotification } from '@/shared/ui/notification';
 import {
   Box,
   Button,

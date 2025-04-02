@@ -2,6 +2,7 @@
 
 import { EmailField } from '@/features/user';
 import { Field } from '@/shared/field';
+import { Description } from '@/shared/ui/Description';
 import {
   Box,
   Button,
@@ -15,9 +16,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
-import { SettingTitle } from './SettingTitle';
-import { Description } from '@/shared/components/Description';
 import { emailVerificationApi } from '../api/email-verification-reques';
+import { SettingTitle } from './SettingTitle';
 
 
 type EmailVerifiedState = "unverified" | "verification-email-sended" | "verified"

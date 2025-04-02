@@ -1,6 +1,7 @@
 "use client";
 import { Session, SESSION_QUERY_KEY } from "@/entities/user";
-import { useNotification } from "@/shared/notification";
+import { Field } from "@/shared/field";
+import { useNotification } from "@/shared/ui/notification";
 import {
   CloudUpload as CloudUploadIcon,
   Save as SaveIcon
@@ -17,10 +18,9 @@ import {
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { PennameSetting } from "./PennameSetting";
-import { Field } from "@/shared/field";
-import { SettingPageTitle } from "./SettingPageTitle";
 import { updateProfileApi } from "../api/update-profile";
+import { PennameSetting } from "./PennameSetting";
+import { SettingPageTitle } from "./SettingPageTitle";
 
 
 type Props = {

@@ -1,11 +1,10 @@
+import { PlainApiResponse } from "@/shared/res/api-response";
 import axios from "axios";
+import { getProxyBaseUrl } from "../proxy";
+import { AccessToken } from "./AccessToken";
 import { AccessTokenStorage, PrivatePropertyAccessTokenStorage } from "./AccessTokenStorage";
 import { useAuthentication } from "./authentication";
-import { PlainApiResponse } from "@/shared/res/api-response";
-import { AccessToken } from "./AccessToken";
 import { SessionExpiredError } from "./SessionExpiredError";
-import { getProxyBaseUrl } from "../proxy";
-import { useNotification } from "@/shared/notification";
 
 
 // AccessToken 저장소 인스턴스를 생성
@@ -17,16 +16,16 @@ const storage: AccessTokenStorage = new PrivatePropertyAccessTokenStorage();
  */
 const ensureAccessToken: () => Promise<string> = async () => {
   const isAuthenticated = useAuthentication.getState().isAuthenticated;
-  if(!isAuthenticated){
+  if (!isAuthenticated) {
     throw new Error("인증되지 않은 사용자입니다. accessToken을 가져올 수 없습니다.");
   }
 
   const isTokenExist: boolean = storage.isTokenExist();
   let isRefreshRequired: boolean = false;
 
-  if(isTokenExist){
+  if (isTokenExist) {
     // 토큰 있음 => 만료여부 확인 후 refresh 요청을 보낼지 결정
-    if(storage.isTokenExpired()){
+    if (storage.isTokenExpired()) {
       isRefreshRequired = true;
     }
   } else {
@@ -34,14 +33,14 @@ const ensureAccessToken: () => Promise<string> = async () => {
     isRefreshRequired = true;
   }
 
-  if(!isRefreshRequired){
+  if (!isRefreshRequired) {
     // refresh 요청이 필요없는 경우, 저장된 토큰을 반환
     return storage.getToken();
   }
   // refresh 요청 전송
   const res = await axios.post<PlainApiResponse<AccessToken>>(getProxyBaseUrl() + `/auth/refresh`);
   const code = res.data.code;
-  switch(code){
+  switch (code) {
     case "SUCCESS":
       // 받아온 토큰 저장 후 반환.
       const token = res.data.data;

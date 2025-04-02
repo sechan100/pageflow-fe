@@ -1,8 +1,8 @@
 'use client'
 
 import { useApplicationProperties } from "@/global/properties"
-import { fieldMarginY } from "@/shared/components/field-margin-y"
 import { Field } from "@/shared/field"
+import { fieldMarginY } from "@/shared/ui/field-margin-y"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { IconButton, InputAdornment, SxProps, TextField } from "@mui/material"
 import { LockIcon } from "lucide-react"

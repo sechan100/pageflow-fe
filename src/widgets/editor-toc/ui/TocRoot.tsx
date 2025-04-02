@@ -1,6 +1,6 @@
 'use client'
 import { useTocStore } from '@/entities/book'
-import { useNotification } from "@/shared/notification"
+import { useNotification } from "@/shared/ui/notification"
 import { closestCenter, DndContext, DragEndEvent, DragMoveEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { List, SxProps } from "@mui/material"
 import { useCallback } from "react"

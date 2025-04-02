@@ -1,5 +1,5 @@
 'use client'
-import { NotificationProvider as BaseNotificationProvider } from "@/shared/notification"
+import { NotificationProvider as BaseNotificationProvider } from "@/shared/ui/notification"
 
 
 

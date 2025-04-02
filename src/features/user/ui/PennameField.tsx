@@ -1,7 +1,7 @@
 'use client'
 import { useApplicationProperties } from "@/global/properties"
-import { fieldMarginY } from "@/shared/components/field-margin-y"
 import { Field } from "@/shared/field"
+import { fieldMarginY } from "@/shared/ui/field-margin-y"
 import { InputAdornment, SxProps, TextField } from "@mui/material"
 import { Pencil } from "lucide-react"
 import { useCallback } from "react"

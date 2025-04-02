@@ -1,6 +1,6 @@
 'use client';
 import { Session } from "@/entities/user";
-import { useNotification } from "@/shared/notification";
+import { useNotification } from "@/shared/ui/notification";
 import {
   Container,
   Divider,
