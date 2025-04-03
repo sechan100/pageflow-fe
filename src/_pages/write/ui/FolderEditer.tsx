@@ -17,7 +17,6 @@ export const FolderEditer = ({
   folderId,
   sx
 }: Props) => {
-  console.log("FolderEditer", folderId)
   const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(folderId);
   const isFolderLoading = folder === undefined || _isFolderLoading
 

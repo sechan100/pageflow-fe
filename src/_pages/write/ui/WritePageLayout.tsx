@@ -1,13 +1,14 @@
 'use client'
 import { EditorBookStoreProvider } from '@/entities/book'
+import { WritePageDialMenu } from '@/features/book'
 import { Box, Container, SxProps } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { getBookApi } from "../api/book"
 import { sideDrawerWidth } from "../config/side-drawer-width"
+import { useGoToUserBooksDial } from '../model/use-go-to-user-books-dial'
 import { SideDrawer } from "./SideDrawer"
 import { TocContextProvider } from './TocContextProvider'
-import { WritePageDialMenu } from './WritePageDialMenu'
 
 
 
@@ -21,6 +22,7 @@ export const WritePageLayout = ({
   children,
   sx
 }: Props) => {
+  useGoToUserBooksDial();
   const { data, isLoading } = useQuery({
     queryKey: ['book', bookId],
     queryFn: () => getBookApi(bookId)
