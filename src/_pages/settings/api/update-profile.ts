@@ -1,6 +1,6 @@
+import { User } from '@/entities/user';
 import { api } from "@/global/api";
 import { ApiResponse } from "@/shared/res/api-response";
-import { User } from '@/entities/user';
 
 
 
@@ -22,7 +22,6 @@ export const updateProfileApi = async (requestForm: RequestForm): Promise<ApiRes
 
   // profileImage
   if (requestForm.profileImage) {
-    console.log(requestForm.profileImage)
     formData.append('profileImage', requestForm.profileImage);
   }
 

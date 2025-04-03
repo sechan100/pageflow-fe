@@ -1,12 +1,12 @@
 'use client'
-import { useEditorBookStore } from "@/entities/book";
 import { TooltipIconButton } from "@/shared/ui/TootipIconButton";
 import { TocTree } from "@/widgets/editor-toc";
 import {
-  Box, Drawer, SxProps, Typography
+  Box, Drawer, SxProps
 } from "@mui/material";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { sideDrawerWidth } from "../config/side-drawer-width";
+import { SideDrawerBookTitle } from "./SideDrawerBookTitle";
 
 type Props = {
   open: boolean;
@@ -21,8 +21,6 @@ export const SideDrawer = ({
   onOpen,
   sx,
 }: Props) => {
-  const { book } = useEditorBookStore();
-
   const handleDrawerClose = () => {
     onClose();
   };
@@ -60,13 +58,10 @@ export const SideDrawer = ({
         <Box sx={{
           display: 'flex',
           alignItems: 'center',
-          padding: 2,
           justifyContent: 'space-between',
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
         }}>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {book.title}
-          </Typography>
+          <SideDrawerBookTitle />
           <TooltipIconButton
             icon={<ChevronLeftIcon />}
             tooltip="목차 닫기"

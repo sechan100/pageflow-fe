@@ -4,7 +4,8 @@ import { useSectionContentQuery } from "../api/section-content";
 
 
 
-type SectionContentQueryResult = SectionWithContent & {
+type SectionContentQueryResult = {
+  section: SectionWithContent | null;
   isLoading: boolean;
 }
 
@@ -37,20 +38,30 @@ export const useSectionContent = (sectionId: string) => {
       }
     },
     load: (): SectionContentQueryResult => {
+      const isLoading = sectionQuery.isLoading || contentQuery.isLoading;
       let content: string | null = null;
+      let title: string | null = null;
 
       const html = localStorage.getItem(sectionLocalStorageKey);
       if (html !== null) {
         content = html;
       } else {
-        content = contentQuery.data?.content || "";
+        if (!isLoading && contentQuery.data !== undefined) {
+          content = contentQuery.data.content;
+        }
+      }
+
+      if (!isLoading && sectionQuery.data !== undefined) {
+        title = sectionQuery.data.title;
       }
 
       return {
-        id: sectionId,
-        title: sectionQuery.data?.title || "",
-        content: content || "",
-        isLoading: sectionQuery.isLoading || contentQuery.isLoading,
+        isLoading,
+        section: (!isLoading && content !== null && title !== null) ? {
+          id: sectionId,
+          title: title,
+          content: content,
+        } : null
       }
     }
   }

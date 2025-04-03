@@ -1,12 +1,51 @@
 'use client'
+import { Section } from '@/entities/book'
 import { NodeTitleField } from '@/features/book'
+import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
 import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/editor'
 import { Box, SxProps } from "@mui/material"
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSectionTitleMutation } from '../api/change-section-title'
 import { useSectionDeletion } from '../model/use-section-deletion'
 
+
+type SectionTitleFieldProps = {
+  section: Section;
+  sx?: SxProps;
+}
+const SectionTitleField = ({
+  section,
+  sx
+}: SectionTitleFieldProps) => {
+  const { mutateAsync } = useSectionTitleMutation(section.id);
+  const notification = useNotification();
+  const [titleField, setTitleField] = useState<Field>({ value: section.title, error: null });
+  const saveDisabled = useMemo(() => titleField.error !== null || titleField.value === section.title, [titleField, section.title]);
+
+  const saveTitle = useCallback(async (title: string) => {
+    if (saveDisabled) {
+      return;
+    }
+    const res = await mutateAsync(title);
+    if (res.success) {
+      notification.success("제목을 변경했습니다.");
+    } else {
+      notification.error("제목 변경에 실패했습니다.");
+    }
+  }, [mutateAsync, notification, saveDisabled]);
+
+  return (
+    <>
+      <NodeTitleField
+        title={titleField}
+        onChange={setTitleField}
+        onSave={saveTitle}
+        saveDisabled={saveDisabled}
+      />
+    </>
+  )
+}
 
 type Props = {
   sectionId: string,
@@ -17,44 +56,28 @@ export const SectionEditer = ({
   sx
 }: Props) => {
   const { load } = useSectionContent(sectionId);
-  const { mutateAsync } = useSectionTitleMutation(sectionId);
-  const notification = useNotification();
+  const { section, isLoading } = load();
   useSectionDeletion(sectionId);
-  const { content, title, isLoading } = load();
 
-  const saveTitle = useCallback(async (title: string) => {
-    const res = await mutateAsync(title);
-    if (res.success) {
-      notification.success("제목을 변경했습니다.");
-    } else {
-      notification.error("제목 변경에 실패했습니다.");
-    }
-  }, [mutateAsync, notification]);
-
-  if (content === undefined || isLoading) {
+  if (section === null || isLoading) {
     return <div>loading...</div>
   }
   return (
-    <Box sx={{
-      px: 3,
-      height: '90vh',
-      overflowY: 'auto',
-    }}>
+    <>
       <Box
         sx={{
           mt: 5,
           mx: 8
         }}
       >
-        <NodeTitleField
-          title={title}
-          onSave={saveTitle}
+        <SectionTitleField
+          section={section}
         />
       </Box>
       <SectionEditorWidget
         sectionId={sectionId}
-        htmlContent={content}
+        htmlContent={section.content}
       />
-    </Box>
+    </>
   )
 }

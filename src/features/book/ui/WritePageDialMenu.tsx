@@ -1,6 +1,6 @@
 'use client'
-import { useWritePageDialMenuStore } from '@/features/book';
 import { SpeedDial, SpeedDialAction, SxProps } from "@mui/material";
+import { useWritePageDialMenuStore } from '../model/use-write-page-dial-menu-store';
 
 
 type Props = {

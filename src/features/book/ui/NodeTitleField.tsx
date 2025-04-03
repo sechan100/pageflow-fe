@@ -1,79 +1,71 @@
 'use client'
 
-import { Box, Button, SxProps, TextField } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { InputAdornment, SxProps, TextField } from "@mui/material";
+import { useCallback } from "react";
 // import { useApplicationProperties } from "@/global/properties";
 import { Field } from "@/shared/field";
 import { fieldMarginY } from "@/shared/ui/field-margin-y";
+import { useFieldOnSaveMode } from "@/shared/ui/use-field-on-save-mode";
+import { PencilLine } from "lucide-react";
 import { validateNodeTitle } from "../model/validate-node-title";
 
 
 type Props = {
-  title: string;
-  onSave: (title: string) => void;
+  title: Field;
+  onChange: (field: Field) => void;
+  /**
+   * 해당 property를 활성화하면, 저장 버튼과 enter 단축키가 활성화
+   */
+  onSave?: (title: string) => void;
+  saveDisabled?: boolean;
+  lable?: string;
+  fieldName?: string;
   sx?: SxProps;
 }
 export const NodeTitleField = ({
   title,
+  onChange,
   onSave,
+  saveDisabled,
+  lable = '제목',
+  fieldName = 'title',
   sx
 }: Props) => {
   // const {} = useApplicationProperties();
-  const fieldRef = useRef<HTMLInputElement>(null);
-  const [titleState, setTitleState] = useState<Field>({
-    value: title,
-    error: null
-  });
-
-  const save = useCallback(() => {
-    if (titleState.error) {
-      return;
-    }
-    onSave(titleState.value);
-  }, [onSave, titleState.error, titleState.value]);
-
-  // Enter Key Save 리스너
-  useEffect(() => {
-    const fieldEl = fieldRef.current;
-    if (fieldEl === null) return;
-
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        save();
-        fieldEl.blur();
-      }
-    }
-    fieldEl.addEventListener('keydown', handleEnter);
-
-    return () => {
-      fieldEl.removeEventListener('keydown', handleEnter);
-    }
-  }, [onSave, save, titleState.error, titleState.value]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     const newError = validateNodeTitle(newTitle);
-    setTitleState({ value: newTitle, error: newError });
-  }, []);
+    onChange({ value: newTitle, error: newError });
+  }, [onChange]);
+
+  const save = useCallback(() => {
+    if (onSave === undefined) {
+      return;
+    }
+    if (title.error) {
+      return;
+    }
+    onSave(title.value);
+  }, [onSave, title]);
+
+  const { inputSlotProps } = useFieldOnSaveMode({
+    onSave: save,
+    saveDisabled: saveDisabled !== undefined ? saveDisabled : false,
+  });
+
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 1,
-      ...sx
-    }}>
+    <>
       <TextField
-        // ref={fieldRef}
-        name={"title"}
+        name={fieldName}
+        label={lable}
         type="text"
-        variant="standard"
-        value={titleState.value}
+        variant={onSave !== undefined ? 'standard' : 'outlined'}
+        value={title.value}
         onChange={handleChange}
-        error={!!titleState.error}
-        helperText={titleState.error}
-        required
+        error={!!title.error}
+        helperText={title.error}
         sx={{
           my: fieldMarginY,
           ...sx
@@ -81,18 +73,16 @@ export const NodeTitleField = ({
         fullWidth
         slotProps={{
           input: {
-            inputRef: fieldRef,
-            endAdornment: (
-              <Button
-                variant="text"
-                onClick={save}
-              >
-                저장
-              </Button>
-            )
+            ...(onSave !== undefined ? inputSlotProps : {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PencilLine />
+                </InputAdornment>
+              )
+            })
           }
         }}
       />
-    </Box>
+    </>
   )
 }
