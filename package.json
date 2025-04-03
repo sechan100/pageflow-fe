@@ -30,6 +30,7 @@
     "re-resizable": "^6.11.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-easy-crop": "^5.4.1",
     "use-sync-external-store": "^1.4.0",
     "zustand": "^5.0.3"
   },

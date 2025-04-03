@@ -60,7 +60,7 @@ export const SingleTextFieldModal = ({
             variant="outlined"
             onClick={() => onClose()}
           >
-            취소
+            {cancelText}
           </Button>
           <Button
             variant="contained"

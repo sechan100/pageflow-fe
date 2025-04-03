@@ -3,10 +3,41 @@ import { useEditorBookStore } from '@/entities/book'
 import { BookTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
-import { Box, SxProps } from "@mui/material"
+import { Box, Paper, SxProps, Typography } from "@mui/material"
 import { useCallback, useState } from 'react'
 import { useChangeBookTitleMutation } from '../api/change-book-title'
+import { BookCoverImageEditor } from './BookCoverImageEditor'
 
+type BookSettingProps = {
+  text: string;
+  children: React.ReactNode;
+  sx?: SxProps;
+}
+const BookSetting = ({
+  text,
+  children,
+  sx
+}: BookSettingProps) => {
+
+  return (
+    <Paper
+      elevation={1}
+      sx={{
+        p: 3,
+        mb: 5,
+      }}
+    >
+      <Typography
+        variant="h6"
+        gutterBottom
+        sx={sx}
+      >
+        {text}
+      </Typography>
+      {children}
+    </Paper>
+  )
+}
 
 
 type Props = {
@@ -41,12 +72,17 @@ export const BookEditer = ({
         mx: 8
       }}
     >
-      <BookTitleField
-        title={title}
-        onChange={setTitle}
-        onSave={changeBookTitle}
-        saveDisabled={saveDisabled}
-      />
+      <BookSetting text="제목">
+        <BookTitleField
+          title={title}
+          onChange={setTitle}
+          onSave={changeBookTitle}
+          saveDisabled={saveDisabled}
+        />
+      </BookSetting>
+      <BookSetting text="표지 사진">
+        <BookCoverImageEditor />
+      </BookSetting>
     </Box>
   )
 }

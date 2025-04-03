@@ -41,7 +41,6 @@ export const CreateNodeTitleField = ({
         onChange={handleChange}
         error={!!title.error}
         helperText={title.error}
-        required
         sx={{
           my: fieldMarginY,
           ...sx
