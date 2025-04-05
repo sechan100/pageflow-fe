@@ -1,7 +1,8 @@
-import { SECTION_QUERY_KEY, Toc, TocOperations, useEditorBookStore, useTocStore } from "@/entities/book";
+import { SECTION_QUERY_KEY, Toc, TocOperations, useTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
+import { useBookContext } from "../model/book-context";
 
 
 
@@ -33,7 +34,7 @@ const changeSectionTitleApi = async ({ bookId, sectionId, title }: Form) => {
 }
 
 export const useSectionTitleMutation = (sectionId: string) => {
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const queryClient = useQueryClient();
   const toc = useTocStore(s => s.toc);
   const setToc = useTocStore(s => s.setToc);

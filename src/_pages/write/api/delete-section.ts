@@ -1,7 +1,8 @@
-import { SECTION_QUERY_KEY, TocOperations, useEditorBookStore, useSectionQuery, useTocStore } from "@/entities/book";
+import { SECTION_QUERY_KEY, TocOperations, useSectionQuery, useTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
+import { useBookContext } from "../model/book-context";
 
 
 type DeleteSectionForm = {
@@ -29,7 +30,7 @@ const deleteSectionApi = async ({ bookId, sectionId }: DeleteSectionForm) => {
 }
 
 export const useDeleteSectionMutation = (sectionId: string) => {
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const { setIsDeleted } = useSectionQuery(sectionId);
   const queryClient = useQueryClient();
   const toc = useTocStore(s => s.toc);

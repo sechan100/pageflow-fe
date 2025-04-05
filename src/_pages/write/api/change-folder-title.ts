@@ -1,7 +1,8 @@
-import { FOLDER_QUERY_KEY, Toc, TocOperations, useEditorBookStore, useTocStore } from "@/entities/book";
+import { FOLDER_QUERY_KEY, Toc, TocOperations, useTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
+import { useBookContext } from "../model/book-context";
 
 
 
@@ -17,23 +18,23 @@ type ChangeFolderTitleResult = {
   message: string;
 }
 
-const changeFolderTitleApi = async ({ bookId, folderId, title}: Form) => {
+const changeFolderTitleApi = async ({ bookId, folderId, title }: Form) => {
   const res = await api
-  .user()
-  .data({ title })
-  .post(`/user/books/${bookId}/toc/folders/${folderId}`);
+    .user()
+    .data({ title })
+    .post(`/user/books/${bookId}/toc/folders/${folderId}`);
 
 
   return res.resolver<ChangeFolderTitleResult>()
-  .SUCCESS((data) => ({
-    success: true,
-    message: res.description
-  }))
-  .resolve();
+    .SUCCESS((data) => ({
+      success: true,
+      message: res.description
+    }))
+    .resolve();
 }
 
 export const useFolderTitleMutation = (folderId: string) => {
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const queryClient = useQueryClient();
   const toc = useTocStore(s => s.toc);
   const setToc = useTocStore(s => s.setToc);
@@ -54,7 +55,7 @@ export const useFolderTitleMutation = (folderId: string) => {
       title
     }),
     onSuccess: (res, title) => {
-      if(res.success){
+      if (res.success) {
         queryClient.invalidateQueries({ queryKey: FOLDER_QUERY_KEY(folderId) });
         changeNodeTitle(folderId, title);
       }

@@ -1,4 +1,5 @@
 'use client'
+import { BookWithAuthor, SectionWithContent } from '@/entities/book';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
@@ -17,6 +18,7 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { sectionEditorStyle } from '../config/section-editor-style';
+import { BookContextProvider } from '../model/book-context';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { LexicalSettingPlugin } from './LexicalSettingPlugin';
 
@@ -34,13 +36,13 @@ const editorConfig = {
 const placeholder = "내용을 입력해주세요.";
 
 type Props = {
-  sectionId: string,
-  htmlContent?: string,
+  book: BookWithAuthor;
+  section: SectionWithContent;
   sx?: SxProps
 }
 export const SectionEditor = ({
-  sectionId,
-  htmlContent,
+  book,
+  section,
   sx
 }: Props) => {
   const setToolbarOpen = useToolbarStore(s => s.setOpen);
@@ -51,41 +53,43 @@ export const SectionEditor = ({
   }, [setToolbarOpen]);
 
   return (
-    <LexicalComposer initialConfig={editorConfig}>
-      <Container
-        maxWidth="md"
-        sx={{
-          mt: 10,
-          mb: 70,
-          position: 'relative',
-          ...sectionEditorStyle,
-        }}
-      >
-        <Box sx={{ position: 'relative' }}>
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable
-                onContextMenu={onContextMenu}
-                aria-placeholder={placeholder}
-                placeholder={
-                  <LexicalPlaceholder
-                    text={placeholder}
-                  />
-                }
-              />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-        </Box>
-        <FloatingToolbar sectionId={sectionId} />
-        <LexicalSettingPlugin sectionId={sectionId} serializedHtml={htmlContent ?? null} />
-        <HistoryPlugin />
-        <ListPlugin />
-        <ImagesPlugin />
-        <MarkdownPlugin />
-        {/* <AutoFocusPlugin /> */}
-        {/* <TreeViewPlugin /> */}
-      </Container>
-    </LexicalComposer>
+    <BookContextProvider value={book}>
+      <LexicalComposer initialConfig={editorConfig}>
+        <Container
+          maxWidth="md"
+          sx={{
+            mt: 10,
+            mb: 70,
+            position: 'relative',
+            ...sectionEditorStyle,
+          }}
+        >
+          <Box sx={{ position: 'relative' }}>
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable
+                  onContextMenu={onContextMenu}
+                  aria-placeholder={placeholder}
+                  placeholder={
+                    <LexicalPlaceholder
+                      text={placeholder}
+                    />
+                  }
+                />
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          </Box>
+          <FloatingToolbar sectionId={section.id} />
+          <LexicalSettingPlugin sectionId={section.id} serializedHtml={section.content ?? null} />
+          <HistoryPlugin />
+          <ListPlugin />
+          <ImagesPlugin />
+          <MarkdownPlugin />
+          {/* <AutoFocusPlugin /> */}
+          {/* <TreeViewPlugin /> */}
+        </Container>
+      </LexicalComposer>
+    </BookContextProvider>
   )
 }

@@ -5,6 +5,7 @@ import { mergeRegister } from '@lexical/utils';
 import { SxProps } from "@mui/material";
 import { FORMAT_ELEMENT_COMMAND } from "lexical";
 import { useEffect } from "react";
+import { useBookContext } from "../model/book-context";
 import { useSectionEditorSave } from "../model/use-section-editor-save";
 
 
@@ -23,7 +24,8 @@ export const LexicalSettingPlugin = ({
   sx
 }: Props) => {
   const [editor] = useLexicalComposerContext();
-  useSectionEditorSave(sectionId);
+  const book = useBookContext();
+  useSectionEditorSave(book.id, sectionId);
   useLexicalEditorSerializedHtmlSync(serializedHtml);
 
   // editor의 모든 노드를 출력

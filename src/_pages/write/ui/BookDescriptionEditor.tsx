@@ -1,5 +1,4 @@
 'use client'
-import { useEditorBookStore } from '@/entities/book';
 import { $getHtmlSerializedEditorState } from '@/shared/lexical/$getHtmlSerializedEditorState';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
@@ -26,6 +25,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { create } from 'zustand';
 import { useChangeBookDescriptionMutation } from '../api/change-book-description';
 import { bookDescriptionEditorStyle } from '../config/book-description-editor-style';
+import { useBookContext } from '../model/book-context';
 
 
 const editorConfig = {
@@ -54,7 +54,7 @@ const useDescriptionBufferStore = create<DescriptionBufferStore>((set, get) => (
 
 
 const useSaveDescription = () => {
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const notification = useNotification();
   const { description, clearDescription } = useDescriptionBufferStore();
   const { mutateAsync: saveDescriptionApi } = useChangeBookDescriptionMutation(bookId);

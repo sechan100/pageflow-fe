@@ -4,6 +4,7 @@ import { WritePageDialMenu } from '@/features/book'
 import { Box, Container, SxProps } from "@mui/material"
 import { useState } from "react"
 import { sideDrawerWidth } from "../config/side-drawer-width"
+import { BookContextProvider } from '../model/book-context'
 import { useGoToUserBooksDial } from '../model/use-go-to-user-books-dial'
 import { SideDrawer } from "./SideDrawer"
 import { TocContextProvider } from './TocContextProvider'
@@ -38,30 +39,32 @@ export const WritePageLayout = ({
       data={book}
       onDataChange={(s, book) => s.setState({ book })}
     >
-      <TocContextProvider>
-        <SideDrawer
-          open={open}
-          onClose={() => setOpen(false)}
-          onOpen={() => setOpen(true)}
-        />
-        <Box
-          sx={{
-            marginLeft: open ? `${sideDrawerWidth}px` : 0,
-            transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1)',
-          }}
-        >
-          <Container maxWidth="md" sx={{ position: 'relative' }}>
-            <Box sx={{
-              px: 3,
-              height: '90vh',
-              overflowY: 'auto',
-            }}>
-              {children}
-            </Box>
-            <WritePageDialMenu />
-          </Container>
-        </Box>
-      </TocContextProvider>
+      <BookContextProvider value={book}>
+        <TocContextProvider>
+          <SideDrawer
+            open={open}
+            onClose={() => setOpen(false)}
+            onOpen={() => setOpen(true)}
+          />
+          <Box
+            sx={{
+              marginLeft: open ? `${sideDrawerWidth}px` : 0,
+              transition: 'margin-left 225ms cubic-bezier(0.4, 0, 0.6, 1)',
+            }}
+          >
+            <Container maxWidth="md" sx={{ position: 'relative' }}>
+              <Box sx={{
+                px: 3,
+                height: '90vh',
+                overflowY: 'auto',
+              }}>
+                {children}
+              </Box>
+              <WritePageDialMenu />
+            </Container>
+          </Box>
+        </TocContextProvider>
+      </BookContextProvider>
     </EditorBookStoreProvider>
   )
 }

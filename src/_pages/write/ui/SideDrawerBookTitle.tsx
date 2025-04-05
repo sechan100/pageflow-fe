@@ -1,8 +1,8 @@
 'use client'
-import { useEditorBookStore } from "@/entities/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Button, SxProps, Typography } from "@mui/material";
 import { useCallback } from "react";
+import { useBookContext } from "../model/book-context";
 
 
 
@@ -12,7 +12,7 @@ type Props = {
 export const SideDrawerBookTitle = ({
   sx
 }: Props) => {
-  const book = useEditorBookStore(s => s.book);
+  const book = useBookContext();
   const { router } = useNextRouter();
 
   const goToBookEditPage = useCallback(() => {

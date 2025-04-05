@@ -13,10 +13,10 @@ type FlushResult = {
   result: "success" | "error" | "lastest";
 }
 
-export const useSectionContent = (sectionId: string) => {
+export const useSectionContent = (bookId: string, sectionId: string) => {
   const sectionQuery = useSectionQuery(sectionId);
-  const contentQuery = useSectionContentQuery(sectionId);
-  const { mutateAsync } = useSaveContentMutation(sectionId);
+  const contentQuery = useSectionContentQuery(bookId, sectionId);
+  const { mutateAsync } = useSaveContentMutation(bookId, sectionId);
   const sectionLocalStorageKey = `section-${sectionId}`;
 
   return {

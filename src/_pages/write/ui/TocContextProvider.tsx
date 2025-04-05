@@ -1,7 +1,8 @@
 'use client'
-import { getTocApi, SvToc, TocStoreProvider, useEditorBookStore } from "@/entities/book";
+import { getTocApi, SvToc, TocStoreProvider } from "@/entities/book";
 import { SxProps } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
+import { useBookContext } from "../model/book-context";
 
 
 
@@ -13,7 +14,7 @@ export const TocContextProvider = ({
   children,
   sx
 }: Props) => {
-  const { book } = useEditorBookStore();
+  const book = useBookContext();
   const [svToc, setSvToc] = useState<SvToc | null>(null);
 
   const refreshToc = useCallback(async () => {

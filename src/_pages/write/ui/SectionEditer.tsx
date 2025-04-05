@@ -7,6 +7,7 @@ import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widge
 import { Box, SxProps } from "@mui/material"
 import { useCallback, useMemo, useState } from 'react'
 import { useSectionTitleMutation } from '../api/change-section-title'
+import { useBookContext } from '../model/book-context'
 import { useSectionDeletion } from '../model/use-section-deletion'
 
 
@@ -55,7 +56,8 @@ export const SectionEditer = ({
   sectionId,
   sx
 }: Props) => {
-  const { load } = useSectionContent(sectionId);
+  const book = useBookContext();
+  const { load } = useSectionContent(book.id, sectionId);
   const { section, isLoading } = load();
   useSectionDeletion(sectionId);
 
@@ -75,8 +77,8 @@ export const SectionEditer = ({
         />
       </Box>
       <SectionEditorWidget
-        sectionId={sectionId}
-        htmlContent={section.content}
+        book={book}
+        section={section}
       />
     </>
   )

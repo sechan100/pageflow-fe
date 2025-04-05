@@ -1,5 +1,4 @@
 'use client'
-import { useEditorBookStore } from "@/entities/book";
 import { useNotification } from "@/shared/ui/notification";
 import { Box, Button, Grid2, SxProps } from "@mui/material";
 import { CloudUploadIcon } from "lucide-react";
@@ -8,6 +7,7 @@ import { useCallback, useRef, useState } from "react";
 import Cropper, { Area } from 'react-easy-crop';
 import { create } from "zustand";
 import { useChangeBookCoverImageMutation } from "../api/change-book-cover-image";
+import { useBookContext } from "../model/book-context";
 import { createCroppedImageFile } from "../model/crop-image";
 
 const bookCoverImageHeight = 350;
@@ -71,7 +71,7 @@ const GridTemplate = ({
 
 const CropMode = () => {
   const notification = useNotification();
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const { mutateAsync: changeBookCoverImageAsync } = useChangeBookCoverImageMutation(bookId);
   const { coverImageFile, coverImageSrc, setCropMode, clearCoverImage } = useCoverImageStore();
 
@@ -145,7 +145,7 @@ type Props = {
 export const BookCoverImageEditor = ({
   sx
 }: Props) => {
-  const book = useEditorBookStore(s => s.book);
+  const book = useBookContext();
   const { setCoverImage, cropMode, setCropMode } = useCoverImageStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

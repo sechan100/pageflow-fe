@@ -1,4 +1,3 @@
-import { useEditorBookStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { LexicalHtmlSerializedState } from "@/shared/lexical/$getHtmlSerializedEditorState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,14 +28,13 @@ const sectionContentSaveApi = async ({ bookId, sectionId, html }: Form): Promise
     .resolve();
 }
 
-export const useSaveContentMutation = (sectionId: string) => {
-  const book = useEditorBookStore(s => s.book);
+export const useSaveContentMutation = (bookId: string, sectionId: string) => {
   const sectionContentQueryKey = SECTION_CONTENT_QUERY_KEY(sectionId);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ html }: { html: LexicalHtmlSerializedState }) => sectionContentSaveApi({
-      bookId: book.id,
+      bookId,
       sectionId,
       html
     }),

@@ -1,7 +1,7 @@
 'use client'
 import { BookStatus, BookWithAuthor } from "@/entities/book";
 import { SxProps, Typography } from "@mui/material";
-import { BookContextProvider } from "../model/use-book";
+import { BookContextProvider } from "../model/book-context";
 
 
 

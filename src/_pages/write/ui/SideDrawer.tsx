@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { sideDrawerWidth } from "../config/side-drawer-width";
+import { useBookContext } from "../model/book-context";
 import { SideDrawerBookTitle } from "./SideDrawerBookTitle";
 
 type Props = {
@@ -21,6 +22,7 @@ export const SideDrawer = ({
   onOpen,
   sx,
 }: Props) => {
+  const book = useBookContext();
   const handleDrawerClose = () => {
     onClose();
   };
@@ -68,7 +70,7 @@ export const SideDrawer = ({
             onClick={handleDrawerClose}
           />
         </Box>
-        <TocTree />
+        <TocTree book={book} />
       </Drawer >
     </>
   );

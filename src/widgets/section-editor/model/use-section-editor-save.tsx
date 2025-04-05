@@ -17,10 +17,10 @@ const AUTO_SAVE_INTERVAL = 4000;
  * lexical context 안에서 section 내용을 저장하는 기능을 추가한다.
  * WritePageDial과 단축키, 그리고 자동 저장 기능등
  */
-export const useSectionEditorSave = (sectionId: string) => {
+export const useSectionEditorSave = (bookId: string, sectionId: string) => {
   const [editor] = useLexicalComposerContext();
   const setMainDial = useWritePageDialMenuStore(s => s.setMainDial);
-  const { save, sync } = useSectionContent(sectionId);
+  const { save, sync } = useSectionContent(bookId, sectionId);
   const notification = useNotification();
 
   const saveToServer = useCallback(async () => {

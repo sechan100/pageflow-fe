@@ -1,6 +1,5 @@
 'use client';
 
-import { useEditorBookStore } from '@/entities/book';
 import { STYLES } from '@/global/styles';
 import { getImageDimensions } from '@/shared/image-dimensions';
 import { INSERT_IMAGE_COMMAND } from '@/shared/lexical/ImagePlugin';
@@ -26,6 +25,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
 import { uploadImageApi } from '../api/upload-image';
+import { useBookContext } from '../model/book-context';
 import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
 
@@ -120,7 +120,7 @@ export const FloatingToolbar = ({
   sectionId,
   sx,
 }: Props) => {
-  const book = useEditorBookStore(s => s.book);
+  const book = useBookContext();
   const [editor] = useLexicalComposerContext();
   const notification = useNotification();
   const { open, setOpen, position, setPosition } = useToolbarStore();

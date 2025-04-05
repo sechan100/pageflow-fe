@@ -1,4 +1,4 @@
-import { useEditorBookStore, useFolderQuery } from "@/entities/book";
+import { useFolderQuery } from "@/entities/book";
 import { useWritePageDialMenuStore } from "@/features/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { useNotification } from "@/shared/ui/notification";
@@ -6,10 +6,11 @@ import { useDialog } from "@/shared/ui/use-dialog";
 import { Trash2 } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { useDeleteFolderMutation } from "../api/delete-folder";
+import { useBookContext } from "./book-context";
 
 
 export const useFolderDeletion = (folderId: string) => {
-  const { id: bookId } = useEditorBookStore(s => s.book);
+  const { id: bookId } = useBookContext();
   const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(folderId);
   const isFolderLoading = folder === undefined || _isFolderLoading
 
