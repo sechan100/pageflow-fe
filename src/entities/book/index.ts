@@ -11,7 +11,7 @@ export { EDITOR_BOOK_QUERY_KEY, useEditorBookQuery } from "./api/editor-book";
 export { defaultFolderOpen } from "./config/default-folder-open";
 // model
 export * from "./model/author.type";
-export * from "./model/book.type";
+export * from "./model/book";
 export * from "./model/folder.type";
 export { mergeServerToc } from "./model/merge-toc";
 export * from "./model/section.type";

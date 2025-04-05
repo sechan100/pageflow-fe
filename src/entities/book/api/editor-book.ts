@@ -1,7 +1,7 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { decode } from "he";
-import { BookWithAuthor } from '../model/book.type';
+import { BookWithAuthor } from '../model/book';
 
 
 type Result = {

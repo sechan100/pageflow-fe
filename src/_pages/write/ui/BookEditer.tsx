@@ -3,6 +3,7 @@ import { useEditorBookStore } from '@/entities/book'
 import { BookTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
+import { BookStatusSetting } from '@/widgets/book-status'
 import { Box, Paper, SxProps, Typography } from "@mui/material"
 import { useCallback, useState } from 'react'
 import { useChangeBookTitleMutation } from '../api/change-book-title'
@@ -85,6 +86,12 @@ export const BookEditer = ({
         <BookCoverImageEditor />
       </BookSetting>
       <BookSetting text="책 설명">
+        <BookDescriptionEditor htmlContent={book.description} />
+      </BookSetting>
+      <BookSetting text="출판 설정">
+        <BookStatusSetting book={book} />
+      </BookSetting>
+      <BookSetting text="공개 범위 설정">
         <BookDescriptionEditor htmlContent={book.description} />
       </BookSetting>
     </Box>

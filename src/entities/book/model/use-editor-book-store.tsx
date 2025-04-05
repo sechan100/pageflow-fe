@@ -1,5 +1,5 @@
 import { createStoreContext } from "@/shared/zustand/create-store-context";
-import { BookWithAuthor } from "./book.type";
+import { BookWithAuthor } from "./book";
 
 
 
