@@ -7,9 +7,7 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
@@ -18,13 +16,14 @@ import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { ImageNode } from './ImageNode';
 import { ImagesPlugin } from './ImagePlugin';
-import { LexicalBaseSettingPlugin } from './LexicalContextSettingPlugin';
+import { LexicalSettingPlugin } from './LexicalSettingPlugin';
+import { MarkdownPlugin } from './MarkdownPlugin';
 
 
 
 const editorConfig = {
   namespace: 'Section Editor',
-  nodes: [ListNode, ListItemNode, HorizontalRuleNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
+  nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
   onError(error: Error) {
     throw error;
   },
@@ -78,11 +77,11 @@ export const SectionEditor = ({
           />
         </Box>
         <FloatingToolbar sectionId={sectionId} />
-        <LexicalBaseSettingPlugin sectionId={sectionId} serializedHtml={htmlContent ?? null} />
+        <LexicalSettingPlugin sectionId={sectionId} serializedHtml={htmlContent ?? null} />
         <HistoryPlugin />
         <ListPlugin />
         <ImagesPlugin />
-        <MarkdownShortcutPlugin />
+        <MarkdownPlugin />
         {/* <AutoFocusPlugin /> */}
         {/* <TreeViewPlugin /> */}
       </Container>

@@ -14,7 +14,10 @@ type Props = {
   serializedHtml: string | null,
   sx?: SxProps
 }
-export const LexicalBaseSettingPlugin = ({
+/**
+ * 해당 컴포넌트 플러그인은 Lexical의 추가적인 설정들을 로드한다.
+ */
+export const LexicalSettingPlugin = ({
   sectionId,
   serializedHtml,
   sx
@@ -24,10 +27,12 @@ export const LexicalBaseSettingPlugin = ({
   useLexicalEditorSerializedHtmlSync(serializedHtml)
 
   // editor의 모든 노드를 출력
-  // useEffect(() => {
-  //   const nodes = editor._nodes.values().map(n => n.klass).toArray();
-  //   console.log(nodes);
-  // }, [editor]);
+  // const nodes = editor._nodes.values().map(n => n.klass).toArray();
+  // console.log(nodes);
+
+  // editor의 모든 command를 출력
+  // const commands = editor._commands.keys().map(c => c.type).toArray();
+  // console.log(commands);
 
   // FORMAT_ELEMENT_COMMAND Command를 해제
   useEffect(() => mergeRegister(
