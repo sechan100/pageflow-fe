@@ -1,18 +1,9 @@
 import { useEditorBookStore } from "@/entities/book";
 import { api } from "@/global/api";
+import { LexicalHtmlSerializedState } from "@/shared/lexical/$getHtmlSerializedEditorState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SECTION_CONTENT_QUERY_KEY } from "./section-content";
 
-
-
-
-
-
-
-
-
-// lexical에서 html 형식으로 직렬화한 section content type
-export type LexicalHtmlSerializedState = string;
 
 type Result = {
   success: true,
@@ -28,14 +19,14 @@ type Form = {
 }
 const sectionContentSaveApi = async ({ bookId, sectionId, html }: Form): Promise<Result> => {
   const res = await api
-  .user()
-  .data({ content: html })
-  .post(`/user/books/${bookId}/toc/sections/${sectionId}/content`);
+    .user()
+    .data({ content: html })
+    .post(`/user/books/${bookId}/toc/sections/${sectionId}/content`);
 
   return res.resolver<Result>()
-  .SUCCESS(() => ({ success: true }))
-  .defaultHandler(() => ({ success: false, message: res.description }))
-  .resolve();
+    .SUCCESS(() => ({ success: true }))
+    .defaultHandler(() => ({ success: false, message: res.description }))
+    .resolve();
 }
 
 export const useSaveContentMutation = (sectionId: string) => {
@@ -44,14 +35,14 @@ export const useSaveContentMutation = (sectionId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-      mutationFn: ({ html }: { html: LexicalHtmlSerializedState }) => sectionContentSaveApi({
-        bookId: book.id,
-        sectionId,
-        html
-      }),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: sectionContentQueryKey});
-      }
+    mutationFn: ({ html }: { html: LexicalHtmlSerializedState }) => sectionContentSaveApi({
+      bookId: book.id,
+      sectionId,
+      html
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: sectionContentQueryKey });
     }
+  }
   );
 }

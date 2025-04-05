@@ -10,7 +10,6 @@ import { Resizable } from 're-resizable'
 import type { Position } from './ImageNode'
 
 import { STYLES } from '@/global/styles'
-import { LexicalPlaceholder } from '@/shared/ui/LexicalPlaceholder'
 import { $generateNodesFromDOM } from '@lexical/html'
 import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
@@ -35,6 +34,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import NextImage from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { $isImageNode } from './ImageNode'
+import { LexicalPlaceholder } from './LexicalPlaceholder'
 
 
 const captionTextStyle = {

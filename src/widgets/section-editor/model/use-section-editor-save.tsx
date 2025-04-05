@@ -1,12 +1,13 @@
 import { useWritePageDialMenuStore } from '@/features/book';
+import { $getHtmlSerializedEditorState } from '@/shared/lexical/$getHtmlSerializedEditorState';
+import { useUserInputChangeUpdateListener } from '@/shared/lexical/use-user-input-change-update-listener';
+import { registerCtrlShortCut } from '@/shared/register-ctrl-short-cut';
 import { useNotification } from "@/shared/ui/notification";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { SpeedDialIcon } from '@mui/material';
 import { debounce } from "lodash";
 import { SaveIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from "react";
-import { $getHtmlSerializedEditorState } from "./$getHtmlSerializedEditorState";
-import { editorStateSyncUpdateTag } from './use-lexical-editor-serialized-html-sync';
 import { useSectionContent } from "./use-section-content";
 
 
@@ -16,7 +17,7 @@ const AUTO_SAVE_INTERVAL = 4000;
  * lexical context 안에서 section 내용을 저장하는 기능을 추가한다.
  * WritePageDial과 단축키, 그리고 자동 저장 기능등
  */
-export const useLexicalEditorSave = (sectionId: string) => {
+export const useSectionEditorSave = (sectionId: string) => {
   const [editor] = useLexicalComposerContext();
   const setMainDial = useWritePageDialMenuStore(s => s.setMainDial);
   const { save, sync } = useSectionContent(sectionId);
@@ -54,31 +55,14 @@ export const useLexicalEditorSave = (sectionId: string) => {
   }, [saveToServer, saveToServerDebounce]);
 
   // save 단축키 등록
-  useEffect(() => {
-    const saveShortcutHandler = async (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        manualSave();
-      }
-    }
-    const editorRootEl = editor._rootElement;
-    if (!editorRootEl) return;
-    editorRootEl.addEventListener("keydown", saveShortcutHandler)
-    return () => {
-      editorRootEl.removeEventListener("keydown", saveShortcutHandler)
-    }
-  }, [editor, manualSave]);
-
+  useEffect(() => registerCtrlShortCut({
+    element: editor.getRootElement(),
+    key: 's',
+    cb: manualSave,
+  }), [editor, manualSave]);
 
   // 자동저장 설정
-  useEffect(() => {
-    return editor.registerUpdateListener(({ tags, dirtyElements, editorState, prevEditorState, dirtyLeaves }) => {
-      if (tags.has("history-merge") || tags.has(editorStateSyncUpdateTag)) return;
-      if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return;
-
-      saveEditorState();
-    })
-  }, [editor, saveEditorState]);
+  useUserInputChangeUpdateListener(saveEditorState);
 
   // Main Dial에 저장 버튼 등록
   useEffect(() => {

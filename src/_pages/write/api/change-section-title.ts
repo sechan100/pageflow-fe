@@ -17,19 +17,19 @@ type ChangeSectionTitleResult = {
   message: string;
 }
 
-const changeSectionTitleApi = async ({ bookId, sectionId, title}: Form) => {
+const changeSectionTitleApi = async ({ bookId, sectionId, title }: Form) => {
   const res = await api
-  .user()
-  .data({ title })
-  .post(`/user/books/${bookId}/toc/sections/${sectionId}`);
+    .user()
+    .data({ title })
+    .post(`/user/books/${bookId}/toc/sections/${sectionId}`);
 
 
   return res.resolver<ChangeSectionTitleResult>()
-  .SUCCESS((data) => ({
-    success: true,
-    message: res.description
-  }))
-  .resolve();
+    .SUCCESS((data) => ({
+      success: true,
+      message: res.description
+    }))
+    .resolve();
 }
 
 export const useSectionTitleMutation = (sectionId: string) => {
@@ -54,7 +54,7 @@ export const useSectionTitleMutation = (sectionId: string) => {
       title
     }),
     onSuccess: (res, title) => {
-      if(res.success){
+      if (res.success) {
         queryClient.invalidateQueries({ queryKey: SECTION_QUERY_KEY(sectionId) });
         changeNodeTitle(sectionId, title);
       }

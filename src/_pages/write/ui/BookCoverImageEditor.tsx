@@ -208,13 +208,6 @@ export const BookCoverImageEditor = ({
             >
               사진 선택
             </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={() => setCropMode(true)}
-            >
-              자르기
-            </Button>
           </Box>
         }
       />

@@ -19,9 +19,14 @@ const getBookApi = async (bookId: string): Promise<Result> => {
 
   return res.resolver<Result>()
     .SUCCESS((data) => {
-      const book = {
+      const book: BookWithAuthor = {
         ...data,
         title: decode(data.title),
+        description: decode(data.description),
+        author: {
+          ...data.author,
+          penname: decode(data.author.penname),
+        }
       }
 
       return {

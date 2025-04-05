@@ -1,5 +1,4 @@
 import { SpeedDialIcon } from "@mui/material";
-import { SaveIcon } from "lucide-react";
 import React from "react";
 import { create } from "zustand";
 
@@ -17,7 +16,7 @@ type DialActionWithOrder = DialAction & {
 type DialActionCleanup = () => void;
 
 const fallbackDial: DialAction = {
-  icon: <SpeedDialIcon openIcon={<SaveIcon />} />,
+  icon: <SpeedDialIcon />,
   name: "",
   cb: () => { },
 };

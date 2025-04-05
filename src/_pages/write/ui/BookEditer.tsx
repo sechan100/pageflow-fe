@@ -7,6 +7,7 @@ import { Box, Paper, SxProps, Typography } from "@mui/material"
 import { useCallback, useState } from 'react'
 import { useChangeBookTitleMutation } from '../api/change-book-title'
 import { BookCoverImageEditor } from './BookCoverImageEditor'
+import { BookDescriptionEditor } from './BookDescriptionEditor'
 
 type BookSettingProps = {
   text: string;
@@ -82,6 +83,9 @@ export const BookEditer = ({
       </BookSetting>
       <BookSetting text="표지 사진">
         <BookCoverImageEditor />
+      </BookSetting>
+      <BookSetting text="책 설명">
+        <BookDescriptionEditor htmlContent={book.description} />
       </BookSetting>
     </Box>
   )

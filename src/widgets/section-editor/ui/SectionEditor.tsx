@@ -1,5 +1,9 @@
 'use client'
-import { LexicalPlaceholder } from '@/shared/ui/LexicalPlaceholder';
+import { editorTheme } from '@/shared/lexical/editor-theme';
+import { ImageNode } from '@/shared/lexical/ImageNode';
+import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
+import { LexicalPlaceholder } from '@/shared/lexical/LexicalPlaceholder';
+import { MarkdownPlugin } from '@/shared/lexical/MarkdownPlugin';
 import { CodeNode } from '@lexical/code';
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';
@@ -12,12 +16,9 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
-import { editorStyle, sectionEditorTheme } from '../config/editor-theme';
+import { sectionEditorStyle } from '../config/section-editor-style';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
-import { ImageNode } from './ImageNode';
-import { ImagesPlugin } from './ImagePlugin';
 import { LexicalSettingPlugin } from './LexicalSettingPlugin';
-import { MarkdownPlugin } from './MarkdownPlugin';
 
 
 
@@ -27,7 +28,7 @@ const editorConfig = {
   onError(error: Error) {
     throw error;
   },
-  theme: sectionEditorTheme,
+  theme: editorTheme,
 };
 
 const placeholder = "내용을 입력해주세요.";
@@ -57,7 +58,7 @@ export const SectionEditor = ({
           mt: 10,
           mb: 70,
           position: 'relative',
-          ...editorStyle,
+          ...sectionEditorStyle,
         }}
       >
         <Box sx={{ position: 'relative' }}>

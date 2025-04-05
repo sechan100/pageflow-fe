@@ -1,11 +1,11 @@
 'use client'
+import { useLexicalEditorSerializedHtmlSync } from "@/shared/lexical/use-lexical-editor-serialized-html-sync";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from '@lexical/utils';
 import { SxProps } from "@mui/material";
 import { FORMAT_ELEMENT_COMMAND } from "lexical";
 import { useEffect } from "react";
-import { useLexicalEditorSave } from "../model/use-lexical-editor-save";
-import { useLexicalEditorSerializedHtmlSync } from "../model/use-lexical-editor-serialized-html-sync";
+import { useSectionEditorSave } from "../model/use-section-editor-save";
 
 
 
@@ -23,8 +23,8 @@ export const LexicalSettingPlugin = ({
   sx
 }: Props) => {
   const [editor] = useLexicalComposerContext();
-  useLexicalEditorSave(sectionId);
-  useLexicalEditorSerializedHtmlSync(serializedHtml)
+  useSectionEditorSave(sectionId);
+  useLexicalEditorSerializedHtmlSync(serializedHtml);
 
   // editor의 모든 노드를 출력
   // const nodes = editor._nodes.values().map(n => n.klass).toArray();

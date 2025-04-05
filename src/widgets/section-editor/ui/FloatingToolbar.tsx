@@ -3,6 +3,7 @@
 import { useEditorBookStore } from '@/entities/book';
 import { STYLES } from '@/global/styles';
 import { getImageDimensions } from '@/shared/image-dimensions';
+import { INSERT_IMAGE_COMMAND } from '@/shared/lexical/ImagePlugin';
 import { useNotification } from '@/shared/ui/notification';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { mergeRegister } from '@lexical/utils';
@@ -27,7 +28,6 @@ import { create } from 'zustand';
 import { uploadImageApi } from '../api/upload-image';
 import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
-import { INSERT_IMAGE_COMMAND } from './ImagePlugin';
 
 const iconSize = 20;
 
