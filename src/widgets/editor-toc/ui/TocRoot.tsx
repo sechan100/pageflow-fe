@@ -1,5 +1,5 @@
 'use client'
-import { useTocStore } from '@/entities/book'
+import { useEditorTocStore } from '@/entities/book'
 import { useNotification } from "@/shared/ui/notification"
 import { closestCenter, DndContext, DragEndEvent, DragMoveEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { List, SxProps } from "@mui/material"
@@ -20,8 +20,8 @@ type Props = {
 export const TocRoot = ({
   sx
 }: Props) => {
-  const toc = useTocStore(s => s.toc);
-  const setToc = useTocStore(s => s.setToc);
+  const toc = useEditorTocStore(s => s.toc);
+  const setToc = useEditorTocStore(s => s.setToc);
   const notification = useNotification();
   const setIndicator = useIndicatorStore(s => s.setIndicator);
   const clearIndicator = useIndicatorStore(s => s.clearIndicator);

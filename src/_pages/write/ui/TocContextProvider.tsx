@@ -1,5 +1,5 @@
 'use client'
-import { getTocApi, SvToc, TocStoreProvider } from "@/entities/book";
+import { EditorTocStoreProvider, getTocApi, SvToc } from "@/entities/book";
 import { SxProps } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useBookContext } from "../model/book-context";
@@ -32,8 +32,8 @@ export const TocContextProvider = ({
     return <div>Loading...</div>
   }
   return (
-    <TocStoreProvider svToc={svToc}>
+    <EditorTocStoreProvider svToc={svToc}>
       {children}
-    </TocStoreProvider>
+    </EditorTocStoreProvider>
   )
 }

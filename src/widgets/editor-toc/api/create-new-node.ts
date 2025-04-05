@@ -1,4 +1,4 @@
-import { Folder, SectionWithContent, TocFolder, TocNode, TocOperations, TocSection, useTocStore } from "@/entities/book";
+import { Folder, SectionWithContent, TocFolder, TocNode, TocOperations, TocSection, useEditorTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation } from "@tanstack/react-query";
 import { produce } from "immer";
@@ -48,9 +48,9 @@ type CreateNodeCmd = {
 
 export const useCreateTocNodeMutation = () => {
   const { id: bookId } = useBookContext();
-  const toc = useTocStore(s => s.toc);
-  const setToc = useTocStore(s => s.setToc);
-  const setFolderOpen = useTocStore(s => s.setFolderOpen);
+  const toc = useEditorTocStore(s => s.toc);
+  const setToc = useEditorTocStore(s => s.setToc);
+  const setFolderOpen = useEditorTocStore(s => s.setFolderOpen);
 
   const addNode = ({ parentNodeId, node }: { parentNodeId: string, node: TocNode }) => {
     const newToc = produce(toc, draft => {

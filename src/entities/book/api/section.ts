@@ -2,7 +2,6 @@ import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 import { Section } from "../model/section.type";
-import { useEditorBookStore } from "../model/use-editor-book-store";
 
 
 
@@ -29,13 +28,12 @@ const useSectionDeletedStore = create<SectionDeletedStore>()((set) => ({
 
 export const SECTION_QUERY_KEY = (sectionId: string) => ['section', sectionId];
 
-export const useSectionQuery = (sectionId: string) => {
-  const book = useEditorBookStore(s => s.book);
+export const useSectionQuery = (bookId: string, sectionId: string) => {
   const isDeleted = useSectionDeletedStore(s => s.isDeleted);
   const query = useQuery<Section>({
     queryKey: SECTION_QUERY_KEY(sectionId),
     queryFn: () => getSectionApi({
-      bookId: book.id,
+      bookId,
       sectionId
     }),
     enabled: !isDeleted,

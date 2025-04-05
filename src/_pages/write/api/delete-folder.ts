@@ -1,4 +1,4 @@
-import { FOLDER_QUERY_KEY, TocOperations, useFolderQuery, useTocStore } from "@/entities/book";
+import { FOLDER_QUERY_KEY, TocOperations, useEditorTocStore, useFolderQuery } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
@@ -31,10 +31,10 @@ const deleteFolderApi = async ({ bookId, folderId }: DeleteFolderForm) => {
 
 export const useDeleteFolderMutation = (folderId: string) => {
   const { id: bookId } = useBookContext();
-  const { setIsDeleted } = useFolderQuery(folderId);
+  const { setIsDeleted } = useFolderQuery(bookId, folderId);
   const queryClient = useQueryClient();
-  const toc = useTocStore(s => s.toc);
-  const setToc = useTocStore(s => s.setToc);
+  const toc = useEditorTocStore(s => s.toc);
+  const setToc = useEditorTocStore(s => s.setToc);
 
   return useMutation({
     mutationFn: () => deleteFolderApi({

@@ -6,6 +6,7 @@ import { useNotification } from '@/shared/ui/notification'
 import { Box, SxProps } from "@mui/material"
 import { useCallback, useMemo, useState } from 'react'
 import { useFolderTitleMutation } from '../api/change-folder-title'
+import { useBookContext } from '../model/book-context'
 import { useFolderDeletion } from '../model/use-folder-deletion'
 
 
@@ -57,7 +58,8 @@ export const FolderEditer = ({
   folderId,
   sx
 }: Props) => {
-  const { data: folder, isLoading: isFolderLoading } = useFolderQuery(folderId);
+  const book = useBookContext();
+  const { data: folder, isLoading: isFolderLoading } = useFolderQuery(book.id, folderId);
   useFolderDeletion(folderId);
 
 

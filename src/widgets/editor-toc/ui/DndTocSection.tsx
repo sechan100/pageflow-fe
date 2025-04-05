@@ -1,5 +1,5 @@
 'use client'
-import { TocSection, useTocStore } from '@/entities/book';
+import { TocSection, useEditorTocStore } from '@/entities/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { SxProps } from "@mui/material";
 import { FilePen } from "lucide-react";
@@ -46,7 +46,7 @@ export const DndTocSection = memo(function DroppableSection({
   depth,
   sx
 }: Props) {
-  const { bookId } = useTocStore(s => s.toc);
+  const { bookId } = useEditorTocStore(s => s.toc);
   const { router } = useNextRouter();
 
 

@@ -11,7 +11,7 @@ import { useBookContext } from "./book-context";
 
 export const useFolderDeletion = (folderId: string) => {
   const { id: bookId } = useBookContext();
-  const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(folderId);
+  const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(bookId, folderId);
   const isFolderLoading = folder === undefined || _isFolderLoading
 
   const { router } = useNextRouter();

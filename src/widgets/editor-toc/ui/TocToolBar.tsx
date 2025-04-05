@@ -1,5 +1,5 @@
 'use client'
-import { useTocStore } from '@/entities/book'
+import { useEditorTocStore } from '@/entities/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
 import { SingleTextFieldModal } from '@/shared/ui/SingleTextFieldModal'
@@ -45,8 +45,8 @@ type Props = {
 export const TocToolBar = ({
   sx
 }: Props) => {
-  const expendAll = useTocStore(s => s.expendAllFolders);
-  const collapseAll = useTocStore(s => s.collapseAllFolders);
+  const expendAll = useEditorTocStore(s => s.expendAllFolders);
+  const collapseAll = useEditorTocStore(s => s.collapseAllFolders);
   const notification = useNotification();
 
   const { mutateAsync: createTocNode } = useCreateTocNodeMutation();

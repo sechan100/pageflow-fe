@@ -11,7 +11,7 @@ import { useBookContext } from "./book-context";
 
 export const useSectionDeletion = (sectionId: string) => {
   const { id: bookId } = useBookContext();
-  const { data: section, isLoading: _isSectionLoading } = useSectionQuery(sectionId);
+  const { data: section, isLoading: _isSectionLoading } = useSectionQuery(bookId, sectionId);
   const isSectionLoading = section === undefined || _isSectionLoading
 
   const { router } = useNextRouter();

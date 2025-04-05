@@ -2,7 +2,6 @@ import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
 import { Folder } from "../model/folder.type";
-import { useEditorBookStore } from "../model/use-editor-book-store";
 
 
 
@@ -29,14 +28,13 @@ const useFolderDeletedStore = create<FolderDeletedStore>()((set) => ({
 
 export const FOLDER_QUERY_KEY = (folderId: string) => ['section', folderId];
 
-export const useFolderQuery = (folderId: string) => {
-  const book = useEditorBookStore(s => s.book);
+export const useFolderQuery = (bookId: string, folderId: string) => {
   const isDeleted = useFolderDeletedStore(s => s.isDeleted);
 
   const query = useQuery<Folder>({
     queryKey: FOLDER_QUERY_KEY(folderId),
     queryFn: () => getFolderApi({
-      bookId: book.id,
+      bookId,
       folderId
     }),
     enabled: !isDeleted,

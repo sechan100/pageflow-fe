@@ -1,4 +1,4 @@
-import { FOLDER_QUERY_KEY, Toc, TocOperations, useTocStore } from "@/entities/book";
+import { FOLDER_QUERY_KEY, Toc, TocOperations, useEditorTocStore } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { produce } from "immer";
@@ -36,8 +36,8 @@ const changeFolderTitleApi = async ({ bookId, folderId, title }: Form) => {
 export const useFolderTitleMutation = (folderId: string) => {
   const { id: bookId } = useBookContext();
   const queryClient = useQueryClient();
-  const toc = useTocStore(s => s.toc);
-  const setToc = useTocStore(s => s.setToc);
+  const toc = useEditorTocStore(s => s.toc);
+  const setToc = useEditorTocStore(s => s.setToc);
 
   const changeNodeTitle = (nodeId: string, title: string) => {
     const newToc = produce<Toc>(toc, draft => {

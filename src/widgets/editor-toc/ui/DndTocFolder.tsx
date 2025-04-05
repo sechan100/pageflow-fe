@@ -1,5 +1,5 @@
 'use client'
-import { TocFolder, useTocStore } from '@/entities/book';
+import { TocFolder, useEditorTocStore } from '@/entities/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { Box, Collapse, List, SxProps, Tooltip } from "@mui/material";
@@ -55,7 +55,7 @@ export const DndTocFolder = memo(function DroppableFolder({
   folder,
   depth,
 }: Props) {
-  const { bookId } = useTocStore(s => s.toc);
+  const { bookId } = useEditorTocStore(s => s.toc);
   const { isOpen, toggle, changeOpen } = useFolderOpen(folder.id);
   const { router } = useNextRouter();
   const isOver = useIsOver(folder.id);

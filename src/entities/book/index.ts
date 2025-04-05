@@ -20,6 +20,5 @@ export { SvNodeTypeGuard } from "./model/sv-toc.type";
 export { TocOperations } from "./model/toc-operations";
 export * from "./model/toc.type";
 export { useCurrentNode } from "./model/use-current-node-id";
-export { EditorBookStoreProvider, useEditorBookStore } from "./model/use-editor-book-store";
-export { TocStoreProvider, useTocStore } from "./model/use-toc-store";
+export { EditorTocStoreProvider, useEditorTocStore } from "./model/use-toc-store";
 

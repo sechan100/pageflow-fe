@@ -7,7 +7,7 @@ import { TocOperations } from "./toc-operations";
 import { Toc } from "./toc.type";
 
 
-type TocStore = {
+type EditorTocStore = {
   toc: Toc;
   setToc: (toc: Toc) => void;
   /**
@@ -20,7 +20,7 @@ type TocStore = {
   collapseAllFolders: () => void;
 }
 
-const [Provider, useStore] = createStoreContext<Toc, TocStore>((initialToc, set, get) => ({
+const [Provider, useStore] = createStoreContext<Toc, EditorTocStore>((initialToc, set, get) => ({
   toc: initialToc,
 
   setToc: (toc) => set({ toc }),
@@ -52,7 +52,7 @@ type Props = {
   svToc: SvToc;
   children: React.ReactNode;
 }
-export const TocStoreProvider = memo(function TocStoreProvider({
+const EditorTocStoreProvider = memo(function TocStoreProvider({
   svToc,
   children
 }: Props) {
@@ -77,4 +77,4 @@ export const TocStoreProvider = memo(function TocStoreProvider({
   )
 })
 
-export const useTocStore = useStore;
+export { EditorTocStoreProvider, useStore as useEditorTocStore };
