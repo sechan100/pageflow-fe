@@ -6,7 +6,7 @@ export { getSectionContentApi } from "./api/section-content";
 // api - toc
 export { getTocApi } from "./api/toc";
 // api - book query
-export { EDITOR_BOOK_QUERY_KEY, useEditorBookQuery } from "./api/editor-book";
+export { BOOK_QUERY_KEY, useBookQuery } from "./api/editor-book";
 // config
 export { defaultFolderOpen } from "./config/default-folder-open";
 // model

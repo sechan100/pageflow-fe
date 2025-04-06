@@ -1,4 +1,4 @@
-import { EDITOR_BOOK_QUERY_KEY } from "@/entities/book";
+import { BOOK_QUERY_KEY } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -37,7 +37,7 @@ export const useChangeBookDescriptionMutation = (bookId: string) => {
     }),
     onSuccess: (res) => {
       if (res.success) {
-        queryClient.invalidateQueries({ queryKey: EDITOR_BOOK_QUERY_KEY(bookId) });
+        queryClient.invalidateQueries({ queryKey: BOOK_QUERY_KEY(bookId) });
       }
     }
   });

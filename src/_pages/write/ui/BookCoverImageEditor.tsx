@@ -1,6 +1,6 @@
 'use client'
 import { useNotification } from "@/shared/ui/notification";
-import { Box, Button, Grid2, SxProps } from "@mui/material";
+import { Box, Button, Grid, SxProps } from "@mui/material";
 import { CloudUploadIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
@@ -48,24 +48,24 @@ const GridTemplate = ({
 }: GridTemplateProps) => {
 
   return (
-    <Grid2
+    <Grid
       container
       gap={1}
       height={bookCoverImageHeight}
       justifyContent="space-evenly"
     >
-      <Grid2
+      <Grid
         size={8}
         sx={{ position: 'relative' }}>
         {image}
-      </Grid2>
-      <Grid2
+      </Grid>
+      <Grid
         size={3}
         alignContent="center"
       >
         {button}
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   )
 }
 

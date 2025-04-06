@@ -1,5 +1,5 @@
 'use client'
-import { Box, Container, Grid2, Paper, SxProps, Typography } from "@mui/material"
+import { Box, Container, Grid, Paper, SxProps, Typography } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { myBooksApi } from "../api/my-books"
 import { BookCard } from "./BookCard"
@@ -70,11 +70,11 @@ export const MyBooksPage = ({
         {/* 내 책이 없을 때 */}
         {myBooks.books.length === 0 && (<EmptyMyBooks />)}
         {/* 책 있을 때 */}
-        <Grid2
+        <Grid
           container
         >
           {myBooks.books.map((book) => (
-            <Grid2
+            <Grid
               key={book.id}
               size={{
                 xs: 12,
@@ -90,9 +90,9 @@ export const MyBooksPage = ({
               <BookCard
                 book={book}
               />
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
       </Paper>
     </Container >
   )

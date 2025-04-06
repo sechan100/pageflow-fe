@@ -12,7 +12,7 @@ import {
   Button,
   Container,
   Divider,
-  Grid2,
+  Grid,
   Stack,
   Typography
 } from "@mui/material";
@@ -102,9 +102,9 @@ export const ProfileSettingsPage = ({ session }: Props) => {
       <SettingPageTitle>프로필 설정</SettingPageTitle>
 
       <form onSubmit={handleSubmit}>
-        <Grid2 container spacing={4}>
+        <Grid container spacing={4}>
           {/* 프로필 이미지 섹션 */}
-          <Grid2
+          <Grid
             size={{
               xs: 12,
               md: 3,
@@ -139,10 +139,10 @@ export const ProfileSettingsPage = ({ session }: Props) => {
                 이미지 변경
               </Button>
             </Box>
-          </Grid2>
+          </Grid>
 
           {/* 사용자 정보 섹션 */}
-          <Grid2
+          <Grid
             size={{
               xs: 12,
               md: 9,
@@ -154,10 +154,10 @@ export const ProfileSettingsPage = ({ session }: Props) => {
                 onChange={setPenname}
               />
             </Stack>
-          </Grid2>
+          </Grid>
 
           {/* 저장 버튼 */}
-          <Grid2
+          <Grid
             size={{
               xs: 12,
             }}
@@ -175,8 +175,8 @@ export const ProfileSettingsPage = ({ session }: Props) => {
                 설정 저장
               </Button>
             </Box>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </form>
     </Container >
   );

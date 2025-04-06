@@ -37,11 +37,11 @@ const getBookApi = async (bookId: string): Promise<Result> => {
     .resolve();
 }
 
-export const EDITOR_BOOK_QUERY_KEY = (bookId: string) => ['editor-book', bookId];
+export const BOOK_QUERY_KEY = (bookId: string) => ['book', bookId];
 
-export const useEditorBookQuery = (bookId: string) => {
+export const useBookQuery = (bookId: string) => {
   const query = useQuery({
-    queryKey: EDITOR_BOOK_QUERY_KEY(bookId),
+    queryKey: BOOK_QUERY_KEY(bookId),
     queryFn: () => getBookApi(bookId)
   });
 

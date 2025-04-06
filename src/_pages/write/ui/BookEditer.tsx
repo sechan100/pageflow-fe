@@ -2,7 +2,7 @@
 import { BookTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
-import { BookStatusSetting } from '@/widgets/book-status'
+import { BookStatusSetting, BookVisibilitySetting } from '@/widgets/book-setting'
 import { Box, Paper, SxProps, Typography } from "@mui/material"
 import { useCallback, useState } from 'react'
 import { useChangeBookTitleMutation } from '../api/change-book-title'
@@ -92,7 +92,7 @@ export const BookEditer = ({
         <BookStatusSetting book={book} />
       </BookSetting>
       <BookSetting text="공개 범위 설정">
-        <BookDescriptionEditor htmlContent={book.description} />
+        <BookVisibilitySetting book={book} />
       </BookSetting>
     </Box>
   )
