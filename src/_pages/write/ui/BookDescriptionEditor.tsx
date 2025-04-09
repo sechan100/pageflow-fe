@@ -1,4 +1,5 @@
 'use client'
+import { registerCtrlShortCut } from '@/shared/keyboard';
 import { $getHtmlSerializedEditorState } from '@/shared/lexical/$getHtmlSerializedEditorState';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
@@ -7,7 +8,6 @@ import { LexicalPlaceholder } from '@/shared/lexical/LexicalPlaceholder';
 import { MarkdownPlugin } from '@/shared/lexical/MarkdownPlugin';
 import { useLexicalEditorSerializedHtmlSync } from '@/shared/lexical/use-lexical-editor-serialized-html-sync';
 import { useUserInputChangeUpdateListener } from '@/shared/lexical/use-user-input-change-update-listener';
-import { registerCtrlShortCut } from '@/shared/register-ctrl-short-cut';
 import { useNotification } from '@/shared/ui/notification';
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
@@ -101,11 +101,16 @@ const Editor = ({
   });
 
   // save 단축키 등록
-  useEffect(() => registerCtrlShortCut({
-    element: editor.getRootElement(),
-    key: 's',
-    cb: saveDescription,
-  }), [editor, saveDescription]);
+  useEffect(() => {
+    const element = editor.getRootElement();
+    if (!element) return;
+
+    return registerCtrlShortCut({
+      element,
+      key: 's',
+      cb: saveDescription,
+    })
+  }, [editor, saveDescription]);
 
   return (
     <>

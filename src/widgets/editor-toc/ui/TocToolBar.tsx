@@ -2,7 +2,7 @@
 import { useEditorTocStore } from '@/entities/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
-import { SingleTextFieldModal } from '@/shared/ui/SingleTextFieldModal'
+import { SingleTextFieldDialog } from '@/shared/ui/SingleTextFieldDialog'
 import { Box, Button, Divider, SxProps } from "@mui/material"
 import { FilePen, FolderPen, Maximize2, Minimize2 } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"
@@ -111,7 +111,7 @@ export const TocToolBar = ({
           }}
         />
       </Box>
-      <SingleTextFieldModal
+      <SingleTextFieldDialog
         open={createNodeModalOpen}
         onClose={() => setCreateNodeModalOpen(false)}
         fieldComponent={

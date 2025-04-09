@@ -1,6 +1,6 @@
 import { BookTitleField } from '@/features/book';
 import { Field } from '@/shared/field';
-import { SingleTextFieldModal } from '@/shared/ui/SingleTextFieldModal';
+import { SingleTextFieldDialog } from '@/shared/ui/SingleTextFieldDialog';
 import {
   Button, SxProps
 } from '@mui/material';
@@ -50,7 +50,7 @@ export const CreateBookButton = ({
       >
         + 새로운 책 집필하기
       </Button>
-      <SingleTextFieldModal
+      <SingleTextFieldDialog
         open={open}
         onClose={() => setOpen(false)}
         fieldComponent={

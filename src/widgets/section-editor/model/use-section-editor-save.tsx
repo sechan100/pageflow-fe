@@ -1,7 +1,7 @@
 import { useWritePageDialMenuStore } from '@/features/book';
+import { registerCtrlShortCut } from '@/shared/keyboard';
 import { $getHtmlSerializedEditorState } from '@/shared/lexical/$getHtmlSerializedEditorState';
 import { useUserInputChangeUpdateListener } from '@/shared/lexical/use-user-input-change-update-listener';
-import { registerCtrlShortCut } from '@/shared/register-ctrl-short-cut';
 import { useNotification } from "@/shared/ui/notification";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { SpeedDialIcon } from '@mui/material';
@@ -55,11 +55,16 @@ export const useSectionEditorSave = (bookId: string, sectionId: string) => {
   }, [saveToServer, saveToServerDebounce]);
 
   // save 단축키 등록
-  useEffect(() => registerCtrlShortCut({
-    element: editor.getRootElement(),
-    key: 's',
-    cb: manualSave,
-  }), [editor, manualSave]);
+  useEffect(() => {
+    const element = editor.getRootElement();
+    if (!element) return;
+
+    return registerCtrlShortCut({
+      element,
+      key: 's',
+      cb: manualSave,
+    })
+  }, [editor, manualSave]);
 
   // 자동저장 설정
   useUserInputChangeUpdateListener(saveEditorState);

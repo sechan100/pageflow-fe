@@ -1,9 +1,10 @@
 import { Box, Button, Modal, Stack, Typography } from "@mui/material";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { registerEnterShortCut } from "../keyboard";
 
 
 
-type SingleTextFieldModalProps = {
+type SingleTextFieldDialogProps = {
   open: boolean;
   onClose: () => void;
   modalTitle: string;
@@ -13,7 +14,7 @@ type SingleTextFieldModalProps = {
   cancelText?: string;
   submitDisabled?: boolean;
 }
-export const SingleTextFieldModal = ({
+export const SingleTextFieldDialog = ({
   open,
   onClose,
   modalTitle,
@@ -22,7 +23,8 @@ export const SingleTextFieldModal = ({
   submitText = '완료',
   cancelText = '취소',
   submitDisabled,
-}: SingleTextFieldModalProps) => {
+}: SingleTextFieldDialogProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   // 생성 버튼 클릭
   const handleSubmit = useCallback(() => {
@@ -30,23 +32,36 @@ export const SingleTextFieldModal = ({
     onClose();
   }, [onClose, onSubmit]);
 
+  // Enter 키를 누르면 submit
+  useEffect(() => {
+    const el = dialogRef.current;
+    if (!el) return;
+
+    return registerEnterShortCut({
+      element: el,
+      cb: handleSubmit,
+    })
+  }, [handleSubmit])
 
   return (
     <Modal
       open={open}
       onClose={onClose}
     >
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        borderRadius: 1,
-        boxShadow: 24,
-        p: 4,
-      }}>
+      <Box
+        ref={dialogRef}
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
         <Typography
           variant="h6"
           component="h2"

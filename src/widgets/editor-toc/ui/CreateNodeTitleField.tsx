@@ -23,7 +23,6 @@ export const CreateNodeTitleField = ({
   fieldName = 'title',
   sx
 }: Props) => {
-
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     const newError = validateNodeTitle(newTitle);
@@ -35,6 +34,10 @@ export const CreateNodeTitleField = ({
       <TextField
         name={fieldName}
         label={lable}
+        inputRef={(ref: HTMLInputElement) => {
+          if (!ref) return;
+          ref.focus();
+        }}
         type="text"
         variant="outlined"
         value={title.value}

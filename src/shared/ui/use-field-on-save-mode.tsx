@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
+import { registerEnterShortCut } from "../keyboard";
 
 
 
@@ -29,22 +30,15 @@ export const useFieldOnSaveMode = ({ onSave, saveDisabled }: Args) => {
   // Enter Key Save 리스너
   useEffect(() => {
     const fieldEl = fieldRef.current;
-    if (fieldEl === null) return;
+    if (!fieldEl) return;
 
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.isComposing) return;
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        e.stopPropagation();
+    return registerEnterShortCut({
+      element: fieldEl,
+      cb: () => {
         save();
         fieldEl.blur();
       }
-    }
-    fieldEl.addEventListener('keydown', handleEnter);
-
-    return () => {
-      fieldEl.removeEventListener('keydown', handleEnter);
-    }
+    });
   }, [onSave, save]);
 
   const inputSlotProps = {
