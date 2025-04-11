@@ -1,5 +1,5 @@
 'use client'
-import { BookWithAuthor, SectionWithContent } from '@/entities/book';
+import { AuthorPrivateBook, SectionWithContent } from '@/entities/book';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
@@ -36,7 +36,7 @@ const editorConfig = {
 const placeholder = "내용을 입력해주세요.";
 
 type Props = {
-  book: BookWithAuthor;
+  book: AuthorPrivateBook;
   section: SectionWithContent;
   sx?: SxProps
 }

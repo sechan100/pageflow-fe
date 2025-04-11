@@ -1,88 +1,109 @@
 'use client';
 
 import { SvTocFolder, SvTocSection } from "@/entities/book";
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import { Box, Divider, Paper, Typography } from "@mui/material";
-import { sampleToc } from "../data/sample-toc";
+import { Box, SxProps, Typography } from "@mui/material";
+import { usePublishedBookContext } from "../model/published-book-context";
+import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
+import { SectionHeader } from "./utils/SectionHeader";
 
-type Props = {
-  compact?: boolean;
+
+type FolderNodeProps = {
+  folder: SvTocFolder;
+  level: number;
+  sx?: SxProps;
 }
-
-export const TableOfContents = ({ compact = false }: Props) => {
-  const renderTocNode = (node: SvTocFolder | SvTocSection, level = 0) => {
-    if (node.type === "SECTION") {
-      return (
-        <Box
-          key={node.id}
-          sx={{
-            pl: level * 2,
-            py: compact ? 0.5 : 0.75,
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: compact ? 'none' : '1px solid',
-            borderColor: 'divider',
-            '&:hover': { bgcolor: 'action.hover' }
-          }}
-        >
-          <Typography
-            variant={compact ? "body2" : "body1"}
-            sx={{
-              fontWeight: 400,
-              color: 'text.primary',
-            }}
-          >
-            {node.title}
-          </Typography>
-        </Box>
-      );
-    }
-
-    return (
-      <Box key={node.id}>
-        <Box
-          sx={{
-            pl: level * 2,
-            py: compact ? 0.5 : 0.75,
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: compact ? 'none' : '1px solid',
-            borderColor: 'divider',
-          }}
-        >
-          <Typography
-            variant={compact ? "body2" : "body1"}
-            sx={{ fontWeight: 600 }}
-          >
-            {node.title}
-          </Typography>
-        </Box>
-        {node.children.map(child => renderTocNode(child, level + 1))}
-      </Box>
-    );
-  };
+const FolderNode = ({
+  folder,
+  level,
+  sx
+}: FolderNodeProps) => {
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 4,
-        mb: 4,
-        borderRadius: 2,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <MenuBookIcon sx={{ mr: 1, color: 'primary.main' }} />
-        <Typography variant="h4" gutterBottom>
-          목차
+    <Box key={folder.id}>
+      <Box
+        sx={{
+          pl: level * 2,
+          py: 0.5,
+          display: 'flex',
+          alignItems: 'center',
+          borderBottom: "none",
+          borderColor: 'divider',
+        }}
+      >
+        <Typography variant={"body2"}>
+          {folder.title}
         </Typography>
       </Box>
-      <Divider sx={{ mb: 3 }} />
+      {folder.children.map(child => renderTocNode(child, level + 1))}
+    </Box>
+  )
+}
 
-      <Box sx={{ maxHeight: compact ? 300 : 400, overflowY: 'auto', pr: 1 }}>
-        {renderTocNode(sampleToc.root)}
+type SectionNodeProps = {
+  section: SvTocSection;
+  level: number;
+  sx?: SxProps;
+}
+const SectionNode = ({
+  section,
+  level,
+  sx
+}: SectionNodeProps) => {
+
+  return (
+    <Box
+      key={section.id}
+      sx={{
+        pl: level * 2,
+        py: 0.5,
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: 'none',
+        borderColor: 'divider',
+      }}
+    >
+      <Typography
+        variant={"body2"}
+        sx={{
+          fontWeight: 400,
+          color: 'text.primary',
+        }}
+      >
+        {section.title}
+      </Typography>
+    </Box>
+  )
+}
+
+const renderTocNode = (node: SvTocFolder | SvTocSection, level = 0) => {
+  if (node.type === "SECTION") {
+    return (
+      <SectionNode
+        key={node.id}
+        section={node}
+        level={level}
+      />
+    );
+  } else {
+    return (
+      <FolderNode
+        key={node.id}
+        folder={node}
+        level={level}
+      />
+    );
+  }
+};
+
+export const TableOfContents = () => {
+  const book = usePublishedBookContext();
+
+  return (
+    <BookInfoSectionPaper>
+      <SectionHeader title="목차" />
+      <Box sx={{ pl: 2 }}>
+        {book.toc.root.children.map(child => renderTocNode(child))}
       </Box>
-    </Paper>
+    </BookInfoSectionPaper>
   );
 };

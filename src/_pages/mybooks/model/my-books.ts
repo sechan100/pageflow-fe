@@ -1,9 +1,13 @@
-import { Author, Book } from "@/entities/book";
+import { BookStatus } from "@/entities/book";
 
 
-
+export type MyBook = {
+  id: string;
+  title: string;
+  coverImageUrl: string;
+  status: BookStatus;
+}
 
 export type MyBooks = {
-  author: Author;
-  books: Book[];
+  books: MyBook[];
 }

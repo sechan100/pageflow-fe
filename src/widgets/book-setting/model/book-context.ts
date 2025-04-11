@@ -1,4 +1,4 @@
-import { BookWithAuthor } from "@/entities/book";
+import { AuthorPrivateBook } from "@/entities/book";
 import { createDataContext } from "@/shared/context";
 
-export const [BookContextProvider, useBookContext] = createDataContext<BookWithAuthor>();
+export const [BookContextProvider, useBookContext] = createDataContext<AuthorPrivateBook>();

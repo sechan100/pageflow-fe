@@ -21,7 +21,6 @@ export type SvTocSection = SvTocNode & {
 }
 
 export type SvToc = {
-  bookId: string; // UUID
   root: SvTocFolder;
 }
 

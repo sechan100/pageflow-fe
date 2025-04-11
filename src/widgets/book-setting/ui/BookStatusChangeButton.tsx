@@ -1,5 +1,5 @@
 'use client'
-import { BookWithAuthor } from "@/entities/book";
+import { AuthorPrivateBook } from "@/entities/book";
 import { useNotification } from "@/shared/ui/notification";
 import { useDialog } from "@/shared/ui/use-dialog";
 import { Box, Button, Checkbox, Dialog, Divider, FormControlLabel, Paper, SxProps, Typography } from "@mui/material";
@@ -26,7 +26,7 @@ const statusSimpleNames: Record<StatusAction, string> = {
   "cancel-resivion": "개정을 취소",
 }
 
-const createActionSuccessMessages: (book: BookWithAuthor) => Record<StatusAction, string> = (book) => ({
+const createActionSuccessMessages: (book: AuthorPrivateBook) => Record<StatusAction, string> = (book) => ({
   publish: `"'${book.title}'"이(가) 출판되었습니다.`,
   "start-revision": "개정을 시작했습니다.",
   revise: `"'${book.title}'"이(가) 개정되었습니다.`,

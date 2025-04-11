@@ -1,5 +1,5 @@
 'use client'
-import { bookStatusConfig, BookStatusInfo, BookWithAuthor } from "@/entities/book";
+import { AuthorPrivateBook, bookStatusConfig, BookStatusInfo } from "@/entities/book";
 import { Grid, SxProps, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { BookContextProvider } from "../model/book-context";
@@ -10,7 +10,7 @@ import { BookStatusChangeButton } from "./BookStatusChangeButton";
 
 
 type Props = {
-  book: BookWithAuthor;
+  book: AuthorPrivateBook;
   sx?: SxProps;
 }
 export const BookStatusSetting = ({

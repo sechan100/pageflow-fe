@@ -1,5 +1,5 @@
 'use client'
-import { BookWithAuthor } from "@/entities/book";
+import { AuthorPrivateBook } from "@/entities/book";
 import { Box, SxProps } from "@mui/material";
 import { BookContextProvider } from "../model/book-context";
 import { TocRoot } from "./TocRoot";
@@ -7,7 +7,7 @@ import { TocToolBar } from "./TocToolBar";
 
 
 type Props = {
-  book: BookWithAuthor;
+  book: AuthorPrivateBook;
   sx?: SxProps
 }
 export const TocTree = ({

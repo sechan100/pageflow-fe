@@ -1,7 +1,9 @@
 'use client';
 
-import { Avatar, Box, Button, Divider, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import { BookReviewRating } from "./BookReviewRating";
+import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
+import { SectionHeader } from "./utils/SectionHeader";
 
 const ReviewItem = ({ name, rating, date, content }: { name: string; rating: number; date: string; content: string }) => (
   <Paper
@@ -27,6 +29,7 @@ const ReviewItem = ({ name, rating, date, content }: { name: string; rating: num
   </Paper>
 );
 
+
 export const ReviewsSection = () => {
   // 샘플 리뷰 데이터
   const reviews = [
@@ -47,19 +50,8 @@ export const ReviewsSection = () => {
   ];
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 4,
-        mb: 4,
-        borderRadius: 2,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.08)'
-      }}
-    >
-      <Typography variant="h4" gutterBottom>
-        리뷰
-      </Typography>
-      <Divider sx={{ mb: 3 }} />
+    <BookInfoSectionPaper>
+      <SectionHeader title="리뷰" />
 
       {/* 리뷰 통계 */}
       <Box sx={{
@@ -106,6 +98,6 @@ export const ReviewsSection = () => {
       <Box sx={{ textAlign: 'center', mt: 3 }}>
         <Button variant="outlined">더 보기</Button>
       </Box>
-    </Paper>
+    </BookInfoSectionPaper>
   );
 };

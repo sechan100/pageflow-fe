@@ -1,11 +1,11 @@
 'use client'
-import { BookWithAuthor } from "@/entities/book";
+import { AuthorPrivateBook } from "@/entities/book";
 import { SxProps } from "@mui/material";
 
 
 
 type Props = {
-  book: BookWithAuthor;
+  book: AuthorPrivateBook;
   sx?: SxProps;
 }
 export const BookVisibilitySetting = ({

@@ -1,12 +1,13 @@
 'use client';
 
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import { Book } from "lucide-react";
 import Image from 'next/image';
 import { useState } from 'react';
 import { usePublishedBookContext } from "../model/published-book-context";
 import { BookReviewRating } from "./BookReviewRating";
+import { PublishedRecoredsSection } from './PublishedRecoredsSection';
+import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
 
 const bookCoverImageWidth = 300;
 const bookCoverImageHeight = bookCoverImageWidth * 1.5;
@@ -33,21 +34,14 @@ const BookCoverImage = () => {
   )
 }
 
+
 export const BookHeroSection = () => {
   const book = usePublishedBookContext();
   const [reviewScore, setReviewScore] = useState(3.7);
   const [reviewCount, setReviewCount] = useState(24);
 
   return (
-    <Paper
-      elevation={1}
-      sx={{
-        p: 4,
-        mb: 4,
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-      }}
-    >
+    <BookInfoSectionPaper>
       <Grid container spacing={2} justifyContent="space-evenly">
         {/* 책 표지 이미지 */}
         <Grid size={{ xs: 12, md: 4 }}>
@@ -59,7 +53,7 @@ export const BookHeroSection = () => {
           <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* 작가 이름 */}
             <Typography variant="overline" color="textSecondary">
-              {book.author.penname} 작가
+              {book.authorProfile.penname} 작가
             </Typography>
 
             {/* 책 제목 */}
@@ -88,23 +82,8 @@ export const BookHeroSection = () => {
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Grid container spacing={2}>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Typography variant="body2" color="text.secondary">출판사</Typography>
-                  <Typography variant="body1">페이지플로우 출판</Typography>
-                  {/* 에디션 */}
-                  <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 600, mb: 3 }}>
-                    에디션: {book.edition}
-                  </Typography>
-                </Grid>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Typography variant="body2" color="text.secondary">페이지 수</Typography>
-                  <Typography variant="body1">354</Typography>
-                </Grid>
                 <Grid size={{ xs: 6, md: 6 }}>
-                  <Typography variant="body2" color="text.secondary">출판 기록</Typography>
-                  <Typography variant="body1" color="text.secondary">2024-02-12 초판 발행(25쇄)</Typography>
-                  <Typography variant="body1" color="text.secondary">2024-9-28 개정판 발행(324쇄)</Typography>
-                  <Typography variant="body1" color="text.secondary">2025-01-13 개정 2판(8쇄)</Typography>
+                  <PublishedRecoredsSection publishedRecords={book.publishedRecords} />
                 </Grid>
               </Grid>
             </Box>
@@ -118,31 +97,19 @@ export const BookHeroSection = () => {
               <Button
                 variant="contained"
                 size="large"
-                startIcon={<ShoppingCartIcon />}
+                startIcon={<Book />}
                 sx={{
                   borderRadius: 6,
                   px: 4,
                   py: 1.5
                 }}
               >
-                구매하기
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                startIcon={<BookmarkIcon />}
-                sx={{
-                  borderRadius: 6,
-                  px: 4,
-                  py: 1.5
-                }}
-              >
-                찜하기
+                열람하기
               </Button>
             </Box>
           </Box>
         </Grid>
       </Grid>
-    </Paper>
+    </BookInfoSectionPaper>
   );
 };
