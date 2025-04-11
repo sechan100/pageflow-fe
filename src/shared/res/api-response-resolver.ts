@@ -80,4 +80,8 @@ export class ApiResponseResolver<D, R> {
   BAD_CREDENTIALS(handler: () => R): ApiResponseResolver<D, R> {
     return this.on("BAD_CREDENTIALS", handler);
   }
+
+  BOOK_ACCESS_DENIED(handler: (description: string) => R): ApiResponseResolver<D, R> {
+    return this.on("BOOK_ACCESS_DENIED", handler);
+  }
 }

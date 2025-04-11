@@ -1,6 +1,6 @@
 'use client';
 
-import { WithAppbarLayout } from "./_utils/WithAppbarLayout";
+import { WithAppbarLayout } from "../global/layout/WithAppbarLayout";
 
 
 

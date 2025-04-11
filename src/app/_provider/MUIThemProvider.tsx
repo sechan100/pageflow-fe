@@ -14,6 +14,14 @@ const theme: Theme = createTheme({
       main: STYLES.color.primary,
       contrastText: '#FAFAFA',
     },
+    warning: {
+      main: STYLES.color.warning,
+      contrastText: '#FAFAFA',
+    },
+    info: {
+      main: STYLES.color.info,
+      contrastText: '#FAFAFA',
+    },
     secondary: {
       main: STYLES.color.secondary,
       contrastText: '#fff',

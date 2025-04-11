@@ -2,6 +2,8 @@
 import { Book } from "@/entities/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Box, Card, CardMedia, SxProps, Typography } from '@mui/material';
+import { useCallback } from "react";
+import { BookStatusChip } from "./BookStatusChip";
 
 
 
@@ -12,6 +14,7 @@ const cardInfoHeight = 60;
 
 
 const writeBookLink = (bookId: string) => `/write/${bookId}`
+const bookReadLink = (bookId: string) => `/books/${bookId}`
 
 type Props = {
   book: Book;
@@ -23,9 +26,27 @@ export const BookCard = ({
 }: Props) => {
   const { router } = useNextRouter();
 
+  // 책 상태에 따라서 적절한 링크로 이동시킨다.
+  const dispatchBookLink = useCallback(() => {
+    let link = null;
+    switch (book.status) {
+      case "DRAFT":
+        link = writeBookLink(book.id);
+        break;
+      case "PUBLISHED":
+      case "REVISING":
+        link = bookReadLink(book.id);
+        break;
+      default:
+        throw new Error(`Unknown book status: ${book.status}`);
+    }
+    router.push(link);
+  }, [book.id, book.status, router]);
+
   return (
     <Card
       sx={{
+        position: 'relative',
         width: cardWidth,
         height: cardHeight + cardInfoHeight,
         display: 'flex',
@@ -38,9 +59,10 @@ export const BookCard = ({
         },
         ...sx
       }}
-      onClick={() => router.push(writeBookLink(book.id))}
+      onClick={dispatchBookLink}
       elevation={3}
     >
+      <BookStatusChip status={book.status} />
       <CardMedia
         component="img"
         height={cardHeight}
@@ -50,7 +72,6 @@ export const BookCard = ({
           objectFit: 'cover',
         }}
       />
-
       <Box
         sx={{
           borderTop: '1px solid #ccc',

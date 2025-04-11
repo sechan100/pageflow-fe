@@ -1,8 +1,14 @@
+import { MUIColor } from "@/shared/ui/mui-color";
 import { Author } from "./author.type";
 
-
-
 export type BookStatus = 'DRAFT' | 'PUBLISHED' | 'REVISING';
+
+export type BookStatusInfo = {
+  status: BookStatus;
+  text: string;
+  color: MUIColor;
+};
+
 
 export type BookVisibility = 'GLOBAL' | 'PERSONAL';
 

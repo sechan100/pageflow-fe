@@ -13,7 +13,7 @@ export type SvTocNode = {
 
 export type SvTocFolder = SvTocNode & {
   type: "FOLDER";
-  children: SvTocNode[];
+  children: (SvTocFolder | SvTocSection)[];
 }
 
 export type SvTocSection = SvTocNode & {

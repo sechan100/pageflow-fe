@@ -1,10 +1,8 @@
 'use client'
-import { BookWithAuthor } from "@/entities/book";
+import { bookStatusConfig, BookStatusInfo, BookWithAuthor } from "@/entities/book";
 import { Grid, SxProps, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { bookStatusConfig } from "../config/book-status";
 import { BookContextProvider } from "../model/book-context";
-import { BookStatusInfo } from "../model/book-status";
 import { resolveStatusActions, StatusAction } from "../model/status-action";
 import { BookStatusChangeButton } from "./BookStatusChangeButton";
 
@@ -25,11 +23,9 @@ export const BookStatusSetting = ({
 
   return (
     <BookContextProvider value={book}>
-      <Typography>
-        현재 상태:&nbsp;
-        <span style={{ color: statusInfo.color }}>
-          {statusInfo.text}
-        </span>
+      <Typography sx={{ display: "inline" }} color={statusInfo.color}>
+        <span style={{ color: "black" }}>현재 상태:&nbsp;</span>
+        {statusInfo.text}
       </Typography>
       <Grid
         container
