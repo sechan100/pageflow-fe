@@ -7,8 +7,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { usePublishedBookContext } from "../model/published-book-context";
 import { BookReviewRating } from "./BookReviewRating";
+import { CharacterCountSection } from "./CharacterCountSection";
 import { PublishedRecoredsSection } from './PublishedRecoredsSection';
-import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
+import { SectionPaper } from "./utils/SectionPaper";
 
 const bookCoverImageWidth = 300;
 const bookCoverImageHeight = bookCoverImageWidth * 1.5;
@@ -37,7 +38,6 @@ const BookCoverImage = () => {
   )
 }
 
-
 export const BookHeroSection = () => {
   const book = usePublishedBookContext();
   const { router } = useNextRouter();
@@ -45,7 +45,7 @@ export const BookHeroSection = () => {
   const [reviewCount, setReviewCount] = useState(24);
 
   return (
-    <BookInfoSectionPaper>
+    <SectionPaper>
       <Grid container spacing={2} justifyContent="space-evenly">
         {/* 책 표지 이미지 */}
         <Grid size={{ xs: 12, md: 4 }}>
@@ -86,9 +86,8 @@ export const BookHeroSection = () => {
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Grid container spacing={2}>
-                <Grid size={{ xs: 6, md: 6 }}>
-                  <PublishedRecoredsSection publishedRecords={book.publishedRecords} />
-                </Grid>
+                <CharacterCountSection charCount={book.totalCharCount} />
+                <PublishedRecoredsSection publishedRecords={book.publishedRecords} />
               </Grid>
             </Box>
 
@@ -115,6 +114,6 @@ export const BookHeroSection = () => {
           </Box>
         </Grid>
       </Grid>
-    </BookInfoSectionPaper>
+    </SectionPaper>
   );
 };

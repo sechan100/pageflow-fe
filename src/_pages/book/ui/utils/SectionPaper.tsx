@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
   sx?: SxProps;
 }
-export const BookInfoSectionPaper = ({
+export const SectionPaper = ({
   children,
   sx
 }: Props) => {

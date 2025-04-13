@@ -1,8 +1,9 @@
 'use client'
 import { convertToLocalDateTime } from "@/shared/local-date-time";
-import { Box, SxProps, Typography } from "@mui/material";
+import { SxProps, Typography } from "@mui/material";
 import { convertEditionToText } from "../model/convert-edition-to-text";
 import { PublishedRecord } from "../model/published-book";
+import { Section, Title } from "./utils/book-info-section";
 
 
 
@@ -19,17 +20,10 @@ export const PublishedRecoredsSection = ({
 }: Props) => {
 
   return (
-    <Box>
-      <Typography
-        sx={{
-          fontWeight: 'bold',
-          mb: 2,
-        }}
-        variant="body2"
-        color="textPrimary"
-      >
+    <Section>
+      <Title>
         출간일
-      </Typography>
+      </Title>
       {publishedRecords.map(({ edition, printingCount, publishedAt }) => {
         const { year, month, day } = convertToLocalDateTime(publishedAt);
         return (
@@ -42,6 +36,6 @@ export const PublishedRecoredsSection = ({
           </Typography>
         )
       })}
-    </Box>
+    </Section>
   )
 }

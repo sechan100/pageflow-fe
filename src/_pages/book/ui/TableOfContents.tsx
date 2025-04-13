@@ -3,8 +3,8 @@
 import { SvTocFolder, SvTocSection } from "@/entities/book";
 import { Box, SxProps, Typography } from "@mui/material";
 import { usePublishedBookContext } from "../model/published-book-context";
-import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
 import { SectionHeader } from "./utils/SectionHeader";
+import { SectionPaper } from "./utils/SectionPaper";
 
 
 type FolderNodeProps = {
@@ -99,11 +99,11 @@ export const TableOfContents = () => {
   const book = usePublishedBookContext();
 
   return (
-    <BookInfoSectionPaper>
+    <SectionPaper>
       <SectionHeader title="목차" />
       <Box sx={{ pl: 2 }}>
         {book.toc.root.children.map(child => renderTocNode(child))}
       </Box>
-    </BookInfoSectionPaper>
+    </SectionPaper>
   );
 };

@@ -26,4 +26,5 @@ export type PublishedBook = {
   publishedRecords: PublishedRecord[];
   authorProfile: AuthorProfile;
   toc: SvToc;
+  totalCharCount: number;
 }

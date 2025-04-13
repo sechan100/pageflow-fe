@@ -5,8 +5,8 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import { usePublishedBookContext } from "../model/published-book-context";
-import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
 import { SectionHeader } from "./utils/SectionHeader";
+import { SectionPaper } from "./utils/SectionPaper";
 
 export const AuthorProfile = () => {
   const {
@@ -24,7 +24,7 @@ export const AuthorProfile = () => {
   const remainingBooksCount = otherBooks.length - previewBooks.length;
 
   return (
-    <BookInfoSectionPaper>
+    <SectionPaper>
       <SectionHeader title="작가 소개" />
 
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3 }}>
@@ -162,6 +162,6 @@ export const AuthorProfile = () => {
           </Box>
         </>
       )}
-    </BookInfoSectionPaper>
+    </SectionPaper>
   );
 };
