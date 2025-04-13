@@ -1,5 +1,6 @@
 'use client';
 
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Book } from "lucide-react";
 import Image from 'next/image';
@@ -11,6 +12,8 @@ import { BookInfoSectionPaper } from "./utils/BookInfoSectionPaper";
 
 const bookCoverImageWidth = 300;
 const bookCoverImageHeight = bookCoverImageWidth * 1.5;
+
+const bookReaderPageUrl = (bookId: string) => `/read/${bookId}`;
 
 const BookCoverImage = () => {
   const book = usePublishedBookContext();
@@ -37,6 +40,7 @@ const BookCoverImage = () => {
 
 export const BookHeroSection = () => {
   const book = usePublishedBookContext();
+  const { router } = useNextRouter();
   const [reviewScore, setReviewScore] = useState(3.7);
   const [reviewCount, setReviewCount] = useState(24);
 
@@ -98,6 +102,7 @@ export const BookHeroSection = () => {
                 variant="contained"
                 size="large"
                 startIcon={<Book />}
+                onClick={() => router.push(bookReaderPageUrl(book.id))}
                 sx={{
                   borderRadius: 6,
                   px: 4,

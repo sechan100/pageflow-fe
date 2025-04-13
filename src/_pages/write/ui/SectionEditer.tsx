@@ -4,7 +4,7 @@ import { NodeTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
 import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/section-editor'
-import { Box, SxProps } from "@mui/material"
+import { Box, Stack, SxProps } from "@mui/material"
 import { useCallback, useMemo, useState } from 'react'
 import { useSectionTitleMutation } from '../api/change-section-title'
 import { useBookContext } from '../model/book-context'

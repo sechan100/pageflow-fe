@@ -19,6 +19,7 @@ import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { sectionEditorStyle } from '../config/section-editor-style';
 import { BookContextProvider } from '../model/book-context';
+import { CharCountPlugin } from './CharCountPlugin';
 import { FloatingToolbar, useToolbarStore } from './FloatingToolbar';
 import { LexicalSettingPlugin } from './LexicalSettingPlugin';
 
@@ -64,6 +65,7 @@ export const SectionEditor = ({
             ...sectionEditorStyle,
           }}
         >
+          <CharCountPlugin />
           <Box sx={{ position: 'relative' }}>
             <RichTextPlugin
               contentEditable={
