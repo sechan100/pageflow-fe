@@ -15,7 +15,7 @@ export const ReaderToc = ({
 }: Props) => {
 
   return (
-    <ReaderTocStoreContextProvider value={tocStore}>
+    <ReaderTocStoreContextProvider store={tocStore}>
       {/* <ReaderTocSidebar /> */}
       <Box>
         안녕 난 toc야.

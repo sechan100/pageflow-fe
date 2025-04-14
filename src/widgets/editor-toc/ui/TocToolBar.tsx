@@ -1,5 +1,4 @@
 'use client'
-import { useEditorTocStore } from '@/entities/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
 import { SingleTextFieldDialog } from '@/shared/ui/SingleTextFieldDialog'
@@ -7,6 +6,7 @@ import { Box, Button, Divider, SxProps } from "@mui/material"
 import { FilePen, FolderPen, Maximize2, Minimize2 } from "lucide-react"
 import React, { useCallback, useEffect, useState } from "react"
 import { useCreateTocNodeMutation } from '../api/create-new-node'
+import { useEditorTocStore } from '../model/editor-toc-store-context'
 import { useCreateNodeParentResolve } from '../model/use-create-node-parent-resolve'
 import { CreateNodeTitleField } from './CreateNodeTitleField'
 
@@ -37,7 +37,6 @@ const ToolIcon = ({
     />
   )
 }
-
 
 type Props = {
   sx?: SxProps

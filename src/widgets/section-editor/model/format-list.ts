@@ -2,14 +2,10 @@ import { $isListItemNode, $isListNode, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORD
 import { $getEditor, $getSelection, $isRangeSelection, BaseSelection } from 'lexical';
 
 
-
-
-
-
 const $getListType = (selection: BaseSelection): "ol" | "ul" | "not-list" => {
   for (const node of selection.getNodes()) {
     const itemNode = node.getParent();
-    
+
     // 부모가 list item인지
     const isListItemNode = $isListItemNode(itemNode);
     if (!isListItemNode) continue;

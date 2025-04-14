@@ -1,12 +1,8 @@
 'use client';
 
+import { AuthGuard } from "@/global/layout/AuthGuard";
 import { WritePageLayout } from '@/pages/write';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
-import { AuthGuard } from "../../../global/layout/AuthGuard";
-
-
-
-
 
 
 type Props = {

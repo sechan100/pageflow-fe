@@ -1,10 +1,11 @@
 'use client'
-import { TocFolder, useEditorTocStore } from '@/entities/book';
+import { EditorTocFolder } from '@/entities/editor';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { DragEndEvent, DragStartEvent, useDndMonitor } from "@dnd-kit/core";
 import { Box, Collapse, List, SxProps, Tooltip } from "@mui/material";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { useBookContext } from "../model/book-context";
 import { useIndicator } from "../model/dnd/use-indicator";
 import { useIsOver } from "../model/dnd/use-is-over";
 import { useFolderOpen } from "../model/use-folder-open";
@@ -16,11 +17,11 @@ import { StyledBaseTocNode } from "./StyledBaseTocNode";
 const folderEditPageLink = (bookId: string, folderId: string) => `/write/${bookId}/folders/${folderId}`;
 
 type StyledFolderNodeProps = {
-  folder: TocFolder;
+  folder: EditorTocFolder;
   depth: number;
   isOpen: boolean;
-  onClick?: (folder: TocFolder) => void;
-  onIconClick?: (folder: TocFolder) => void;
+  onClick?: (folder: EditorTocFolder) => void;
+  onIconClick?: (folder: EditorTocFolder) => void;
   sx?: SxProps
 }
 export const StyledFolderNode = memo(function Folder({
@@ -48,14 +49,14 @@ export const StyledFolderNode = memo(function Folder({
 
 
 type Props = {
-  folder: TocFolder;
+  folder: EditorTocFolder;
   depth: number;
 }
 export const DndTocFolder = memo(function DroppableFolder({
   folder,
   depth,
 }: Props) {
-  const { bookId } = useEditorTocStore(s => s.toc);
+  const { id: bookId } = useBookContext();
   const { isOpen, toggle, changeOpen } = useFolderOpen(folder.id);
   const { router } = useNextRouter();
   const isOver = useIsOver(folder.id);

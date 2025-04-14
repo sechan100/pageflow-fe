@@ -1,4 +1,4 @@
-import { Toc } from '@/entities/book';
+import { EditorToc } from "@/entities/editor";
 import { Active, Over } from "@dnd-kit/core";
 import { RelocateForm } from "../../api/relocate-node";
 import { IndicatorMode } from "../../ui/Indicator";
@@ -7,20 +7,18 @@ import { InsertBelowOperation } from "./InsertBelowOperation";
 import { InsertFirstIntoOperation } from "./InsertFirstIntoOperation";
 import { InsertLastIntoOperation } from "./InsertLastIntoOperation";
 
-
 export type DndOperationContext = {
-  toc: Toc;
+  bookId: string;
+  toc: EditorToc;
   active: Active;
   over: Over;
   overDepth: number;
 }
 
-export type RelocateResult =  {
+export type RelocateResult = {
   form: RelocateForm;
-  toc: Toc;
+  toc: EditorToc;
 }
-
-
 
 export interface DndOperation {
   /**
@@ -48,8 +46,8 @@ const operations: DndOperation[] = [
 export const DndOperationDispatcher = {
   dispatch: (context: DndOperationContext): DndOperation | null => {
     const acceptableOperations = operations.filter(op => op.isAcceptable(context));
-    switch(acceptableOperations.length){
-      case 0: 
+    switch (acceptableOperations.length) {
+      case 0:
         return null;
       case 1:
         return acceptableOperations[0];

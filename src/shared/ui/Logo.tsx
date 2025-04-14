@@ -1,13 +1,12 @@
 'use client';
 
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
-import { Typography, TypographyPropsVariantOverrides } from "@mui/material";
-import { Variant } from "@mui/material/styles/createTypography";
+import { Typography, TypographyPropsVariantOverrides, TypographyVariant } from "@mui/material";
 import { OverridableStringUnion } from "@mui/types";
 
 
 type Props = {
-  variant?: OverridableStringUnion<Variant | 'inherit', TypographyPropsVariantOverrides>;
+  variant?: OverridableStringUnion<TypographyVariant | 'inherit', TypographyPropsVariantOverrides>
 }
 export const PageflowLogo = ({
   variant = 'h3'

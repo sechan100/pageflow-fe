@@ -1,5 +1,5 @@
 'use client'
-import { NodeTypeGuard, TocNode } from '@/entities/book';
+import { EditorTocNode, isEditorTocFolder, isEditorTocSection } from '@/entities/editor';
 import { STYLES } from "@/global/styles";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { Box, SxProps } from "@mui/material";
@@ -10,23 +10,23 @@ import { useFolderOpen } from "../model/use-folder-open";
 import { Indicator } from "./Indicator";
 
 
-const getDndData = (node: TocNode, depth: number, isOpen: boolean | null): TocNodeDndData => {
+const getDndData = (node: EditorTocNode, depth: number, isOpen: boolean | null): TocNodeDndData => {
   let data: TocNodeDndData;
-  if (NodeTypeGuard.isFolder(node)) {
+  if (isEditorTocFolder(node)) {
     if (isOpen === null) throw new Error("isOpen이 null입니다.");
     const folderData: TocFolderDndData = {
       id: node.id,
-      type: "folder",
+      type: "FOLDER",
       node: node,
       depth,
       isOpen
     }
     data = folderData;
-  } else if (NodeTypeGuard.isSection(node)) {
+  } else if (isEditorTocSection(node)) {
     if (isOpen !== null) throw new Error("isOpen이 null이 아닙니다.");
     const sectionData: TocSectionDndData = {
       id: node.id,
-      type: "section",
+      type: "SECTION",
       node: node,
       depth
     }
@@ -38,7 +38,7 @@ const getDndData = (node: TocNode, depth: number, isOpen: boolean | null): TocNo
 
 
 type Props = {
-  node: TocNode;
+  node: EditorTocNode;
   depth: number;
   children: React.ReactNode;
   sx?: SxProps
@@ -50,13 +50,13 @@ export const Dndable = memo(function Dndable({
   sx
 }: Props) {
   const { indicator } = useIndicator(node.id);
-  const { getIsOpen } = useFolderOpen(node.id, NodeTypeGuard.isSection(node));
+  const { getIsOpen } = useFolderOpen(node.id, isEditorTocSection(node));
 
   const data = useMemo<TocNodeDndData>(() => {
-    if (NodeTypeGuard.isFolder(node)) {
+    if (isEditorTocFolder(node)) {
       return getDndData(node, depth, getIsOpen());
 
-    } else if (NodeTypeGuard.isSection(node)) {
+    } else if (isEditorTocSection(node)) {
       return getDndData(node, depth, null);
 
     } else throw new Error("알 수 없는 노드 타입입니다.");

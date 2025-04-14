@@ -1,5 +1,4 @@
-import { createDataContext } from "@/shared/context";
-import { ZustandStore } from "@/shared/zustand/zustand-store";
+import { createStoreRelayContext } from "@/shared/zustand/create-store-relay-context";
 
 export type TocNodeType = "FOLDER" | "SECTION";
 
@@ -45,15 +44,7 @@ export type ReaderTocStore = {
   position: ReaderPosition;
   setPosition: (position: ReaderPosition) => void;
 }
-const [ReaderTocStoreContextProvider, useReaderTocStoreContext] = createDataContext<ZustandStore<ReaderTocStore>>();
-
-const useReaderTocStore = () => {
-  const store = useReaderTocStoreContext();
-  if (!store) {
-    throw new Error("useReaderTocStore must be used within a ReaderTocStoreProvider");
-  }
-  return store;
-}
+const [ReaderTocStoreContextProvider, useReaderTocStore] = createStoreRelayContext<ReaderTocStore>();
 
 export {
   isTocFolder, isTocNode, isTocSection,

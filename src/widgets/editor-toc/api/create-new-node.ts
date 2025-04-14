@@ -1,8 +1,9 @@
-import { Folder, SectionWithContent, TocFolder, TocNode, TocOperations, TocSection, useEditorTocStore } from "@/entities/book";
+import { EditorFolder, EditorTocFolder, EditorTocNode, EditorTocSection, TocOperations, WithContentEditorSection } from "@/entities/editor";
 import { api } from "@/global/api";
 import { useMutation } from "@tanstack/react-query";
 import { produce } from "immer";
 import { useBookContext } from "../model/book-context";
+import { useEditorTocStore } from "../model/editor-toc-store-context";
 
 
 
@@ -16,7 +17,7 @@ type Form = {
 
 type CreateNewNodeResult = {
   success: true;
-  node: Folder | SectionWithContent;
+  node: EditorFolder | WithContentEditorSection;
 } | {
   success: false;
   message: string;
@@ -29,7 +30,7 @@ const createNewNodeApi = async ({ bookId, type, parentNodeId, title }: Form) => 
       parentNodeId,
       title
     })
-    .post<Folder | SectionWithContent>(`/user/books/${bookId}/toc/${type}s`);
+    .post<EditorFolder | WithContentEditorSection>(`/user/books/${bookId}/toc/${type}s`);
 
   return res.resolver<CreateNewNodeResult>()
     .SUCCESS((data) => ({
@@ -52,7 +53,7 @@ export const useCreateTocNodeMutation = () => {
   const setToc = useEditorTocStore(s => s.setToc);
   const setFolderOpen = useEditorTocStore(s => s.setFolderOpen);
 
-  const addNode = ({ parentNodeId, node }: { parentNodeId: string, node: TocNode }) => {
+  const addNode = ({ parentNodeId, node }: { parentNodeId: string, node: EditorTocNode }) => {
     const newToc = produce(toc, draft => {
       const parentNode = TocOperations.findFolder(draft, parentNodeId);
       parentNode.children = [
@@ -62,7 +63,7 @@ export const useCreateTocNodeMutation = () => {
       return draft;
     });
 
-    if (node.type === 'folder') {
+    if (node.type === 'FOLDER') {
       // 새로 생성한 폴더는 열어둔다.
       setFolderOpen(node.id, true);
     }
@@ -80,20 +81,20 @@ export const useCreateTocNodeMutation = () => {
       if (!res.success) return;
 
       // Folder \ SectionWithContent 타입을 TocNode 타입으로 변환
-      let node: TocNode;
+      let node: EditorTocNode;
       if ("content" in res.node && typeof res.node.content === "string") {
         node = {
           id: res.node.id,
           title: res.node.title,
-          type: 'section',
-        } as TocSection;
+          type: 'SECTION',
+        } as EditorTocSection;
       } else {
         node = {
           id: res.node.id,
           title: res.node.title,
-          type: 'folder',
+          type: 'FOLDER',
           children: [],
-        } as TocFolder;
+        } as EditorTocFolder;
       }
 
       addNode({ parentNodeId, node });

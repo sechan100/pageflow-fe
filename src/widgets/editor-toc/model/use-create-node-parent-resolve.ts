@@ -1,5 +1,6 @@
-import { TocOperations, useCurrentNode, useEditorTocStore } from "@/entities/book";
+import { TocOperations, useCurrentNode } from "@/entities/editor";
 import { useCallback, useMemo } from "react";
+import { useEditorTocStore } from "./editor-toc-store-context";
 
 
 

@@ -16,6 +16,9 @@ export type SimpleBook = {
   coverImageUrl: string;
 }
 
+/**
+ * 작가에게만 보여지는 책 정보
+ */
 export type AuthorPrivateBook = {
   id: string;
   title: string;

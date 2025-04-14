@@ -1,9 +1,10 @@
 'use client'
-import { TocSection, useEditorTocStore } from '@/entities/book';
+import { EditorTocSection } from "@/entities/editor";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { SxProps } from "@mui/material";
 import { FilePen } from "lucide-react";
 import { memo, useMemo } from "react";
+import { useBookContext } from "../model/book-context";
 import { Dndable } from "./Dndable";
 import { StyledBaseTocNode } from "./StyledBaseTocNode";
 
@@ -11,9 +12,9 @@ import { StyledBaseTocNode } from "./StyledBaseTocNode";
 const sectionEditPageLink = (bookId: string, sectionId: string) => `/write/${bookId}/sections/${sectionId}`;
 
 type StyledSectionNodeProps = {
-  section: TocSection;
+  section: EditorTocSection;
   depth: number;
-  onClick?: (section: TocSection) => void;
+  onClick?: (section: EditorTocSection) => void;
   sx?: SxProps
 }
 export const StyledSectionNode = memo(function Section({
@@ -37,7 +38,7 @@ export const StyledSectionNode = memo(function Section({
 })
 
 type Props = {
-  section: TocSection;
+  section: EditorTocSection;
   depth: number;
   sx?: SxProps
 }
@@ -46,9 +47,8 @@ export const DndTocSection = memo(function DroppableSection({
   depth,
   sx
 }: Props) {
-  const { bookId } = useEditorTocStore(s => s.toc);
+  const { id: bookId } = useBookContext();
   const { router } = useNextRouter();
-
 
   return (
     <Dndable

@@ -1,11 +1,11 @@
-import { NodeTypeGuard, TocNode } from '@/entities/book';
+import { EditorTocNode, isEditorTocFolder, isEditorTocSection } from "@/entities/editor";
 import { DndTocFolder } from "./DndTocFolder";
 import { DndTocSection } from "./DndTocSection";
 
 
 // 재귀적으로 TOC 노드를 렌더링하는 함수
-export const renderTocNode = (node: TocNode, depth = 0) => {
-  if (NodeTypeGuard.isFolder(node)) {
+export const renderTocNode = (node: EditorTocNode, depth = 0) => {
+  if (isEditorTocFolder(node)) {
     return (
       <DndTocFolder
         key={node.id}
@@ -13,7 +13,7 @@ export const renderTocNode = (node: TocNode, depth = 0) => {
         depth={depth}
       />
     )
-  } else if (NodeTypeGuard.isSection(node)) {
+  } else if (isEditorTocSection(node)) {
     return (
       <DndTocSection
         key={node.id}

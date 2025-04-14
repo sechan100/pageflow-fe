@@ -1,9 +1,6 @@
 
 
-
-
-
-export type Folder = {
+export type EditorFolder = {
   id: string;
   title: string;
 }

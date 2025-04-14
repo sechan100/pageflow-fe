@@ -1,7 +1,7 @@
 import { api } from "@/global/api";
 import { LexicalHtmlSerializedState } from "@/shared/lexical/$getHtmlSerializedEditorState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SECTION_CONTENT_QUERY_KEY } from "./section-content";
+import { EDITOR_SECTION_CONTENT_QUERY_KEY } from "./section-content";
 
 
 type Result = {
@@ -29,7 +29,7 @@ const sectionContentSaveApi = async ({ bookId, sectionId, html }: Form): Promise
 }
 
 export const useSaveContentMutation = (bookId: string, sectionId: string) => {
-  const sectionContentQueryKey = SECTION_CONTENT_QUERY_KEY(sectionId);
+  const sectionContentQueryKey = EDITOR_SECTION_CONTENT_QUERY_KEY(sectionId);
   const queryClient = useQueryClient();
 
   return useMutation({

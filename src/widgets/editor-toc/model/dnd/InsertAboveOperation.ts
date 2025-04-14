@@ -1,4 +1,4 @@
-import { TocOperations } from '@/entities/book';
+import { TocOperations } from '@/entities/editor';
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { extractTocNodeDndData } from "./dnd-data";
@@ -14,9 +14,9 @@ export class InsertAboveOperation implements DndOperation {
    * dest를 3등분하여 active가 윗부분 영역에 over중이라면 수행한다.
    */
   isAcceptable({ active, over }: DndOperationContext): boolean {
-    if(active.id === over.id) return false;
+    if (active.id === over.id) return false;
     const activeRect = active.rect.current.translated;
-    if(!activeRect) return false;
+    if (!activeRect) return false;
 
     const splitedRect = RectUtils.splitRectToThreeHorizontally(over.rect);
     return RectUtils.isRectCenterVerticallyInBoundary(activeRect, splitedRect.top);
@@ -30,7 +30,7 @@ export class InsertAboveOperation implements DndOperation {
     }
   }
 
-  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+  relocate({ active, over, toc, bookId }: DndOperationContext): RelocateResult {
     const { id: overId } = extractTocNodeDndData(over);
     const { id: activeId } = extractTocNodeDndData(active);
 
@@ -46,14 +46,14 @@ export class InsertAboveOperation implements DndOperation {
       destFolderId = parent.id;
     });
 
-    if(!destFolderId || destIndex === null) {
+    if (!destFolderId || destIndex === null) {
       throw new Error("destFolderId 또는 destIndex를 찾을 수 없습니다.");
     }
 
     return {
       toc: newToc,
       form: {
-        bookId: toc.bookId,
+        bookId,
         targetNodeId: activeId,
         destFolderId,
         destIndex,

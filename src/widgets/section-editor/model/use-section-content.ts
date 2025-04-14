@@ -1,11 +1,11 @@
-import { SectionWithContent, useSectionQuery } from "@/entities/book";
+import { WithContentEditorSection, useEditorSectionQuery } from "@/entities/editor";
 import { useSaveContentMutation } from "../api/save-content";
-import { useSectionContentQuery } from "../api/section-content";
+import { useEditorSectionContentQuery } from "../api/section-content";
 
 
 
 type SectionContentQueryResult = {
-  section: SectionWithContent | null;
+  section: WithContentEditorSection | null;
   isLoading: boolean;
 }
 
@@ -14,8 +14,8 @@ type FlushResult = {
 }
 
 export const useSectionContent = (bookId: string, sectionId: string) => {
-  const sectionQuery = useSectionQuery(bookId, sectionId);
-  const contentQuery = useSectionContentQuery(bookId, sectionId);
+  const sectionQuery = useEditorSectionQuery(bookId, sectionId);
+  const contentQuery = useEditorSectionContentQuery(bookId, sectionId);
   const { mutateAsync } = useSaveContentMutation(bookId, sectionId);
   const sectionLocalStorageKey = `section-${sectionId}`;
 

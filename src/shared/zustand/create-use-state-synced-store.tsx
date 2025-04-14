@@ -3,10 +3,9 @@
  * 상위 컴포넌트에서 사용하는 useState를 하위 레이어들에게 context로, 또는 store 상태로 전달하고싶을 때 유용하다.
  * 이렇게하면 하위 컴포넌트에서 상위 컴포넌트의 state를 변경하는 것도 가능하다.
  */
+import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useRef } from 'react';
 import { StoreApi, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useRef } from 'react';
-import React from 'react';
 
 
 // useState Return Value의 타입을 정의
@@ -16,8 +15,8 @@ export interface UseStateRv<S> {
   setState: Dispatch<SetStateAction<S>>;
 }
 // useState의 반환값을 UseStateRv로 변환해주는 함수
-const getUseStateRvFromUseStateReturnType = function<S>(useState: UseState<S>): UseStateRv<S> {
-  if(Array.isArray(useState)) {
+const getUseStateRvFromUseStateReturnType = function <S>(useState: UseState<S>): UseStateRv<S> {
+  if (Array.isArray(useState)) {
     return {
       state: useState[0],
       setState: useState[1]
@@ -31,7 +30,7 @@ const getUseStateRvFromUseStateReturnType = function<S>(useState: UseState<S>): 
 type UseState<S> = UseStateRv<S> | [S, Dispatch<SetStateAction<S>>]
 
 // store 타입
-interface UseStateSyncStore<S>{
+interface UseStateSyncStore<S> {
   state: S;
   setState: (state: S) => void;
 }
@@ -43,7 +42,7 @@ const createSyncedStore = <S,>(useStateRv: UseStateRv<S>): StoreApi<UseStateSync
     state: useStateRv.state,
     setState: (state: S) => {
       set({ state });
-      if(!Object.is(useStateRv.state, state)){
+      if (!Object.is(useStateRv.state, state)) {
         useStateRv.setState(state)
       }
     }
@@ -74,8 +73,8 @@ export const createUseStateSyncedStore = <S,>(): {
     const storeRef = useRef(createSyncedStore(useStateRv));
 
     useEffect(() => {
-      if(!Object.is(storeRef.current.getState().state, useStateRv.state)){
-        storeRef.current.setState({state: useStateRv.state});
+      if (!Object.is(storeRef.current.getState().state, useStateRv.state)) {
+        storeRef.current.setState({ state: useStateRv.state });
       }
     }, [useStateRv.state])
 
@@ -90,9 +89,9 @@ export const createUseStateSyncedStore = <S,>(): {
   const useStoreHook = (): [S, (state: S) => void] => {
     const store = useContext(StoreContext);
     if (!store) throw new Error("해당 context에서는 store가 정의되지 않습니다. 올바른 컨텍스트에서 접근가능");
-    const {state, setState} = useStore(store);
+    const { state, setState } = useStore(store);
     return [state, setState];
   }
-  
+
   return { StoreProvider: Provider, useStoreHook };
 }

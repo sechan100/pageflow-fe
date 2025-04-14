@@ -1,8 +1,8 @@
 'use client'
-import { SimpleBook } from "@/entities/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Box, Card, CardMedia, SxProps, Typography } from '@mui/material';
 import { useCallback } from "react";
+import { MyBook } from "../model/my-books";
 import { BookStatusChip } from "./BookStatusChip";
 
 
@@ -17,7 +17,7 @@ const writeBookLink = (bookId: string) => `/write/${bookId}`
 const bookReadLink = (bookId: string) => `/books/${bookId}`
 
 type Props = {
-  book: SimpleBook;
+  book: MyBook;
   sx?: SxProps
 }
 export const BookCard = ({

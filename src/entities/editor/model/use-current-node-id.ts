@@ -17,17 +17,17 @@ export const useCurrentNode = (): CurrentNodeInfo => {
   const nodeType = useMemo(() => {
     if (params.folderId || typeof params.folderId === 'string') {
       return 'folder';
-    } else if(params.sectionId && typeof params.sectionId === 'string') {
+    } else if (params.sectionId && typeof params.sectionId === 'string') {
       return 'section';
     } else {
       return "none";
     }
   }, [params]);
-  
+
   const nodeId = useMemo(() => {
     if (nodeType === 'folder') {
       return params.folderId as string;
-    } else if(nodeType === 'section') {
+    } else if (nodeType === 'section') {
       return params.sectionId as string;
     } else {
       return null;

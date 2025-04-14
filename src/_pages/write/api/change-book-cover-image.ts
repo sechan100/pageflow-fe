@@ -1,4 +1,4 @@
-import { BOOK_QUERY_KEY } from "@/entities/book";
+import { AUTHOR_PRIVATE_BOOK_QUERY_KEY } from "@/entities/book";
 import { api } from "@/global/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -40,7 +40,7 @@ export const useChangeBookCoverImageMutation = (bookId: string) => {
     }),
     onSuccess: (res) => {
       if (res.success) {
-        queryClient.invalidateQueries({ queryKey: BOOK_QUERY_KEY(bookId) });
+        queryClient.invalidateQueries({ queryKey: AUTHOR_PRIVATE_BOOK_QUERY_KEY(bookId) });
       }
     }
   });

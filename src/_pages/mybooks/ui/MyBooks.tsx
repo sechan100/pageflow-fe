@@ -1,7 +1,6 @@
 'use client'
 import { Box, Container, Grid, Paper, SxProps, Typography } from "@mui/material"
-import { useQuery } from "@tanstack/react-query"
-import { myBooksApi } from "../api/my-books"
+import { useMyBooksQuery } from "../api/my-books"
 import { BookCard } from "./BookCard"
 import { CreateBookButton } from "./CreateBookButton"
 import { EmptyMyBooks } from "./EmptyMyBooks"
@@ -14,11 +13,7 @@ type Props = {
 export const MyBooksPage = ({
   sx
 }: Props) => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['mybooks'],
-    queryFn: myBooksApi,
-  })
-
+  const { data, isLoading } = useMyBooksQuery();
 
   // 로딩중 화면
   if (isLoading || !data) {

@@ -3,7 +3,7 @@
  * Context API를 사용하지 않고 전역 변수를 통해 관리합니다.
  */
 import React, { useEffect, useRef } from 'react';
-import { StoreApi, useStore } from 'zustand';
+import { StoreApi, UseBoundStore, useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 
 /**
@@ -23,20 +23,16 @@ const createStoreWithInit: <D, S>(initializer: Initializer<D, S>) => (data: D) =
     return (data) => createStore((set, get) => initializer(data, set, get));
   }
 
-type ExtractState<S> = S extends {
-  getState: () => infer T;
-} ? T : never;
-type ReadonlyStoreApi<T> = Pick<StoreApi<T>, 'getState' | 'getInitialState' | 'subscribe'>;
-type UseBoundStore<S extends ReadonlyStoreApi<unknown>> = {
-  (): ExtractState<S>;
-  <U>(selector: (state: ExtractState<S>) => U): U;
-} & S;
-
 interface StoreProviderProps<D, S> {
   data: D;
   children: React.ReactNode;
   onDataChange?: (store: StoreApi<S>, data: D) => void;
 }
+
+/**
+ * 절대로 여러개의 Provider를 렌더링하지 않도록 주의해야 한다.
+ * 하나의 createStoreContext에서 생성된 Provider는 단 1개의 context만을 제공할 수 있다. (react context api처럼 사용 X)
+ */
 export const createStoreContext = <D, S>(initializer: Initializer<D, S>): [
   React.FC<StoreProviderProps<D, S>>,
   UseBoundStore<StoreApi<S>>

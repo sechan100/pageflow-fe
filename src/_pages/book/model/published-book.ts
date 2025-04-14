@@ -1,4 +1,5 @@
-import { SimpleBook, SvToc } from "@/entities/book";
+import { SimpleBook } from "@/entities/book";
+import { ReadOnlyToc } from "@/entities/reader";
 import { LocalDateTimeArray } from "@/shared/local-date-time";
 
 
@@ -25,6 +26,6 @@ export type PublishedBook = {
   description: string;
   publishedRecords: PublishedRecord[];
   authorProfile: AuthorProfile;
-  toc: SvToc;
+  toc: ReadOnlyToc;
   totalCharCount: number;
 }

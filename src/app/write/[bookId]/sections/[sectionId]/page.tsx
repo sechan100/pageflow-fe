@@ -1,12 +1,7 @@
 'use client';
 
-import { useCurrentNode } from '@/entities/book';
+import { useCurrentNode } from '@/entities/editor';
 import { SectionEditer } from '@/pages/write';
-
-
-
-
-
 
 
 export default function Page() {

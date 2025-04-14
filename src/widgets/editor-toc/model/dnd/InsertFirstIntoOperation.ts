@@ -1,4 +1,4 @@
-import { TocOperations } from '@/entities/book';
+import { TocOperations } from '@/entities/editor';
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
@@ -24,7 +24,7 @@ export class InsertFirstIntoOperation implements DndOperation {
      */
     // over의 상태 확인
     const data = extractTocNodeDndData(over);
-    if (data.type === "folder") {
+    if (data.type === "FOLDER") {
       const { node, isOpen } = data as TocFolderDndData;
       if (isOpen) {
         if (node.children.length === 0) return false;
@@ -44,7 +44,7 @@ export class InsertFirstIntoOperation implements DndOperation {
     }
   }
 
-  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+  relocate({ active, over, toc, bookId }: DndOperationContext): RelocateResult {
     const { id: overId } = extractTocNodeDndData(over);
     const { id: activeId } = extractTocNodeDndData(active);
 
@@ -59,7 +59,7 @@ export class InsertFirstIntoOperation implements DndOperation {
     return {
       toc: newToc,
       form: {
-        bookId: toc.bookId,
+        bookId,
         targetNodeId: activeId,
         destFolderId,
         destIndex: 0,

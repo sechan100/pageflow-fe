@@ -1,14 +1,15 @@
 'use client'
-import { useEditorTocStore } from '@/entities/book'
 import { useNotification } from "@/shared/ui/notification"
 import { closestCenter, DndContext, DragEndEvent, DragMoveEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { List, SxProps } from "@mui/material"
 import { useCallback } from "react"
 import { relocateNodeApi } from "../api/relocate-node"
 import { dndConfig } from "../config"
+import { useBookContext } from "../model/book-context"
 import { extractTocNodeDndData } from "../model/dnd/dnd-data"
-import { DndOperationDispatcher } from "../model/dnd/dnd-operation"
+import { DndOperationContext, DndOperationDispatcher } from "../model/dnd/dnd-operation"
 import { useIndicatorStore } from "../model/dnd/use-indicator"
+import { useEditorTocStore } from "../model/editor-toc-store-context"
 import { OverlayProvider } from "./OverlayProvider"
 import { renderTocNode } from "./render-toc-node"
 
@@ -20,6 +21,7 @@ type Props = {
 export const TocRoot = ({
   sx
 }: Props) => {
+  const { id: bookId } = useBookContext();
   const toc = useEditorTocStore(s => s.toc);
   const setToc = useEditorTocStore(s => s.setToc);
   const notification = useNotification();
@@ -47,19 +49,19 @@ export const TocRoot = ({
   const handleDragMove = useCallback(({ over, active }: DragMoveEvent) => {
     if (!over) return null;
     const { depth: overDepth } = extractTocNodeDndData(over);
-    const context = { active, over, toc, overDepth };
+    const context: DndOperationContext = { active, over, toc, overDepth, bookId };
     const operation = DndOperationDispatcher.dispatch(context);
     if (operation) {
       setIndicator(String(over.id), operation.getIndicatorMode(context));
     } else {
       clearIndicator();
     }
-  }, [clearIndicator, setIndicator, toc])
+  }, [bookId, clearIndicator, setIndicator, toc])
 
   const handleDragEnd = useCallback(({ over, active }: DragEndEvent) => {
     if (!over) return null;
     const { depth: overDepth } = extractTocNodeDndData(over);
-    const context = { active, over, toc, overDepth };
+    const context: DndOperationContext = { active, over, toc, overDepth, bookId };
     const operation = DndOperationDispatcher.dispatch(context);
     if (operation) {
       const { form, toc: newToc } = operation.relocate(context);
@@ -75,7 +77,7 @@ export const TocRoot = ({
         }
       })
     }
-  }, [notification, setToc, toc])
+  }, [bookId, notification, setToc, toc])
 
   return (
     <DndContext

@@ -3,10 +3,6 @@ import { $getRoot } from "lexical";
 import { useEffect, useState } from "react";
 
 
-
-
-
-
 export const useSectionCharCount = () => {
   const [editor] = useLexicalComposerContext();
   const [charCount, setCharCount] = useState(0);

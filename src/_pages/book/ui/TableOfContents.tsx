@@ -1,6 +1,6 @@
 'use client';
 
-import { SvTocFolder, SvTocSection } from "@/entities/book";
+import { isReadOnlyTocFolder, isReadOnlyTocSection, ReadOnlyTocFolder, ReadOnlyTocNode, ReadOnlyTocSection } from "@/entities/reader";
 import { Box, SxProps, Typography } from "@mui/material";
 import { usePublishedBookContext } from "../model/published-book-context";
 import { SectionHeader } from "./utils/SectionHeader";
@@ -8,7 +8,7 @@ import { SectionPaper } from "./utils/SectionPaper";
 
 
 type FolderNodeProps = {
-  folder: SvTocFolder;
+  folder: ReadOnlyTocFolder;
   level: number;
   sx?: SxProps;
 }
@@ -40,7 +40,7 @@ const FolderNode = ({
 }
 
 type SectionNodeProps = {
-  section: SvTocSection;
+  section: ReadOnlyTocSection;
   level: number;
   sx?: SxProps;
 }
@@ -75,8 +75,8 @@ const SectionNode = ({
   )
 }
 
-const renderTocNode = (node: SvTocFolder | SvTocSection, level = 0) => {
-  if (node.type === "SECTION") {
+const renderTocNode = (node: ReadOnlyTocNode, level = 0) => {
+  if (isReadOnlyTocSection(node)) {
     return (
       <SectionNode
         key={node.id}
@@ -84,7 +84,7 @@ const renderTocNode = (node: SvTocFolder | SvTocSection, level = 0) => {
         level={level}
       />
     );
-  } else {
+  } else if (isReadOnlyTocFolder(node)) {
     return (
       <FolderNode
         key={node.id}
@@ -92,6 +92,8 @@ const renderTocNode = (node: SvTocFolder | SvTocSection, level = 0) => {
         level={level}
       />
     );
+  } else {
+    throw new Error("Unknown toc node type");
   }
 };
 

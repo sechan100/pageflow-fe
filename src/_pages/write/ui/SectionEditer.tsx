@@ -1,10 +1,10 @@
 'use client'
-import { Section } from '@/entities/book'
+import { EditorSection } from '@/entities/editor'
 import { NodeTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
 import { SectionEditor as SectionEditorWidget, useSectionContent } from '@/widgets/section-editor'
-import { Box, Stack, SxProps } from "@mui/material"
+import { Box, SxProps } from "@mui/material"
 import { useCallback, useMemo, useState } from 'react'
 import { useSectionTitleMutation } from '../api/change-section-title'
 import { useBookContext } from '../model/book-context'
@@ -12,7 +12,7 @@ import { useSectionDeletion } from '../model/use-section-deletion'
 
 
 type SectionTitleFieldProps = {
-  section: Section;
+  section: EditorSection;
   sx?: SxProps;
 }
 const SectionTitleField = ({

@@ -1,4 +1,4 @@
-import { TocFolder, TocOperations } from '@/entities/book';
+import { EditorTocFolder, TocOperations } from '@/entities/editor';
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
@@ -18,16 +18,16 @@ export class InsertBelowOperation implements DndOperation {
    * 위 조건이 적절한 경우, dest를 3등분하여 active가 아랫부분에 over중이라면 수행한다.
    */
   isAcceptable({ active, over }: DndOperationContext): boolean {
-    if(active.id === over.id) return false;
+    if (active.id === over.id) return false;
     const activeRect = active.rect.current.translated;
-    if(!activeRect) return false;
+    if (!activeRect) return false;
 
     // over의 상태 확인
     const data = extractTocNodeDndData(over);
-    if(data.type === "folder"){
+    if (data.type === "FOLDER") {
       const { node, isOpen } = data as TocFolderDndData;
-      const folder = node as TocFolder;
-      if(isOpen && folder.children.length > 0) return false;
+      const folder = node as EditorTocFolder;
+      if (isOpen && folder.children.length > 0) return false;
     }
 
     // rect 계산
@@ -43,7 +43,7 @@ export class InsertBelowOperation implements DndOperation {
     }
   }
 
-  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+  relocate({ active, over, toc, bookId }: DndOperationContext): RelocateResult {
     const { id: overId } = extractTocNodeDndData(over);
     const { id: activeId } = extractTocNodeDndData(active);
 
@@ -55,18 +55,18 @@ export class InsertBelowOperation implements DndOperation {
       const target = TocOperations.removeNodeMutable(draft, activeId);
       destIndex = parent.children.findIndex(child => child.id === overId) + 1;
       parent.children.splice(destIndex, 0, target);
-      
+
       destFolderId = parent.id;
     });
 
-    if(!destFolderId || destIndex === null) {
+    if (!destFolderId || destIndex === null) {
       throw new Error("destFolderId 또는 destIndex를 찾을 수 없습니다.");
     }
 
     return {
       toc: newToc,
       form: {
-        bookId: toc.bookId,
+        bookId,
         targetNodeId: activeId,
         destFolderId,
         destIndex,

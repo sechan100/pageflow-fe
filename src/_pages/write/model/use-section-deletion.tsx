@@ -1,4 +1,4 @@
-import { useSectionQuery } from "@/entities/book";
+import { useEditorSectionQuery } from "@/entities/editor";
 import { useWritePageDialMenuStore } from "@/features/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { useNotification } from "@/shared/ui/notification";
@@ -11,7 +11,7 @@ import { useBookContext } from "./book-context";
 
 export const useSectionDeletion = (sectionId: string) => {
   const { id: bookId } = useBookContext();
-  const { data: section, isLoading: _isSectionLoading } = useSectionQuery(bookId, sectionId);
+  const { data: section, isLoading: _isSectionLoading } = useEditorSectionQuery(bookId, sectionId);
   const isSectionLoading = section === undefined || _isSectionLoading
 
   const { router } = useNextRouter();

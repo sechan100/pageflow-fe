@@ -7,6 +7,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { sideDrawerWidth } from "../config/side-drawer-width";
 import { useBookContext } from "../model/book-context";
+import { useEditorTocStore } from "../model/editor-toc-store";
 import { SideDrawerBookTitle } from "./SideDrawerBookTitle";
 
 type Props = {
@@ -70,7 +71,10 @@ export const SideDrawer = ({
             onClick={handleDrawerClose}
           />
         </Box>
-        <EditorToc book={book} />
+        <EditorToc
+          book={book}
+          editorTocStore={useEditorTocStore}
+        />
       </Drawer >
     </>
   );

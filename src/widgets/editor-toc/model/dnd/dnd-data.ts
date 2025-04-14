@@ -1,24 +1,24 @@
-import { TocFolder, TocNode, TocNodeType, TocSection } from '@/entities/book';
+import { EditorTocFolder, EditorTocNode, EditorTocNodeType, EditorTocSection } from "@/entities/editor";
 import { Active, Collision, Over, Translate } from "@dnd-kit/core";
 
 
 
 export type TocNodeDndData = {
   id: string;
-  type: TocNodeType;
-  node: TocNode;
+  type: EditorTocNodeType;
+  node: EditorTocNode;
   depth: number;
 }
 
 export type TocFolderDndData = TocNodeDndData & {
-  type: "folder";
-  node: TocFolder;
+  type: "FOLDER";
+  node: EditorTocFolder;
   isOpen: boolean;
 }
 
 export type TocSectionDndData = TocNodeDndData & {
-  type: "section";
-  node: TocSection;
+  type: "SECTION";
+  node: EditorTocSection;
 }
 
 export interface DragEvent {

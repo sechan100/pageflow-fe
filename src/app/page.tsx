@@ -1,7 +1,6 @@
 'use client';
 
-import { WithAppbarLayout } from "../global/layout/WithAppbarLayout";
-
+import { WithAppbarLayout } from "@/global/layout/WithAppbarLayout";
 
 
 export default function Home() {

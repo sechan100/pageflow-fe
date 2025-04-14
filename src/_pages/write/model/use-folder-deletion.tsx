@@ -1,4 +1,4 @@
-import { useFolderQuery } from "@/entities/book";
+import { useEditorFolderQuery } from "@/entities/editor";
 import { useWritePageDialMenuStore } from "@/features/book";
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { useNotification } from "@/shared/ui/notification";
@@ -11,7 +11,7 @@ import { useBookContext } from "./book-context";
 
 export const useFolderDeletion = (folderId: string) => {
   const { id: bookId } = useBookContext();
-  const { data: folder, isLoading: _isFolderLoading } = useFolderQuery(bookId, folderId);
+  const { data: folder, isLoading: _isFolderLoading } = useEditorFolderQuery(bookId, folderId);
   const isFolderLoading = folder === undefined || _isFolderLoading
 
   const { router } = useNextRouter();

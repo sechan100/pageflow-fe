@@ -1,5 +1,6 @@
 'use client'
-import { AuthorPrivateBook, SectionWithContent } from '@/entities/book';
+import { AuthorPrivateBook } from '@/entities/book';
+import { WithContentEditorSection } from '@/entities/editor';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
@@ -38,7 +39,7 @@ const placeholder = "내용을 입력해주세요.";
 
 type Props = {
   book: AuthorPrivateBook;
-  section: SectionWithContent;
+  section: WithContentEditorSection;
   sx?: SxProps
 }
 export const SectionEditor = ({

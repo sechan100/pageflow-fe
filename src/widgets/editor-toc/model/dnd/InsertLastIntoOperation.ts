@@ -1,4 +1,4 @@
-import { TocOperations } from '@/entities/book';
+import { TocOperations } from '@/entities/editor';
 import { produce } from "immer";
 import { IndicatorMode } from "../../ui/Indicator";
 import { extractTocNodeDndData, TocFolderDndData } from "./dnd-data";
@@ -15,15 +15,15 @@ export class InsertLastIntoOperation implements DndOperation {
    * dest를 3등분하여 active가 중앙에 over중이라면 수행한다.
    */
   isAcceptable({ active, over }: DndOperationContext): boolean {
-    if(active.id === over.id) return false;
+    if (active.id === over.id) return false;
     const activeRect = active.rect.current.translated;
-    if(!activeRect) return false;
+    if (!activeRect) return false;
 
     // over의 상태 확인
     const data = extractTocNodeDndData(over);
-    if(data.type === "folder"){
+    if (data.type === "FOLDER") {
       const { node, isOpen } = data as TocFolderDndData;
-      if(isOpen) return false;
+      if (isOpen) return false;
       // rect 계산
       const splitedRect = RectUtils.splitRectToThreeHorizontally(over.rect);
       return RectUtils.isRectCenterVerticallyInBoundary(activeRect, splitedRect.center);
@@ -38,7 +38,7 @@ export class InsertLastIntoOperation implements DndOperation {
     }
   }
 
-  relocate({ active, over, toc }: DndOperationContext): RelocateResult {
+  relocate({ active, over, toc, bookId }: DndOperationContext): RelocateResult {
     const { id: overId } = extractTocNodeDndData(over);
     const { id: activeId } = extractTocNodeDndData(active);
 
@@ -52,14 +52,14 @@ export class InsertLastIntoOperation implements DndOperation {
       parent.children.push(target);
     });
 
-    if(destIndex === null) {
+    if (destIndex === null) {
       throw new Error("destIndex를 찾을 수 없습니다.");
     }
 
     return {
       toc: newToc,
       form: {
-        bookId: toc.bookId,
+        bookId,
         targetNodeId: activeId,
         destFolderId,
         destIndex,

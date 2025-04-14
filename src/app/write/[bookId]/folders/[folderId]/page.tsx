@@ -1,8 +1,6 @@
 'use client';
-import { useCurrentNode } from '@/entities/book';
+import { useCurrentNode } from '@/entities/editor';
 import { FolderEditer } from '@/pages/write';
-
-
 
 
 

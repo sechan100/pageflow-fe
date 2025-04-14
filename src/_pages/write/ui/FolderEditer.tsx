@@ -1,5 +1,5 @@
 'use client'
-import { Folder, useFolderQuery } from '@/entities/book'
+import { EditorFolder, useEditorFolderQuery } from '@/entities/editor'
 import { NodeTitleField } from '@/features/book'
 import { Field } from '@/shared/field'
 import { useNotification } from '@/shared/ui/notification'
@@ -11,7 +11,7 @@ import { useFolderDeletion } from '../model/use-folder-deletion'
 
 
 type FolderTitleFieldProps = {
-  folder: Folder;
+  folder: EditorFolder;
   sx?: SxProps;
 }
 const FolderTitleField = ({
@@ -59,7 +59,7 @@ export const FolderEditer = ({
   sx
 }: Props) => {
   const book = useBookContext();
-  const { data: folder, isLoading: isFolderLoading } = useFolderQuery(book.id, folderId);
+  const { data: folder, isLoading: isFolderLoading } = useEditorFolderQuery(book.id, folderId);
   useFolderDeletion(folderId);
 
 

@@ -1,5 +1,5 @@
 'use client'
-import { useBookQuery } from '@/entities/book'
+import { useAuthorPrivateBookQuery } from '@/entities/book'
 import { WritePageDialMenu } from '@/features/book'
 import { Box, Container, SxProps } from "@mui/material"
 import { useState } from "react"
@@ -22,7 +22,7 @@ export const WritePageLayout = ({
   sx
 }: Props) => {
   useGoToUserBooksDial();
-  const { data, isLoading } = useBookQuery(bookId);
+  const { data, isLoading } = useAuthorPrivateBookQuery(bookId);
   const [open, setOpen] = useState(true);
 
   if (isLoading || !data) {

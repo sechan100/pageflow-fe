@@ -1,5 +1,6 @@
-import { defaultFolderOpen, useEditorTocStore } from '@/entities/book';
+import { defaultFolderOpen } from '@/entities/editor';
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEditorTocStore } from './editor-toc-store-context';
 
 
 

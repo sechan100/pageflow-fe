@@ -1,14 +1,14 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { create } from "zustand";
-import { Folder } from "../model/folder.type";
+import { EditorFolder } from "../model/folder";
 
 
 
-const getFolderApi = async ({ bookId, folderId }: { bookId: string, folderId: string }) => {
+const getEditorFolderApi = async ({ bookId, folderId }: { bookId: string, folderId: string }) => {
   const res = await api
     .user()
-    .get<Folder>(`/user/books/${bookId}/toc/folders/${folderId}`);
+    .get<EditorFolder>(`/user/books/${bookId}/toc/folders/${folderId}`);
   if (!res.isSuccess()) {
     throw new Error(res.description);
   }
@@ -26,14 +26,14 @@ const useFolderDeletedStore = create<FolderDeletedStore>()((set) => ({
   isDeleted: false
 }));
 
-export const FOLDER_QUERY_KEY = (folderId: string) => ['section', folderId];
+export const EDITOR_FOLDER_QUERY_KEY = (folderId: string) => ['section', folderId];
 
-export const useFolderQuery = (bookId: string, folderId: string) => {
+export const useEditorFolderQuery = (bookId: string, folderId: string) => {
   const isDeleted = useFolderDeletedStore(s => s.isDeleted);
 
-  const query = useQuery<Folder>({
-    queryKey: FOLDER_QUERY_KEY(folderId),
-    queryFn: () => getFolderApi({
+  const query = useQuery<EditorFolder>({
+    queryKey: EDITOR_FOLDER_QUERY_KEY(folderId),
+    queryFn: () => getEditorFolderApi({
       bookId,
       folderId
     }),

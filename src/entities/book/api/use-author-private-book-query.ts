@@ -12,7 +12,7 @@ type Result = {
   message: string
 }
 
-const getBookApi = async (bookId: string): Promise<Result> => {
+const getAuthorPrivateBookApi = async (bookId: string): Promise<Result> => {
   const res = await api
     .user()
     .get<AuthorPrivateBook>(`/user/books/${bookId}`);
@@ -33,15 +33,15 @@ const getBookApi = async (bookId: string): Promise<Result> => {
     .resolve();
 }
 
-export const BOOK_QUERY_KEY = (bookId: string) => ['book', bookId];
+export const AUTHOR_PRIVATE_BOOK_QUERY_KEY = (bookId: string) => ['book', bookId];
 
 /**
  * 작가가 자신의 책을 불러올 때, 다양한 상태를 포함해서 불러오는 query
  */
-export const useBookQuery = (bookId: string) => {
+export const useAuthorPrivateBookQuery = (bookId: string) => {
   const query = useQuery({
-    queryKey: BOOK_QUERY_KEY(bookId),
-    queryFn: () => getBookApi(bookId)
+    queryKey: AUTHOR_PRIVATE_BOOK_QUERY_KEY(bookId),
+    queryFn: () => getAuthorPrivateBookApi(bookId)
   });
 
   return query;
