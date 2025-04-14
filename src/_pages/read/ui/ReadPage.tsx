@@ -1,9 +1,8 @@
+import { SectionReader } from '@/widgets/reader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import React from 'react';
-import { BookViewer } from './BookViewer';
-import { TocSidebar } from './TocSidebar';
 
 interface ReadPageProps {
   bookId?: string;
@@ -72,11 +71,11 @@ export const ReadPage: React.FC<ReadPageProps> = ({
         flexGrow: 1,
         overflow: 'hidden'
       }}>
-        <TocSidebar
+        {/* <ReaderToc
           toc={toc}
           open={tocOpen}
           onClose={() => setTocOpen(false)}
-        />
+        /> */}
 
         <Box sx={{
           flexGrow: 1,
@@ -85,7 +84,7 @@ export const ReadPage: React.FC<ReadPageProps> = ({
           maxWidth: tocOpen ? 'calc(100% - 300px)' : '100%',
           transition: 'max-width 0.3s ease'
         }}>
-          <BookViewer content={bookContent} />
+          <SectionReader content={bookContent} />
         </Box>
       </Box>
     </Box>

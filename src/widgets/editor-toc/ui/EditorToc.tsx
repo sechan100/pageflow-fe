@@ -10,7 +10,7 @@ type Props = {
   book: AuthorPrivateBook;
   sx?: SxProps
 }
-export const TocTree = ({
+export const EditorToc = ({
   book,
   sx
 }: Props) => {

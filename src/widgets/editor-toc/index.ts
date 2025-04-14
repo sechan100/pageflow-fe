@@ -1,1 +1,1 @@
-export { TocTree } from "./ui/TocTree";
+export { EditorToc } from "./ui/EditorToc";

@@ -1,6 +1,6 @@
 'use client'
 import { TooltipIconButton } from "@/shared/ui/TootipIconButton";
-import { TocTree } from "@/widgets/editor-toc";
+import { EditorToc } from "@/widgets/editor-toc";
 import {
   Box, Drawer, SxProps
 } from "@mui/material";
@@ -70,7 +70,7 @@ export const SideDrawer = ({
             onClick={handleDrawerClose}
           />
         </Box>
-        <TocTree book={book} />
+        <EditorToc book={book} />
       </Drawer >
     </>
   );

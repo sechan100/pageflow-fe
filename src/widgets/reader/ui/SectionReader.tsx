@@ -24,7 +24,7 @@ const viewerConfig = {
 type Props = {
   content: string;
 };
-export const BookViewer = ({
+export const SectionReader = ({
   content
 }: Props) => {
 

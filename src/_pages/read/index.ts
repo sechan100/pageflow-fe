@@ -1,5 +1,5 @@
 // Export UI components only
-export { BookViewer } from './ui/BookViewer';
+export { ReaderToc } from '../../widgets/reader-toc/ui/ReaderTocSidebar';
+export { SectionReader } from '../../widgets/reader/ui/SectionReader';
 export { ReadPage } from './ui/ReadPage';
-export { TocSidebar } from './ui/TocSidebar';
 

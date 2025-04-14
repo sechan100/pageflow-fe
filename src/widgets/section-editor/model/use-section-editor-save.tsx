@@ -5,6 +5,7 @@ import { useUserInputChangeUpdateListener } from '@/shared/lexical/use-user-inpu
 import { useNotification } from "@/shared/ui/notification";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { SpeedDialIcon } from '@mui/material';
+import { $getSelection } from 'lexical';
 import { debounce } from "lodash";
 import { SaveIcon } from 'lucide-react';
 import { useCallback, useEffect, useMemo } from "react";
@@ -43,6 +44,12 @@ export const useSectionEditorSave = (bookId: string, sectionId: string) => {
   // editor의 현재 내용을 로컬스토리지에 저장
   const saveEditorState = useCallback(() => {
     editor.read(async () => {
+      const selection = $getSelection();
+      if (!selection) return;
+      const nodes = selection.getNodes();
+      if (nodes.length !== 1) return;
+      const key = nodes[0];
+      console.log(key);
       const html = $getHtmlSerializedEditorState();
       save(html);
       saveToServerDebounce();
