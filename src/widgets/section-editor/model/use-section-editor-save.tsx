@@ -44,12 +44,12 @@ export const useSectionEditorSave = (bookId: string, sectionId: string) => {
   // editor의 현재 내용을 로컬스토리지에 저장
   const saveEditorState = useCallback(() => {
     editor.read(async () => {
+      // selection의 node가 1개라는 것은 현재 커서를 단일 위치에 두고 텍스트를 작성하고 있다는 것임
       const selection = $getSelection();
       if (!selection) return;
       const nodes = selection.getNodes();
       if (nodes.length !== 1) return;
-      const key = nodes[0];
-      console.log(key);
+
       const html = $getHtmlSerializedEditorState();
       save(html);
       saveToServerDebounce();

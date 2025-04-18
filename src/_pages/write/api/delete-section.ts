@@ -32,7 +32,7 @@ const deleteSectionApi = async ({ bookId, sectionId }: DeleteSectionForm) => {
 
 export const useDeleteSectionMutation = (sectionId: string) => {
   const { id: bookId } = useBookContext();
-  const { setIsDeleted } = useEditorSectionQuery(bookId, sectionId);
+  const { setSectionDeleted } = useEditorSectionQuery(bookId, sectionId);
   const queryClient = useQueryClient();
   const toc = useEditorTocStore(s => s.toc);
   const setToc = useEditorTocStore(s => s.setToc);
@@ -45,7 +45,7 @@ export const useDeleteSectionMutation = (sectionId: string) => {
     onSuccess: (res) => {
       if (res.success) {
         // query 삭제
-        setIsDeleted(true);
+        setSectionDeleted(sectionId);
         queryClient.removeQueries({ queryKey: EDITOR_SECTION_QUERY_KEY(sectionId) });
 
         const newToc = produce(toc, draft => {

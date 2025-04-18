@@ -1,6 +1,6 @@
-import { SimpleBook } from "@/entities/book";
 import { ReadOnlyToc } from "@/entities/reader";
 import { LocalDateTimeArray } from "@/shared/local-date-time";
+import { SimpleBook } from './book';
 
 
 

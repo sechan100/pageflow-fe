@@ -1,7 +1,7 @@
 'use client'
 
+import { usePublishedBookQuery } from '@/entities/book';
 import { Box, Container, SxProps, Typography } from "@mui/material";
-import { usePublishedBookQuery } from "../api/published-book";
 import { PublishedBookContextProvider, usePublishedBookContext } from "../model/published-book-context";
 import { AuthorProfile } from "./AuthorProfile";
 import { BookHeroSection } from "./BookHeroSection";

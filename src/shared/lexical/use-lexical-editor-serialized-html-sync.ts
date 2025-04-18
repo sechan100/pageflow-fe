@@ -16,7 +16,7 @@ export const useLexicalEditorSerializedHtmlSync = (html: string | null) => {
   useEffect(() => {
     if (html === null) return;
 
-    // update =====================
+    // update
     editor.update(() => {
       const root = $getRoot();
       const isEmpty = root.getTextContent() === "";

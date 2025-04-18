@@ -1,3 +1,4 @@
+import { ReadOnlyFolder } from '@/entities/reader';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { CodeNode } from '@lexical/code';
@@ -22,10 +23,10 @@ const viewerConfig = {
 };
 
 type Props = {
-  content: string;
+  folder: ReadOnlyFolder;
 };
-export const SectionReader = ({
-  content
+export const FolderViewer = ({
+  folder
 }: Props) => {
 
   return (

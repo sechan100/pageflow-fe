@@ -1,8 +1,8 @@
 import { PlainApiResponse } from "@/shared/res/api-response";
-import axios from "axios";
-import { getProxyBaseUrl } from "./proxy";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { getProxyBaseUrl } from "./proxy";
 
 
 
@@ -29,6 +29,9 @@ type ServerProperties = {
     pennameMaxLength: number;
     pennameRegex: string;
     pennameRegexMessage: string;
+  },
+  book: {
+    folderDesigns: string[]
   }
 }
 

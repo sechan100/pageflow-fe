@@ -32,7 +32,7 @@ const deleteFolderApi = async ({ bookId, folderId }: DeleteFolderForm) => {
 
 export const useDeleteFolderMutation = (folderId: string) => {
   const { id: bookId } = useBookContext();
-  const { setIsDeleted } = useEditorFolderQuery(bookId, folderId);
+  const { setFolderDeleted } = useEditorFolderQuery(bookId, folderId);
   const queryClient = useQueryClient();
   const toc = useEditorTocStore(s => s.toc);
   const setToc = useEditorTocStore(s => s.setToc);
@@ -46,7 +46,7 @@ export const useDeleteFolderMutation = (folderId: string) => {
       if (res.success) {
         // query 삭제
         queryClient.removeQueries({ queryKey: EDITOR_FOLDER_QUERY_KEY(folderId) });
-        setIsDeleted(true);
+        setFolderDeleted(folderId);
 
         const newToc = produce(toc, draft => {
           TocOperations.removeNodeMutable(draft, folderId);
