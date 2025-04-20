@@ -1,4 +1,3 @@
-import { ReadOnlyFolder } from '@/entities/reader';
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { CodeNode } from '@lexical/code';
@@ -10,6 +9,8 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Box, Paper } from '@mui/material';
+import { ReadableFolder } from '../../model/readable-folder';
+import { useLayoutStore } from '../../model/use-reader-layout-store';
 
 
 const viewerConfig = {
@@ -23,11 +24,12 @@ const viewerConfig = {
 };
 
 type Props = {
-  folder: ReadOnlyFolder;
+  folder: ReadableFolder;
 };
-export const FolderViewer = ({
-  folder
+export const FolderReader = ({
+  folder,
 }: Props) => {
+  const layout = useLayoutStore();
 
   return (
     <Paper elevation={0} sx={{

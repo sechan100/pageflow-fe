@@ -1,13 +1,12 @@
 import { PublishedBook, usePublishedBookQuery } from '@/entities/book';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
-import { ReaderToc } from '@/widgets/reader-toc';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Button, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { useState } from 'react';
-import { PublishedBookContextProvider } from '../model/published-book-context';
-import { ReaderTocStoreContextProvider, useReaderTocStore } from '../model/reader-toc-store';
-import { NodeViewer } from './NodeViewer';
+import { BookContextProvider } from '../model/book-context';
+import { PositionStoreContextProvider } from '../model/position';
+import { TocContextProvider } from "../model/TocContextProvider";
+import { BookReader } from './BookReader';
+import { ReaderToc } from './toc/ReaderToc';
 
 
 type ReadPageContentProps = {
@@ -27,10 +26,9 @@ const ReadPageContent = ({
     <>
       <Box sx={{
         display: 'flex',
-        height: '100vh',
         flexDirection: 'column'
       }}>
-        <Box sx={{
+        {/* <Box sx={{
           display: 'flex',
           alignItems: 'center',
           p: 2,
@@ -54,27 +52,15 @@ const ReadPageContent = ({
           <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'center' }}>
             {book.title}
           </Typography>
-        </Box>
+        </Box> */}
 
         <Box sx={{
           display: 'flex',
           flexGrow: 1,
           overflow: 'hidden'
         }}>
-          <ReaderToc
-            book={book}
-            tocStore={useReaderTocStore}
-          />
-
-          <Box sx={{
-            flexGrow: 1,
-            overflow: 'auto',
-            p: 3,
-            maxWidth: open ? 'calc(100% - 300px)' : '100%',
-            transition: 'max-width 0.3s ease'
-          }}>
-            <NodeViewer />
-          </Box>
+          <ReaderToc />
+          <BookReader />
         </Box>
       </Box>
     </>
@@ -96,10 +82,12 @@ export const ReadPage = ({ bookId }: Props) => {
   }
 
   return (
-    <PublishedBookContextProvider value={book}>
-      <ReaderTocStoreContextProvider data={book.toc}>
-        <ReadPageContent book={book} />
-      </ReaderTocStoreContextProvider>
-    </PublishedBookContextProvider>
+    <BookContextProvider value={book}>
+      <TocContextProvider value={book.toc}>
+        <PositionStoreContextProvider data={book.toc}>
+          <ReadPageContent book={book} />
+        </PositionStoreContextProvider>
+      </TocContextProvider>
+    </BookContextProvider>
   );
 };

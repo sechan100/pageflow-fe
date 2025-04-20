@@ -1,14 +1,9 @@
 'use client'
+import { PublishedRecord } from '@/entities/book';
 import { convertToLocalDateTime } from "@/shared/local-date-time";
 import { SxProps, Typography } from "@mui/material";
-import { PublishedRecord } from "../../../entities/book/model/published-book";
 import { convertEditionToText } from "../model/convert-edition-to-text";
 import { Section, Title } from "./utils/book-info-section";
-
-
-
-
-
 
 type Props = {
   publishedRecords: PublishedRecord[];

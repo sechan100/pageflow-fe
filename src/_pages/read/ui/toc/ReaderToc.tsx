@@ -10,8 +10,8 @@ import { TocRoot } from './TocRoot';
 
 
 
-export const ReaderTocSidebar = () => {
-  const [open, setOpen] = useState(true);
+export const ReaderToc = () => {
+  const [open, setOpen] = useState(false);
   const onClose = () => {
     setOpen(false);
   };

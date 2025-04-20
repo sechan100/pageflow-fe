@@ -1,17 +1,17 @@
-import { ReadOnlySection } from "@/entities/reader";
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
 import { decode } from "he";
+import { ReadableSection } from "../model/readable-section";
 
 type Form = {
   bookId: string;
   sectionId: string;
 }
 
-const getSectionApi = async ({ bookId, sectionId }: Form): Promise<ReadOnlySection> => {
+const getSectionApi = async ({ bookId, sectionId }: Form): Promise<ReadableSection> => {
   const res = await api
     .guest()
-    .get<ReadOnlySection>(`/reader/books/${bookId}/sections/${sectionId}`);
+    .get<ReadableSection>(`/reader/books/${bookId}/sections/${sectionId}`);
   if (!res.isSuccess()) {
     throw new Error(res.description);
   }
@@ -21,11 +21,11 @@ const getSectionApi = async ({ bookId, sectionId }: Form): Promise<ReadOnlySecti
   }
 }
 
-export const READ_ONLY_SECTION_QUERY_KEY = (sectionId: string) => ['section', sectionId];
+export const READABLE_SECTION_QUERY_KEY = (sectionId: string) => ['reader', 'section', sectionId];
 
-export const useReadOnlySectionQuery = ({ bookId, sectionId }: Form) => {
+export const useReadableSectionQuery = ({ bookId, sectionId }: Form) => {
   const query = useQuery({
-    queryKey: READ_ONLY_SECTION_QUERY_KEY(sectionId),
+    queryKey: READABLE_SECTION_QUERY_KEY(sectionId),
     queryFn: () => getSectionApi({ bookId, sectionId }),
   });
 

@@ -1,5 +1,5 @@
 'use client'
-import { ReadOnlyTocFolder, ReadOnlyTocNode, ReadOnlyTocSection, isReadOnlyTocFolder, isReadOnlyTocSection } from "@/entities/reader";
+import { isReadableTocFolder, isReadableTocSection, ReadableTocFolder, ReadableTocNode, ReadableTocSection } from '@/entities/book';
 import ArticleIcon from '@mui/icons-material/Article';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -7,10 +7,10 @@ import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { useState } from "react";
-import { useReaderTocStore } from "../model/reader-store";
+import { useTocContext } from "../../model/TocContextProvider";
 
 type TocFolderProps = {
-  folder: ReadOnlyTocFolder;
+  folder: ReadableTocFolder;
   level: number;
   sx?: SxProps;
 }
@@ -59,7 +59,7 @@ const TocFolderNode = ({
 };
 
 type TocSectionProps = {
-  section: ReadOnlyTocSection;
+  section: ReadableTocSection;
   level: number;
   sx?: SxProps;
 }
@@ -101,17 +101,17 @@ const TocSectionNode = ({
   );
 };
 
-const renderTocNode = (node: ReadOnlyTocNode, level: number) => {
-  if (isReadOnlyTocFolder(node)) {
+const renderTocNode = (node: ReadableTocNode, level: number) => {
+  if (isReadableTocFolder(node)) {
     return <TocFolderNode key={node.id} folder={node} level={level} />;
-  } else if (isReadOnlyTocSection(node)) {
+  } else if (isReadableTocSection(node)) {
     return <TocSectionNode key={node.id} section={node} level={level} />;
   }
   return null;
 };
 
 export const TocRoot = () => {
-  const toc = useReaderTocStore(s => s.toc);
+  const toc = useTocContext();
 
   return (
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
