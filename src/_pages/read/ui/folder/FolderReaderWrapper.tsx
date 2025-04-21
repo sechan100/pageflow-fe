@@ -5,7 +5,7 @@ import { usePositionStore } from "../../model/position";
 import { FolderReader } from "./FolderReader";
 
 
-export const FolderDataProvider = () => {
+export const FolderReaderWrapper = () => {
   const bookId = useBookContext().id;
   const position = usePositionStore(s => s.position);
   const { data, isLoading, promise } = useReadableFolderQuery({ bookId, folderId: position.tocNodeId });

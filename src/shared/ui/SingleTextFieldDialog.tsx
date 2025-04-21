@@ -1,6 +1,6 @@
 import { Box, Button, Modal, Stack, Typography } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
-import { registerEnterShortCut } from "../keyboard";
+import { registerKeyboardShortCut } from "../keyboard";
 
 
 
@@ -37,7 +37,7 @@ export const SingleTextFieldDialog = ({
     const el = dialogRef.current;
     if (!el) return;
 
-    return registerEnterShortCut({
+    return registerKeyboardShortCut({
       element: el,
       cb: handleSubmit,
     })

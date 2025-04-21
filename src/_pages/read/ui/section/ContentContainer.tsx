@@ -3,8 +3,6 @@ import { Box, SxProps } from "@mui/material";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useLayoutStore } from "../../model/use-reader-layout-store";
 import { columnGapRatio, columnWidthRatio } from "./section-columns";
-import { useCalculatePages } from "./use-calculate-pages";
-
 
 
 const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
@@ -44,6 +42,48 @@ const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
 }
 
 
+type Args = {
+  width: number;
+  scrollWidth: number;
+}
+const useCalculatePages = ({ width, scrollWidth }: Args) => {
+  /**
+   * 모든 수치들은 width 값이다.
+   * 사용되는 값들은 
+   * - column: css columns의 columnWidth
+   * - gap: css columns의 columnGap
+   * - halfPage: 하나의 column과 하나의 gap을 합친 수치
+   */
+  const gap = width * columnGapRatio;
+  const column = width * columnWidthRatio;
+  const halfPage = column + gap;
+
+  /**
+   * 칼럼은 column, gap 순서대로 번갈아가며 등장하다가, 마지막에는 column으로 끝난다. 
+   * halfPage는 column과 gap을 합친 수치로, 마지막에 gap으로 끝나는 경우에 'halfPageCount * 2 = pageCount'가 맞아 떨어진다.
+   * 때문에 전체 scrollWidth에 gap을 하나 더한 후 halfPage로 나누어 페이지 수를 구한다.
+   * 
+   * 다만, 마지막 페이지가 반쪽짜리인 경우에 대비해서 언제나 컨테이너 마지막에 가상 반페이지를 추가해두기 때문에,
+   * 1개의 halfPage 개수를 빼줘야한다.
+   * 예를 들어, halfPageCount가 6이라면 딱 3페이지로 맞아 떨어진다. 하지만 마지막 가상 반페이지 때문에 
+   * 계산하면 실제로는 7개의 halfPage로 계산된다. 따라서 1개를 감하여 6개로 조정해줘야한다.
+   */
+  const halfPageCount = Math.round((scrollWidth + gap) / halfPage) - 1;
+
+  /**
+   * halfPage 개수가 홀수개인지 확인. -> 홀수개라면 마지막 페이지는 반쪽페이지
+   * 페이지 수는 2개의 반페이지를 합쳐서 1개로 세고, 마지막은 반페이지는 1개든 2개든 1개로 셈.
+   */
+  const isLastFullPage = halfPageCount % 2 === 0;
+  const pageCount = Math.floor(halfPageCount / 2) + (isLastFullPage ? 0 : 1);
+
+  return {
+    pageCount,
+    isLastFullPage
+  }
+}
+
+
 type Props = {
   children: React.ReactNode;
   sx?: SxProps;
@@ -56,8 +96,8 @@ export const ContentContainer = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { width, height, scrollLeft, scrollWidth } = useElementProperties(scrollContainerRef);
 
-  const { isLastPageHalf, pageCount } = useCalculatePages({ scrollWidth, width })
-  console.log("pages", pageCount, isLastPageHalf);
+  const { isLastFullPage, pageCount } = useCalculatePages({ scrollWidth, width })
+  console.log("pages", pageCount, isLastFullPage);
 
 
   return (
@@ -87,13 +127,13 @@ export const ContentContainer = ({
         },
 
         // 마지막에 반쪽짜리 페이지가 남는 경우를 위한 
-        // "& > div > *:last-child::after": {
-        //   content: "''",
-        //   visibility: "hidden",
-        //   userSelect: "none",
-        //   display: "block",
-        //   breakBefore: "column",
-        // }
+        "& > div > *:last-child::after": {
+          content: "''",
+          visibility: "hidden",
+          userSelect: "none",
+          display: "block",
+          breakBefore: "column",
+        }
       }}
     >
       {children}

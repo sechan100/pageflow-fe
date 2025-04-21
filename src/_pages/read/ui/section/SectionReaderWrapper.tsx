@@ -6,7 +6,7 @@ import { usePositionStore } from "../../model/position";
 import { SectionReader } from "./SectionReader";
 
 
-export const SectionDataProvider = () => {
+export const SectionReaderWrapper = () => {
   const bookId = useBookContext().id;
   const position = usePositionStore(s => s.position);
   const { data, isLoading } = useReadableSectionQuery({ bookId, sectionId: position.tocNodeId });

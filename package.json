@@ -25,6 +25,7 @@
     "lexical": "^0.27.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.479.0",
+    "mitt": "^3.0.1",
     "neverthrow": "^8.2.0",
     "next": "^15.2.4",
     "re-resizable": "^6.11.2",

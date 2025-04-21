@@ -53,3 +53,28 @@ export const registerEnterShortCut = ({
     element.removeEventListener("keydown", handleEnter)
   }
 }
+
+type KeyboardShortCutArgs = {
+  element: HTMLElement;
+  key: string;
+  cb: () => void;
+}
+export const registerKeyboardShortCut = ({
+  element,
+  key,
+  cb
+}: KeyboardShortCutArgs): Cleanup => {
+  const handleEnter = (e: KeyboardEvent) => {
+    if (e.isComposing) return;
+    if (e.key === key) {
+      e.preventDefault();
+      e.stopPropagation();
+      cb();
+    }
+  }
+  element.addEventListener("keydown", handleEnter)
+
+  return () => {
+    element.removeEventListener("keydown", handleEnter)
+  }
+}

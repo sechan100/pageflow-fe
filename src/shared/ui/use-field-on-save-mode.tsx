@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useCallback, useEffect, useRef } from "react";
-import { registerEnterShortCut } from "../keyboard";
+import { registerKeyboardShortCut } from "../keyboard";
 
 
 
@@ -32,7 +32,7 @@ export const useFieldOnSaveMode = ({ onSave, saveDisabled }: Args) => {
     const fieldEl = fieldRef.current;
     if (!fieldEl) return;
 
-    return registerEnterShortCut({
+    return registerKeyboardShortCut({
       element: fieldEl,
       cb: () => {
         save();
