@@ -1,6 +1,7 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
 import { RefObject, useEffect, useRef, useState } from "react";
+import { readerController } from "../../model/reader-controller";
 import { useLayoutStore } from "../../model/use-reader-layout-store";
 import { columnGapRatio, columnWidthRatio } from "./section-columns";
 
@@ -53,10 +54,12 @@ const useCalculatePages = ({ width, scrollWidth }: Args) => {
    * - column: css columns의 columnWidth
    * - gap: css columns의 columnGap
    * - halfPage: 하나의 column과 하나의 gap을 합친 수치
+   * -pageBreakPointCommonDifference: 페이지가 바뀌는 지점을 각 항으로 하는 등차수열의 공차(첫 항 = 0)
    */
   const gap = width * columnGapRatio;
   const column = width * columnWidthRatio;
   const halfPage = column + gap;
+  const pageBreakPointCommonDifference = halfPage * 2;
 
   /**
    * 칼럼은 column, gap 순서대로 번갈아가며 등장하다가, 마지막에는 column으로 끝난다. 
@@ -78,9 +81,49 @@ const useCalculatePages = ({ width, scrollWidth }: Args) => {
   const pageCount = Math.floor(halfPageCount / 2) + (isLastFullPage ? 0 : 1);
 
   return {
+    gap,
+    column,
+    halfPage,
+    pageBreakPointCommonDifference,
     pageCount,
     isLastFullPage
   }
+}
+
+type UseScrollControllArgs = {
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
+  pageBreakPointCommonDifference: number;
+  pageCount: number;
+}
+const useScrollControll = ({
+  scrollContainerRef,
+  pageBreakPointCommonDifference,
+  pageCount,
+}: UseScrollControllArgs) => {
+
+
+  // PREV
+  useEffect(() => readerController.registerToPrevListener(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    if (container.scrollLeft <= 0) return;
+    container.scrollTo({
+      left: container.scrollLeft - pageBreakPointCommonDifference,
+      behavior: "smooth",
+    });
+  }), [pageBreakPointCommonDifference, scrollContainerRef]);
+
+  // NEXT
+  useEffect(() => readerController.registerToNextListener(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    if (container.scrollLeft >= container.scrollWidth) return;
+    container.scrollTo({
+      left: container.scrollLeft + pageBreakPointCommonDifference,
+      behavior: "smooth",
+    })
+  }), [pageBreakPointCommonDifference, scrollContainerRef]);
+
 }
 
 
@@ -88,7 +131,7 @@ type Props = {
   children: React.ReactNode;
   sx?: SxProps;
 }
-export const ContentContainer = ({
+export const ReaderScrollContainer = ({
   children,
   sx
 }: Props) => {
@@ -96,8 +139,12 @@ export const ContentContainer = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { width, height, scrollLeft, scrollWidth } = useElementProperties(scrollContainerRef);
 
-  const { isLastFullPage, pageCount } = useCalculatePages({ scrollWidth, width })
-  console.log("pages", pageCount, isLastFullPage);
+  const { isLastFullPage, pageCount, pageBreakPointCommonDifference } = useCalculatePages({ scrollWidth, width })
+  useScrollControll({
+    scrollContainerRef,
+    pageBreakPointCommonDifference,
+    pageCount
+  });
 
 
   return (

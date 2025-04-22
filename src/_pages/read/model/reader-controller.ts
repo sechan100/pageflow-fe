@@ -22,10 +22,3 @@ export const readerController = {
     emitter.emit(toNextEvent);
   },
 }
-
-readerController.registerToPrevListener(() => {
-  console.log("PREV!");
-});
-readerController.registerToNextListener(() => {
-  console.log("NEXT!");
-});
