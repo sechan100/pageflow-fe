@@ -1,6 +1,6 @@
 import { api } from "@/global/api";
 import { decode } from "he";
-import { ReadableSectionContent } from "../model/readable-section";
+import { ReadableSectionContent } from "../model/readable-content";
 
 type Form = {
   bookId: string;

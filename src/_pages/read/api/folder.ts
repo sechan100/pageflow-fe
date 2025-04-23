@@ -1,5 +1,5 @@
 import { api } from "@/global/api";
-import { ReadableFolderContent } from "../model/readable-folder";
+import { ReadableFolderContent } from "../model/readable-content";
 
 
 

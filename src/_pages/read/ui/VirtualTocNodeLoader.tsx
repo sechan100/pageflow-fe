@@ -5,16 +5,10 @@ import { getReadableFolderApi } from "../api/folder";
 import { getReadableSectionApi } from "../api/section";
 import { useBookContext } from "../model/book-context";
 import { Position, usePositionStore } from "../model/position";
-import { ReadableFolderContent } from "../model/readable-folder";
-import { ReadableSectionContent } from "../model/readable-section";
+import { isReadableSectionContent, ReadableContent } from "../model/readable-content";
 import { FolderContent } from "./FolderContent";
 import { SectionContent } from "./SectionContent";
 
-
-type ReadableContent = ReadableFolderContent | ReadableSectionContent;
-const isReadableSectionContent = (content: ReadableContent): content is ReadableSectionContent => {
-  return 'shouldShowTitle' in content && 'shouldBreakSection' in content && 'content' in content;
-}
 
 const contentCache = new Map<string, ReadableContent>();
 
@@ -63,11 +57,11 @@ export const VirtualTocNodeLoader = ({
 
   return (
     <>
-      {contents.map((content, index) => {
+      {contents.map((content) => {
         if (isReadableSectionContent(content)) {
-          return <SectionContent key={index} section={content} />
+          return <SectionContent key={content.id} section={content} />
         } else {
-          return <FolderContent key={index} folder={content} />
+          return <FolderContent key={content.id} folder={content} />
         }
       })}
     </>

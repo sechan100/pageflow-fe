@@ -1,131 +1,77 @@
 'use client'
+import { ReadableTocNodeType } from "@/entities/book";
 import { Box, SxProps } from "@mui/material";
-import { RefObject, useEffect, useRef, useState } from "react";
-import { readerController } from "../model/reader-controller";
+import { debounce } from "lodash";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { usePositionStore } from "../model/position";
+import { registerReaderEventListener } from "../model/reader-event";
+import { useTocContext } from "../model/TocContextProvider";
 import { useLayoutStore } from "../model/use-reader-layout-store";
+import { usePages } from "./use-pages";
 
-const columnGapRatio = 0.1;
-const columnWidthRatio = (1 - columnGapRatio) / 2;
+export const columnGapRatio = 0.1;
+export const columnWidthRatio = (1 - columnGapRatio) / 2;
 
 
-const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
-  const [size, setSize] = useState({
-    width: 0,
-    height: 0,
-    scrollWidth: 0,
-    scrollLeft: 0,
-  });
+type GetCurrentPositionArgs = {
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
+}
+const useObserveCurrentPosition = ({ scrollContainerRef }: GetCurrentPositionArgs) => {
+  /**
+   * 페이지에 첫번째로 보이는 html 문단, 또는 부모 엘리먼트 요소.
+   * observer로 folder나 section의 content를 구성하는 Element들을 관찰한다.
+   * IntersectionObserver를 사용하여, 보이는 엘리먼트들은 visibleContentSetRef에 추가하고, 보이지 않으면 제거한다.
+   * 가장 처음 보이는 엘리먼트는 setFVCLEN을 통해서 저장한다.
+   * 만약 페이지 시작부분에 문단이 걸쳐있는 경우, 해당 문단은 아직 visible한 것으로(isIntersecting = true) 판단되기 때문에, Set에 남아있게된다.
+   * 이 경우 해당 문단 노드가 fvElement이 된다.
+   * 
+   * '페이지 넘김'으로 인한 observerCallback이 여러번 실행되기 때문에, 완전히 스크롤이 끝난 이후에 첫번째 노드를 꺼내오면 된다. (JS의 Set은 순서 보장)
+   */
+  const [firstVisibleElement, setFVElement] = useState<HTMLElement | null>(null);
+  const visibleContentSetRef = useRef<Set<Element>>(new Set());
+
+  const observerCallback = useCallback((entries: IntersectionObserverEntry[]) => {
+    for (const entry of entries) {
+      const contentArea = entry.target;
+      if (entry.isIntersecting) {
+        visibleContentSetRef.current.add(contentArea);
+        // break;
+      } else {
+        visibleContentSetRef.current.delete(contentArea);
+      }
+    }
+    for (const fvlen of visibleContentSetRef.current.values()) {
+      if (fvlen instanceof HTMLElement) {
+        setFVElement(fvlen);
+        break;
+      }
+    }
+  }, []);
+
+  const registerObserver = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const observer = new IntersectionObserver(observerCallback, {
+      root: container,
+      threshold: [0]
+    });
+    // 모든 섹션 관찰 시작
+    let i = 0;
+    // const contents = document.querySelectorAll('[data-toc-node-id]');
+    document.querySelectorAll('.section-content .reader-lexical-node').forEach((el) => {
+      i++;
+      observer.observe(el);
+    })
+    console.debug("observer", i);
+    return () => observer.disconnect();
+  }, [observerCallback, scrollContainerRef]);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) {
-      return;
-    }
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const scrollContainer = entry.target as HTMLDivElement;
-        const scrollWidth = scrollContainer.scrollWidth;
-        const scrollLeft = scrollContainer.scrollLeft;
-        const { width, height } = entry.contentRect;
-        if (
-          width !== size.width ||
-          height !== size.height ||
-          scrollWidth !== size.scrollWidth ||
-          scrollLeft !== size.scrollLeft
-        ) {
-          setSize({ width, height, scrollWidth, scrollLeft });
-        }
-      }
-    });
-    resizeObserver.observe(el);
-    return () => resizeObserver.unobserve(el);
-  }, [ref, size]);
+    const debouncedRegisterObserver = debounce(registerObserver, 100);
+    registerReaderEventListener("content-rendered", debouncedRegisterObserver);
+  }, [registerObserver]);
 
-  return size;
-}
-
-
-type Args = {
-  width: number;
-  scrollWidth: number;
-}
-const useCalculatePages = ({ width, scrollWidth }: Args) => {
-  /**
-   * 모든 수치들은 width 값이다.
-   * 사용되는 값들은 
-   * - column: css columns의 columnWidth
-   * - gap: css columns의 columnGap
-   * - halfPage: 하나의 column과 하나의 gap을 합친 수치
-   * -pageBreakPointCommonDifference: 페이지가 바뀌는 지점을 각 항으로 하는 등차수열의 공차(첫 항 = 0)
-   */
-  const gap = width * columnGapRatio;
-  const column = width * columnWidthRatio;
-  const halfPage = column + gap;
-  const pageBreakPointCommonDifference = halfPage * 2;
-
-  /**
-   * 칼럼은 column, gap 순서대로 번갈아가며 등장하다가, 마지막에는 column으로 끝난다. 
-   * halfPage는 column과 gap을 합친 수치로, 마지막에 gap으로 끝나는 경우에 'halfPageCount * 2 = pageCount'가 맞아 떨어진다.
-   * 때문에 전체 scrollWidth에 gap을 하나 더한 후 halfPage로 나누어 페이지 수를 구한다.
-   * 
-   * 다만, 마지막 페이지가 반쪽짜리인 경우에 대비해서 언제나 컨테이너 마지막에 가상 반페이지를 추가해두기 때문에,
-   * 1개의 halfPage 개수를 빼줘야한다.
-   * 예를 들어, halfPageCount가 6이라면 딱 3페이지로 맞아 떨어진다. 하지만 마지막 가상 반페이지 때문에 
-   * 계산하면 실제로는 7개의 halfPage로 계산된다. 따라서 1개를 감하여 6개로 조정해줘야한다.
-   */
-  const halfPageCount = Math.round((scrollWidth + gap) / halfPage) - 1;
-
-  /**
-   * halfPage 개수가 홀수개인지 확인. -> 홀수개라면 마지막 페이지는 반쪽페이지
-   * 페이지 수는 2개의 반페이지를 합쳐서 1개로 세고, 마지막은 반페이지는 1개든 2개든 1개로 셈.
-   */
-  const isLastFullPage = halfPageCount % 2 === 0;
-  const pageCount = Math.floor(halfPageCount / 2) + (isLastFullPage ? 0 : 1);
-
-  return {
-    gap,
-    column,
-    halfPage,
-    pageBreakPointCommonDifference,
-    pageCount,
-    isLastFullPage
-  }
-}
-
-type UseScrollControllArgs = {
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
-  pageBreakPointCommonDifference: number;
-  pageCount: number;
-}
-const useScrollControll = ({
-  scrollContainerRef,
-  pageBreakPointCommonDifference,
-  pageCount,
-}: UseScrollControllArgs) => {
-
-
-  // PREV
-  useEffect(() => readerController.registerToPrevListener(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    if (container.scrollLeft <= 0) return;
-    container.scrollTo({
-      left: container.scrollLeft - pageBreakPointCommonDifference,
-      behavior: "smooth",
-    });
-  }), [pageBreakPointCommonDifference, scrollContainerRef]);
-
-  // NEXT
-  useEffect(() => readerController.registerToNextListener(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    if (container.scrollLeft >= container.scrollWidth) return;
-    container.scrollTo({
-      left: container.scrollLeft + pageBreakPointCommonDifference,
-      behavior: "smooth",
-    })
-  }), [pageBreakPointCommonDifference, scrollContainerRef]);
-
+  return firstVisibleElement;
 }
 
 
@@ -138,20 +84,43 @@ export const ReaderScrollContainer = ({
   sx
 }: Props) => {
   const layout = useLayoutStore();
+  const toc = useTocContext();
+  const currentPosition = usePositionStore(s => s.position);
+  const setPosition = usePositionStore(s => s.setPosition);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { width, height, scrollLeft, scrollWidth } = useElementProperties(scrollContainerRef);
+  const { width } = usePages(scrollContainerRef);
 
-  const { isLastFullPage, pageCount, pageBreakPointCommonDifference } = useCalculatePages({ scrollWidth, width })
-  useScrollControll({
-    scrollContainerRef,
-    pageBreakPointCommonDifference,
-    pageCount
-  });
+  // 페이지의 첫부분에 보이는 LexicalNode나 FolderNode를 관찰하여 position을 업데이트한다.
+  const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });
+  useEffect(() => {
+    if (!firstVisibleElement) return;
+    const { tocNodeId, tocNodeType }: { tocNodeId: string, tocNodeType: ReadableTocNodeType } = (() => {
+      const sectionId = firstVisibleElement.dataset.tocSectionId;
+      if (sectionId) {
+        return { tocNodeId: sectionId, tocNodeType: "SECTION" }
+      } else {
+        const folderId = firstVisibleElement.dataset.tocFolderId;
+        if (folderId) {
+          return { tocNodeId: folderId, tocNodeType: "FOLDER" }
+        } else {
+          throw new Error("No tocNodeId or tocFolderId found");
+        }
+      }
+    })();
 
+    // position을 업데이트한다.
+    if (currentPosition.tocNodeId === tocNodeId) return;
+    setPosition(toc, {
+      tocNodeId,
+      tocNodeType,
+      contentElementIndex: 0,
+      contextText: null,
+    })
+  }, [currentPosition.tocNodeId, firstVisibleElement, setPosition, toc]);
 
   return (
     <Box
-      component="section"
+      component="main"
       className="reader-scroll-container"
       ref={scrollContainerRef}
       sx={{
@@ -162,7 +131,7 @@ export const ReaderScrollContainer = ({
         columnGap: `${width * columnGapRatio}px`,
         columnWidth: `${width * columnWidthRatio}px`,
         columnFill: "auto",
-        overflowY: "scroll",
+        overflowX: "hidden",
 
         fontSize: layout.fontSize,
         lineHeight: layout.lineHeight,
@@ -170,13 +139,12 @@ export const ReaderScrollContainer = ({
         "& .pf-p": {
           textAlign: "justify",
           // wordBreak: "break-all",
-          // widows: 1,
-          // orphans: 1,
+          orphans: "1 !important",
           m: 0,
         },
 
         // 마지막에 반쪽짜리 페이지가 남는 경우를 위한 
-        "& > div > *:last-child::after": {
+        "& > section:last-child > div > *:last-child::after": {
           content: "''",
           visibility: "hidden",
           userSelect: "none",
