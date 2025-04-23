@@ -1,5 +1,5 @@
+import { ReadableToc } from "@/entities/book";
 import { createDataContext } from "@/shared/context";
-import { ReadableToc } from "../../../entities/book/model/readable-toc";
 
 
 

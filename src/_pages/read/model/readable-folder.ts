@@ -2,8 +2,8 @@ import { FolderDesign } from "@/entities/book";
 
 
 
-export type ReadableFolder = {
+export type ReadableFolderContent = {
   id: string;
   title: string;
-  folderDesign: FolderDesign;
+  design: FolderDesign;
 }

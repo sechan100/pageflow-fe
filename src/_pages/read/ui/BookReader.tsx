@@ -3,8 +3,8 @@ import { Box } from '@mui/material';
 import { useBookContext } from "../model/book-context";
 import { usePositionStore } from '../model/position';
 import { ControllerChevron } from './ControllerChevron';
-import { FolderReaderWrapper } from './folder/FolderReaderWrapper';
-import { SectionReaderWrapper } from './section/SectionReaderWrapper';
+import { ReaderScrollContainer } from './ReaderScrollContainer';
+import { VirtualTocNodeLoader } from './VirtualTocNodeLoader';
 
 
 const chevronTop = "42%";
@@ -23,7 +23,9 @@ export const BookReader = () => {
         position: "relative"
       }}>
         <ControllerChevron direction='left' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
-        {position.tocNodeType === "FOLDER" ? (<FolderReaderWrapper />) : (<SectionReaderWrapper />)}
+        <ReaderScrollContainer>
+          <VirtualTocNodeLoader />
+        </ReaderScrollContainer>
         <ControllerChevron direction='right' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
       </Box>
     </Box>

@@ -2,7 +2,7 @@
 
 
 
-export type ReadableSection = {
+export type ReadableSectionContent = {
   id: string;
   title: string;
   shouldShowTitle: boolean;

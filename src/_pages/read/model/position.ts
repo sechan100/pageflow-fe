@@ -1,5 +1,5 @@
+import { ReadableToc, ReadableTocFolder, ReadableTocNode, ReadableTocNodeType } from "@/entities/book";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
-import { ReadableToc, ReadableTocNodeType } from "../../../entities/book/model/readable-toc";
 
 export type Position = {
   tocNodeId: string;
@@ -21,7 +21,7 @@ export type Position = {
   contextText: string | null;
 };
 
-export const getStartingPositionOfToc = (toc: ReadableToc): Position => {
+const getStartingPositionOfToc = (toc: ReadableToc): Position => {
   const root = toc.root;
   const firstChild = root.children[0];
 
@@ -37,17 +37,87 @@ export const getStartingPositionOfToc = (toc: ReadableToc): Position => {
   };
 }
 
-type PositionStore = {
-  position: Position;
-  setPosition: (position: Position) => void;
+type AdjacentContext = {
+  prev: ReadableTocNode | null;
+  currentId: string;
+  next: ReadableTocNode | null;
 }
-export const [PositionStoreContextProvider, usePositionStore] = createStoreContext<ReadableToc, PositionStore>((toc, set, get) => ({
+const getAdjacentPosition = (toc: ReadableToc, currentPosition: Position): { prev: Position | null, next: Position | null } => {
+  const context: AdjacentContext = { prev: null, currentId: currentPosition.tocNodeId, next: null };
+
+  const currentNode = getCurrentPositionRecursive(toc.root, context);
+  if (!currentNode) {
+    throw new Error("Toc에서 현재 위치를 찾을 수 없습니다.");
+  }
+  const prev = context.prev ? {
+    tocNodeId: context.prev.id,
+    tocNodeType: context.prev.type,
+    contentElementIndex: 1,
+    contextText: null,
+  } : null;
+
+  const next = context.next ? {
+    tocNodeId: context.next.id,
+    tocNodeType: context.next.type,
+    contentElementIndex: 1,
+    contextText: null,
+  } : null;
+
+  return { prev, next };
+}
+
+const getCurrentPositionRecursive = (parent: ReadableTocFolder, context: AdjacentContext): ReadableTocNode | null => {
+  for (let i = 0; i < parent.children.length; i++) {
+    const node = parent.children[i];
+    if (node.id === context.currentId) {
+      // 다음 node를 현재 부모 수준에서 찾을 수 있는 경우 context.next를 할당, 할당하지 않으면 조부모 수준에서 next를 찾아야함을 요청
+      if (i + 1 !== parent.children.length - 1) {
+        return context.next = parent.children[i + 1];
+      }
+      return node;
+    }
+    context.prev = node;
+    if (node.type === "FOLDER") {
+      const target = getCurrentPositionRecursive(node as ReadableTocFolder, context);
+      if (target) {
+        if (context.next === null) {
+          if (i + 1 !== parent.children.length - 1) {
+            return context.next = parent.children[i + 1];
+          }
+        }
+        return target;
+      }
+    }
+  }
+  return null;
+}
+
+type PositionStore = {
+  prev: Position | null;
+  position: Position;
+  next: Position | null;
+  setPosition: (toc: ReadableToc, position: Position) => void;
+}
+export const [PositionStoreContextProvider, usePositionStore] = createStoreContext<ReadableToc, PositionStore>((toc, set, get) => {
   // position: getStartingPositionOfToc(toc),
-  position: {
+  const current: Position = {
     tocNodeId: "9725c2a3-d1fb-4d4d-8f17-713c8c0f7fe9",
     tocNodeType: "SECTION",
     contentElementIndex: 1,
     contextText: null,
-  },
-  setPosition: (position: Position) => set({ position }),
-}));
+  }
+  const adjacent = getAdjacentPosition(toc, current);
+  return {
+    prev: adjacent.prev,
+    position: current,
+    next: adjacent.next,
+    setPosition: (toc: ReadableToc, position: Position) => {
+      const adjacent = getAdjacentPosition(toc, position);
+      set({
+        prev: adjacent.prev,
+        position: position,
+        next: adjacent.next,
+      });
+    },
+  }
+});

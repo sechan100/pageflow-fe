@@ -1,9 +1,11 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { readerController } from "../../model/reader-controller";
-import { useLayoutStore } from "../../model/use-reader-layout-store";
-import { columnGapRatio, columnWidthRatio } from "./section-columns";
+import { readerController } from "../model/reader-controller";
+import { useLayoutStore } from "../model/use-reader-layout-store";
+
+const columnGapRatio = 0.1;
+const columnWidthRatio = (1 - columnGapRatio) / 2;
 
 
 const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
@@ -150,7 +152,7 @@ export const ReaderScrollContainer = ({
   return (
     <Box
       component="section"
-      className="section-reader"
+      className="reader-scroll-container"
       ref={scrollContainerRef}
       sx={{
         position: 'relative',
