@@ -5,9 +5,6 @@ import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
 import { LexicalPlaceholder } from '@/shared/lexical/LexicalPlaceholder';
-import { MarkdownPlugin } from '@/shared/lexical/MarkdownPlugin';
-import { CodeNode } from '@lexical/code';
-import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from '@lexical/list';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -15,7 +12,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { QuoteNode } from '@lexical/rich-text';
 import { Box, Container, SxProps } from "@mui/material";
 import { useCallback } from 'react';
 import { sectionEditorStyle } from '../config/section-editor-style';
@@ -28,7 +25,7 @@ import { LexicalSettingPlugin } from './LexicalSettingPlugin';
 
 const editorConfig = {
   namespace: 'Section Editor',
-  nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
+  nodes: [ListNode, ListItemNode, QuoteNode, ImageNode],
   onError(error: Error) {
     throw error;
   },
@@ -88,7 +85,7 @@ export const SectionEditor = ({
           <HistoryPlugin />
           <ListPlugin />
           <ImagesPlugin />
-          <MarkdownPlugin />
+          {/* <MarkdownPlugin /> */}
           {/* <AutoFocusPlugin /> */}
           {/* <TreeViewPlugin /> */}
         </Container>

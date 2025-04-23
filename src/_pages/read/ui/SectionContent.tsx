@@ -65,7 +65,7 @@ type Props = {
 export const SectionContent = ({ section }: Props) => {
   const lexicalConfig = useMemo(() => ({
     namespace: `section-${section.id}-reader`,
-    nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, CodeNode, LinkNode, ImageNode],
+    nodes: [ListNode, ListItemNode, QuoteNode, CodeNode, LinkNode, ImageNode],
     onError(error: Error) {
       throw error;
     },

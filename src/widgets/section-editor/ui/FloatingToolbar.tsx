@@ -14,10 +14,7 @@ import {
   FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND
 } from 'lexical';
 import {
-  Bold,
-  Heading1,
-  Heading2,
-  Heading3, Italic,
+  Bold, Italic,
   List,
   ListOrdered, Paperclip, Strikethrough,
   Underline
@@ -26,7 +23,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { create } from 'zustand';
 import { uploadImageApi } from '../api/upload-image';
 import { useBookContext } from '../model/book-context';
-import { $formatHeading, $isH } from '../model/format-heading';
 import { $formatList } from '../model/format-list';
 
 const iconSize = 20;
@@ -102,13 +98,10 @@ const VisuallyHiddenInput = styled('input')({
 
 // 툴바 상태 타입
 type ToolbarState = {
-  isBold: boolean,
-  isItalic: boolean,
-  isUnderline: boolean,
-  isStrikethrough: boolean,
-  isHeading1: boolean,
-  isHeading2: boolean,
-  isHeading3: boolean,
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderline: boolean;
+  isStrikethrough: boolean;
 }
 
 type Props = {
@@ -132,17 +125,11 @@ export const FloatingToolbar = ({
     isItalic,
     isUnderline,
     isStrikethrough,
-    isHeading1,
-    isHeading2,
-    isHeading3,
   }, setToolbarState] = useState<ToolbarState>({
     isBold: false,
     isItalic: false,
     isUnderline: false,
     isStrikethrough: false,
-    isHeading1: false,
-    isHeading2: false,
-    isHeading3: false,
   });
 
   // 드래그 처리를 위한 상태
@@ -321,18 +308,10 @@ export const FloatingToolbar = ({
         isItalic: selection.hasFormat('italic'),
         isUnderline: selection.hasFormat('underline'),
         isStrikethrough: selection.hasFormat('strikethrough'),
-        isHeading1: $isH(selection, 'h1'),
-        isHeading2: $isH(selection, 'h2'),
-        isHeading3: $isH(selection, 'h3'),
       }
       setToolbarState(newToolbarState);
     }
   }, []);
-
-  // 헤딩 포맷 적용
-  const formatHeading = useCallback((headingSize: 'h1' | 'h2' | 'h3') => {
-    editor.update(() => $formatHeading(headingSize));
-  }, [editor]);
 
   // 리스트 포맷 적용
   const formatList = useCallback((listType: 'ol' | 'ul') => {
@@ -456,27 +435,6 @@ export const FloatingToolbar = ({
             color={isStrikethrough ? 'primary' : 'default'}
           >
             <Strikethrough size={iconSize} />
-          </IconButton>
-        </ToolBox>
-        {/* heading */}
-        <ToolBox>
-          <IconButton
-            onClick={() => formatHeading('h1')}
-            color={isHeading1 ? 'primary' : 'default'}
-          >
-            <Heading1 size={iconSize} />
-          </IconButton>
-          <IconButton
-            onClick={() => formatHeading('h2')}
-            color={isHeading2 ? 'primary' : 'default'}
-          >
-            <Heading2 size={iconSize} />
-          </IconButton>
-          <IconButton
-            onClick={() => formatHeading('h3')}
-            color={isHeading3 ? 'primary' : 'default'}
-          >
-            <Heading3 size={iconSize} />
           </IconButton>
         </ToolBox>
         {/* list */}
