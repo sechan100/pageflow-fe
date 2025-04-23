@@ -1,3 +1,4 @@
+import { debounce } from "lodash";
 import { RefObject, useEffect, useState } from "react";
 import { readerController } from "../model/reader-controller";
 import { registerReaderEventListener } from "../model/reader-event";
@@ -33,9 +34,11 @@ const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
         }
       }
     });
+    // content가 렌더링되면 상태를 변경해서 observe를 다시 실행 -> content가 렌더링된 상태의 scrollWidth로 시작
     const cleanup = registerReaderEventListener("content-rendered", () => {
-      resizeObserver.observe(el);
+      setSize({ ...size })
     });
+    resizeObserver.observe(el);
     return () => {
       resizeObserver.disconnect();
       cleanup();
@@ -102,6 +105,24 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
+
+  // scrollWidth가 바뀌었을 때, currentPage에 맞게 scrollLeft를 새롭게 조정
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const resizeCallbackDebounced = debounce<ResizeObserverCallback>((entries) => entries.forEach(entry => {
+      if (entry.target.scrollWidth === scrollWidth) return;
+      const newScrollLeft = currentPage * pageBreakPointCommonDifference;
+      container.scrollTo({
+        left: newScrollLeft,
+        behavior: "instant",
+      });
+    }), 100);
+
+    const resizeObserver = new ResizeObserver(resizeCallbackDebounced);
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, [containerRef, currentPage, pageBreakPointCommonDifference, scrollWidth]);
 
   // scroll 이벤트 등록
   useEffect(() => {
