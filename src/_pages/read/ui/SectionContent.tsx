@@ -1,7 +1,6 @@
 import { editorTheme } from '@/shared/lexical/editor-theme';
 import { ImageNode } from '@/shared/lexical/ImageNode';
 import { useLexicalEditorSerializedHtmlSync } from '@/shared/lexical/use-lexical-editor-serialized-html-sync';
-import { CodeNode } from '@lexical/code';
 import { LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -9,7 +8,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { QuoteNode } from '@lexical/rich-text';
+import { Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
 import { ReadableSectionContent } from "../model/readable-content";
@@ -65,7 +65,7 @@ type Props = {
 export const SectionContent = ({ section }: Props) => {
   const lexicalConfig = useMemo(() => ({
     namespace: `section-${section.id}-reader`,
-    nodes: [ListNode, ListItemNode, QuoteNode, CodeNode, LinkNode, ImageNode],
+    nodes: [ListNode, ListItemNode, QuoteNode, LinkNode, ImageNode],
     onError(error: Error) {
       throw error;
     },
@@ -78,6 +78,7 @@ export const SectionContent = ({ section }: Props) => {
 
   return (
     <NodeContentWrapper tocNodeId={section.id} type="SECTION">
+      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>{section.title}</Typography>
       <LexicalComposer initialConfig={lexicalConfig}>
         <RichTextPlugin
           contentEditable={

@@ -1,5 +1,6 @@
 import { RefObject, useEffect, useState } from "react";
 import { readerController } from "../model/reader-controller";
+import { registerReaderEventListener } from "../model/reader-event";
 import { columnGapRatio, columnWidthRatio } from "./ReaderScrollContainer";
 
 
@@ -32,8 +33,13 @@ const useElementProperties = (ref: RefObject<HTMLElement | null>) => {
         }
       }
     });
-    resizeObserver.observe(el);
-    return () => resizeObserver.unobserve(el);
+    const cleanup = registerReaderEventListener("content-rendered", () => {
+      resizeObserver.observe(el);
+    });
+    return () => {
+      resizeObserver.disconnect();
+      cleanup();
+    }
   }, [ref, size]);
 
   return size;
@@ -93,45 +99,44 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     pageCount,
     isLastFullPage
   } = calculatePage({ width, scrollWidth });
+
+  const [currentPage, setCurrentPage] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
 
-  // PREV
-  useEffect(() => readerController.registerToPrevListener(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    if (isScrolling) return;
-    if (container.scrollLeft <= 0) return;
-
-    setIsScrolling(true);
-    container.scrollTo({
-      left: container.scrollLeft - pageBreakPointCommonDifference,
-      behavior: "smooth",
-    });
-  }), [pageBreakPointCommonDifference, containerRef, isScrolling]);
-
-  // NEXT
-  useEffect(() => readerController.registerToNextListener(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    if (isScrolling) return;
-    // TODO: Page 데이터를 만들고, page가 마지막이라면 못 넘어가게 막기
-    if (container.scrollLeft >= container.scrollWidth) return;
-
-    setIsScrolling(true);
-    container.scrollTo({
-      left: container.scrollLeft + pageBreakPointCommonDifference,
-      behavior: "smooth",
-    })
-  }), [pageBreakPointCommonDifference, containerRef, isScrolling]);
-
-
+  // scroll 이벤트 등록
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    const scrollHandler = (direction: "prev" | "next") => {
+      if (isScrolling) return;
+      // 방향에 따른 동작조건 체크
+      if (direction === "prev") {
+        if (currentPage === 0) return;
+      } else {
+        // TODO: Page 데이터를 만들고, page가 마지막이라면 못 넘어가게 막기
+        if (currentPage === pageCount - 1) return;
+      }
+      setIsScrolling(true);
+
+      const newScrollLeft = container.scrollLeft + (direction === "prev" ? -pageBreakPointCommonDifference : pageBreakPointCommonDifference);
+      container.scrollTo({
+        left: newScrollLeft,
+        behavior: "smooth",
+      });
+      setCurrentPage((prev) => direction === "prev" ? --prev : ++prev);
+    }
+
+    const prevListenerCleanUp = readerController.registerToPrevListener(() => scrollHandler("prev"));
+    const nextListenerCleanUp = readerController.registerToNextListener(() => scrollHandler("next"));
     const handler = () => setIsScrolling(false);
     container.addEventListener("scrollend", handler);
-    return () => container.removeEventListener("scrollend", handler);
-  }, [containerRef]);
+    return () => {
+      prevListenerCleanUp();
+      nextListenerCleanUp();
+      container.removeEventListener("scrollend", handler);
+    }
+  }, [containerRef, currentPage, isScrolling, pageBreakPointCommonDifference, pageCount]);
 
   return {
     gap,
