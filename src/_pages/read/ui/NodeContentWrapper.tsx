@@ -27,7 +27,14 @@ export const NodeContentWrapper = ({
   }, [tocNodeId])
 
   return (
-    <section className={typeCn} data-toc-node-id={tocNodeId}>
+    <section
+      className={typeCn}
+      data-toc-node-id={tocNodeId}
+      style={{
+        // breakBefore: "column",
+        // breakAfter: "column",
+      }}
+    >
       {children}
     </section>
   )

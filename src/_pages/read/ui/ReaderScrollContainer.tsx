@@ -133,6 +133,9 @@ export const ReaderScrollContainer = ({
         columnFill: "auto",
         overflowX: "hidden",
 
+        // 가로축 미세 오차 때문에 글자가 잘리는 경우를 방지
+        px: 1,
+
         fontSize: layout.fontSize,
         lineHeight: layout.lineHeight,
 
