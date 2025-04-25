@@ -73,7 +73,7 @@ export const useReadableUnit = () => {
   /**
    * 새로운 Folder를 ReadableUnit의 leaderFolder로 설정한다.
    */
-  const setLeaderFolder = useCallback(async (folderId: string) => {
+  const setLeadFolder = useCallback(async (folderId: string) => {
     const newLeaderFolder = TocUtils.findFolder(toc, folderId);
 
     return useReadableUnitStore.setState({
@@ -123,7 +123,7 @@ export const useReadableUnit = () => {
     folder,
     sections,
     isFullyLoaded,
-    setLeaderFolder,
+    setLeadFolder,
     fetchNextSection,
   };
 }

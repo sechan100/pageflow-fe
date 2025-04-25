@@ -132,6 +132,19 @@ export const ReaderScrollContainer = ({
           orphans: "1 !important",
           m: 0,
         },
+
+        /**
+         * 마지막에 반쪽짜리 페이지가 남는 경우를 위해서 항상 가짜 halfPage를 만들어준다.
+         * 마지막 페이지가 온전하게 끝나는 경우 그냥 여기는 안보여주면 됨.
+         * 해당 페이지 존재 여부에 따라서 scrollWidth page 계산 로직을 달리해야한다.
+         */
+        "& > *:last-child::after": {
+          content: "''",
+          visibility: "hidden",
+          userSelect: "none",
+          display: "block",
+          breakBefore: "column",
+        }
       }}
     >
       {children}

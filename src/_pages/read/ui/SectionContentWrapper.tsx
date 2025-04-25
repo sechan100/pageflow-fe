@@ -28,14 +28,6 @@ export const SectionContentWrapper = ({
       data-section-id={section.id}
       sx={{
         breakBefore: section.shouldBreakSection ? "column" : undefined,
-        // "&::before": shouldBreakColumn ? {
-        //   content: "''",
-        //   visibility: "hidden",
-        //   userSelect: "none",
-        //   display: "block",
-        //   breakBefore: "column",
-        //   height,
-        // } : {},
       }}
 
     >

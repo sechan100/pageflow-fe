@@ -17,19 +17,24 @@ export const VirtualTocNodeLoader = ({
   // TODO: 이거 구현하기(현재 position의 가장 가까운 부모 folder 가져오기)
   const startingFolderId = "70020faa-f35d-4722-8d46-4203274b151b";
   const { prev, position, next } = usePositionStore();
-  const { setLeaderFolder, fetchNextSection, isFullyLoaded, folder, leadFolder, sections } = useReadableUnit();
+  const { setLeadFolder, fetchNextSection, isFullyLoaded, folder, leadFolder, sections } = useReadableUnit();
   console.log("leadFolder", leadFolder, "sections", sections);
 
-  // 최초만 실행
+  /**
+   * 최초 렌더링시에 LeadFolder를 초기화한다.
+   */
   useEffect(() => {
-    setLeaderFolder(startingFolderId);
+    setLeadFolder(startingFolderId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
+  /**
+   * 'pageChangedEvent'가 발생한 경우, 다음 페이지가 충분히 준비될 수 있도록 추가적으로 section을 로드한다.
+   */
   useEffect(() => {
     const removeListener = pageChangedEvent.registerListener(({ page, totalPages }) => {
-      // 전체 페이지보다 1개 이전 페이지에 위치해있을 때,
+      // 이제 다음 페이지가 끝 페이지인 경우 새로운 섹션을 로드한다.
       if (page >= (totalPages - 1) - 1) {
         fetchNextSection();
       }
@@ -37,7 +42,7 @@ export const VirtualTocNodeLoader = ({
     return () => {
       removeListener();
     }
-  }, [fetchNextSection, setLeaderFolder]);
+  }, [fetchNextSection, setLeadFolder]);
 
 
   return (
