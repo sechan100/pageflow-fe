@@ -8,7 +8,7 @@ type Form = {
   folderId: string;
 }
 
-export const getReadableFolderApi = async ({ bookId, folderId }: Form) => {
+export const getReadableFolderContentApi = async ({ bookId, folderId }: Form) => {
   const res = await api
     .guest()
     .get<ReadableFolderContent>(`/reader/books/${bookId}/folders/${folderId}`);

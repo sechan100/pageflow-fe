@@ -4,7 +4,7 @@ import { Box, CircularProgress } from '@mui/material';
 import { useState } from 'react';
 import { BookContextProvider } from '../model/book-context';
 import { PositionStoreContextProvider } from '../model/position';
-import { TocContextProvider } from "../model/TocContextProvider";
+import { TocContextProvider } from "../model/toc-context";
 import { BookReader } from './BookReader';
 import { ReaderToc } from './toc/ReaderToc';
 

@@ -7,7 +7,7 @@ type Form = {
   sectionId: string;
 }
 
-export const getReadableSectionApi = async ({ bookId, sectionId }: Form): Promise<ReadableSectionContent> => {
+export const getReadableSectionContentApi = async ({ bookId, sectionId }: Form): Promise<ReadableSectionContent> => {
   const res = await api
     .guest()
     .get<ReadableSectionContent>(`/reader/books/${bookId}/sections/${sectionId}`);

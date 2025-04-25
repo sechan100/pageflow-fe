@@ -4,7 +4,7 @@ import { useBookContext } from "../model/book-context";
 import { usePositionStore } from '../model/position';
 import { ControllerChevron } from './ControllerChevron';
 import { ReaderScrollContainer } from './ReaderScrollContainer';
-import { VirtualTocNodeLoader } from './VirtualTocNodeLoader';
+import { VirtualTocNodeLoader } from './ContentLoader';
 
 
 const chevronTop = "42%";

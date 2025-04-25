@@ -1,13 +1,13 @@
 'use client'
-import { ReadableTocNodeType } from "@/entities/book";
 import { Box, SxProps } from "@mui/material";
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { usePositionStore } from "../model/position";
-import { registerReaderEventListener } from "../model/reader-event";
-import { useTocContext } from "../model/TocContextProvider";
+import { contentRenderedEvent } from "../model/reader-event";
+import { useTocContext } from "../model/toc-context";
 import { useLayoutStore } from "../model/use-reader-layout-store";
-import { usePages } from "./use-pages";
+import { extractNodeInfoFromElement } from "./logic/content-element";
+import { usePages } from "./logic/scroll-pages";
 
 export const columnGapRatio = 0.1;
 export const columnWidthRatio = (1 - columnGapRatio) / 2;
@@ -68,7 +68,7 @@ const useObserveCurrentPosition = ({ scrollContainerRef }: GetCurrentPositionArg
 
   useEffect(() => {
     const debouncedRegisterObserver = debounce(registerObserver, 100);
-    registerReaderEventListener("content-rendered", debouncedRegisterObserver);
+    contentRenderedEvent.registerListener(debouncedRegisterObserver);
   }, [registerObserver]);
 
   return firstVisibleElement;
@@ -94,20 +94,7 @@ export const ReaderScrollContainer = ({
   const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });
   useEffect(() => {
     if (!firstVisibleElement) return;
-    const { tocNodeId, tocNodeType }: { tocNodeId: string, tocNodeType: ReadableTocNodeType } = (() => {
-      const sectionId = firstVisibleElement.dataset.tocSectionId;
-      if (sectionId) {
-        return { tocNodeId: sectionId, tocNodeType: "SECTION" }
-      } else {
-        const folderId = firstVisibleElement.dataset.tocFolderId;
-        if (folderId) {
-          return { tocNodeId: folderId, tocNodeType: "FOLDER" }
-        } else {
-          throw new Error("No tocNodeId or tocFolderId found");
-        }
-      }
-    })();
-
+    const { tocNodeId, tocNodeType } = extractNodeInfoFromElement(firstVisibleElement);
     // position을 업데이트한다.
     if (currentPosition.tocNodeId === tocNodeId) return;
     setPosition(toc, {
@@ -145,15 +132,6 @@ export const ReaderScrollContainer = ({
           orphans: "1 !important",
           m: 0,
         },
-
-        // 마지막에 반쪽짜리 페이지가 남는 경우를 위한 
-        "& > section:last-child > div > *:last-child::after": {
-          content: "''",
-          visibility: "hidden",
-          userSelect: "none",
-          display: "block",
-          breakBefore: "column",
-        }
       }}
     >
       {children}

@@ -7,7 +7,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { Box, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, SxProps } from "@mui/material";
 import { useState } from "react";
-import { useTocContext } from "../../model/TocContextProvider";
+import { useTocContext } from "../../model/toc-context";
 
 type TocFolderProps = {
   folder: ReadableTocFolder;

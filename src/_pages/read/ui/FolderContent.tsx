@@ -7,7 +7,6 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Paper, Typography } from '@mui/material';
 import { ReadableFolderContent } from '../model/readable-content';
 import { useLayoutStore } from '../model/use-reader-layout-store';
-import { NodeContentWrapper } from './NodeContentWrapper';
 
 
 const viewerConfig = {
@@ -29,20 +28,18 @@ export const FolderContent = ({
   const layout = useLayoutStore();
 
   return (
-    <NodeContentWrapper tocNodeId={folder.id} type="FOLDER">
-      <Paper elevation={0} sx={{
-        p: 4,
-        maxWidth: '800px',
-        margin: '0 auto',
-        minHeight: '90vh',
-        backgroundColor: '#fff',
-        boxShadow: '0 0 10px rgba(0,0,0,0.05)',
-        borderRadius: '8px',
-      }}>
-        <Typography>
-          나는 폴더다 {folder.title}
-        </Typography>
-      </Paper>
-    </NodeContentWrapper>
+    <Paper elevation={0} sx={{
+      p: 4,
+      maxWidth: '800px',
+      margin: '0 auto',
+      minHeight: '90vh',
+      backgroundColor: '#fff',
+      boxShadow: '0 0 10px rgba(0,0,0,0.05)',
+      borderRadius: '8px',
+    }}>
+      <Typography>
+        FOLDER: {folder.title}
+      </Typography>
+    </Paper>
   );
 };
