@@ -34,17 +34,17 @@ export const pageChangedEvent = {
 /**
  * 전체 페이지 개수가 변경된 경우에 발생하는 이벤트
  */
-type TotalPagesChangedEvent = {
+type TotalPageCountChangedEvent = {
   currentPage: number;
   totalPageCount: number;
 }
-export const totalPagesChangedEvent = {
-  name: "total-pages-changed" as const,
-  registerListener: (callback: (data: TotalPagesChangedEvent) => void) => {
-    return register(totalPagesChangedEvent.name, callback);
+export const totalPageCountChangedEvent = {
+  name: "total-page-count-changed" as const,
+  registerListener: (callback: (data: TotalPageCountChangedEvent) => void) => {
+    return register(totalPageCountChangedEvent.name, callback);
   },
-  emit: (data: TotalPagesChangedEvent) => {
-    readerEventEmitter.emit(totalPagesChangedEvent.name, data);
+  emit: (data: TotalPageCountChangedEvent) => {
+    readerEventEmitter.emit(totalPageCountChangedEvent.name, data);
   }
 }
 
@@ -64,6 +64,18 @@ export const pageOverflowEvent = {
   }
 }
 
+/**
+ * readableUnit이 최초 세팅되거나 변경된 경우에 발생
+ */
+export const readableUnitChangedEvent = {
+  name: "readable-unit-changed" as const,
+  registerListener: (callback: () => void) => {
+    return register(readableUnitChangedEvent.name, callback);
+  },
+  emit: () => {
+    readerEventEmitter.emit(readableUnitChangedEvent.name);
+  }
+}
 
 const register = (event: string, callback: any) => {
   readerEventEmitter.on(event, callback);

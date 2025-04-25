@@ -1,6 +1,6 @@
 import { debounce } from "lodash";
 import { RefObject, useEffect, useState } from "react";
-import { contentRenderedEvent } from "../../model/reader-event";
+import { contentRenderedEvent, readableUnitChangedEvent } from "../../model/reader-event";
 
 
 
@@ -32,14 +32,27 @@ export const useContainerSize = (ref: RefObject<HTMLElement | null>) => {
       }
     }, 100);
     const resizeObserver = new ResizeObserver(resizeCallback);
-    // content가 렌더링되면 상태를 변경해서 observe를 다시 실행 -> content가 렌더링된 상태의 scrollWidth로 시작
-    const cleanup = contentRenderedEvent.registerListener(() => {
+
+    /**
+     * content가 렌더링되면 일부러 상태를 변경해서 observe를 다시 실행 
+     * -> content가 모두 렌더링된 상태에서의 scrollWidth로 재계산
+     */
+    const rmContentRenderedListener = contentRenderedEvent.registerListener(() => {
       setSize({ ...size });
     });
+
+    /**
+     * readableUnit이 변경되면 컨텐츠가 변경되므로 새로운 scrollWidth로 재계산이 필요.
+     */
+    const rmReadableUnitChangedListener = readableUnitChangedEvent.registerListener(() => {
+      setSize({ ...size });
+    });
+
     resizeObserver.observe(el);
     return () => {
       resizeObserver.disconnect();
-      cleanup();
+      rmContentRenderedListener();
+      rmReadableUnitChangedListener();
     };
   }, [ref, size]);
 

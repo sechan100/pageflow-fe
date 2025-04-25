@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { readerController } from "../../model/reader-controller";
-import { pageChangedEvent, pageOverflowEvent, totalPagesChangedEvent } from "../../model/reader-event";
+import { pageChangedEvent, pageOverflowEvent, readableUnitChangedEvent, totalPageCountChangedEvent } from "../../model/reader-event";
 import { columnGapRatio, columnWidthRatio } from "../ReaderScrollContainer";
 import { useContainerSize } from "./use-container-size";
 
@@ -60,6 +60,21 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
 
   const currentPageRef = useRef<number>(0);
 
+  const resetPage = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.scrollTo({
+      left: 0,
+      behavior: "instant",
+    });
+    currentPageRef.current = 0;
+  }, [containerRef]);
+
+  const LOGPAGE = useCallback(() => console.log("[페이지]", currentPageRef.current + 1, "/", totalPageCount), [totalPageCount]);
+  useEffect(() => {
+    LOGPAGE();
+  }, [LOGPAGE, totalPageCount]);
+
   /**
    * 스크롤 이동 중
    */
@@ -113,11 +128,12 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     const newScrollLeft = container.scrollLeft + (direction === "prev" ? -pageBreakPointCommonDifference : pageBreakPointCommonDifference);
     container.scrollTo({
       left: newScrollLeft,
-      behavior: "smooth",
+      behavior: "instant",
     });
     const newPage = direction === "prev" ? currentPage - 1 : currentPage + 1;
     currentPageRef.current = newPage;
-  }, [containerRef, isScrolling, pageBreakPointCommonDifference, totalPageCount]);
+    LOGPAGE();
+  }, [LOGPAGE, containerRef, isScrolling, pageBreakPointCommonDifference, totalPageCount]);
 
   /**
    * moveScroll 함수로 스크롤 이동이 완료된 후에 호출
@@ -154,11 +170,24 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
    * totalPage가 변경되면 'totalPagesChanged' 이벤트를 발행
    */
   useEffect(() => {
-    totalPagesChangedEvent.emit({
+    totalPageCountChangedEvent.emit({
       currentPage: currentPageRef.current,
       totalPageCount: totalPageCount,
     })
   }, [totalPageCount]);
+
+  /**
+   * 'readableUnitChanged' 이벤트가 발생하면 page를 초기화
+   */
+  useEffect(() => {
+    const rmListener = readableUnitChangedEvent.registerListener(() => {
+      resetPage();
+    });
+
+    return () => {
+      rmListener();
+    }
+  }, [resetPage, totalPageCount]);
 
   return {
     gap,

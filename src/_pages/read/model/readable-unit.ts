@@ -94,9 +94,6 @@ const isLeadNode = (toc: ReadableToc, targetId: string) => {
 
 /**
  * currentLeadNode의 prevLeadNode를 찾는다.
- * 이전 node는 다음 단게로 탐색한다.
- * 1. target의 이전 index에 위치한 node
- * 2. target의 index가 0이라면 target의 부모 
  */
 const findPrevLeadNode = (toc: ReadableToc, currentLeadNodeId: string): ReadableTocNode | null => {
   if (!isLeadNode(toc, currentLeadNodeId)) {
@@ -111,16 +108,31 @@ const findPrevLeadNode = (toc: ReadableToc, currentLeadNodeId: string): Readable
     return null;
   }
 
+  /**
+   * 일단 currentLeadNode의 형제 중에서 바로 앞에 있는 다른 leadNode를 찾는다.
+   * 그 leadNode가 Section이라면 바로 반환, Folder라면 그 Folder를 기준으로 가장 오른쪽으로 끝까지 간 node, 그 node의 leadNode가 바로 정답
+   */
+  let prevLeadNodeAmongSiblings: ReadableTocNode | null = null;
   for (let i = currentLeadNodeIndex - 1; i >= 0; i--) {
     const candidate = parent.children[i];
     if (isLeadNode(toc, candidate.id)) {
-      return candidate;
+      prevLeadNodeAmongSiblings = candidate;
+      break;
     }
   }
-  /**
-   * parent의 children[0]까지 돌았는데 leadNode를 찾지 못한 경우, parent가 prevLeadNode이다.
-   */
-  return parent;
+  // currentLeadNodeIndex부터 children[0]까지 돌았는데 leadNode를 찾지 못한 경우는 parent가 정답이다.
+  if (prevLeadNodeAmongSiblings === null) {
+    return parent;
+  }
+
+  if (prevLeadNodeAmongSiblings.type === "SECTION") {
+    return prevLeadNodeAmongSiblings;
+  }
+
+  // currentLeadNode의 바로 앞에 있는 prevLeadNode를 기준으로 rightmost path로 움직여 도달한 node
+  const prevRightMostNode = TocOperations.findRightMostNode(prevLeadNodeAmongSiblings as ReadableTocFolder);
+  const leadNodeOfPrevRightMostNode = findLeadNode(toc, prevRightMostNode.id);
+  return leadNodeOfPrevRightMostNode;
 }
 
 /**
@@ -133,8 +145,8 @@ const findNextLeadNode = (toc: ReadableToc, currentLeadNodeId: string): Readable
   return findNextLeadNodeRecursive(toc, currentLeadNodeId);
 }
 
-const findNextLeadNodeRecursive = (toc: ReadableToc, targetNodeId: string): ReadableTocNode | null => {
-  const next = findNextNodeRecursive(toc, targetNodeId);
+const findNextLeadNodeRecursive = (toc: ReadableToc, currentLeadNodeId: string): ReadableTocNode | null => {
+  const next = findNextNodeRecursive(toc, currentLeadNodeId, false);
   if (next === null) {
     return null;
   }
@@ -145,20 +157,27 @@ const findNextLeadNodeRecursive = (toc: ReadableToc, targetNodeId: string): Read
   }
 }
 
-const findNextNodeRecursive = (toc: ReadableToc, targetNodeId: string): ReadableTocNode | null => {
-  const target = TocOperations.findNode(toc, targetNodeId);
-  const parent = TocOperations.findParent(toc, targetNodeId);
-
-  const targetIndex = parent.children.indexOf(target);
-  const nextIndex = targetIndex + 1;
-  if (nextIndex <= parent.children.length - 1) {
-    return parent.children[nextIndex];
+const findNextNodeRecursive = (toc: ReadableToc, currentNodeId: string, isFromBottom: boolean): ReadableTocNode | null => {
+  const target = TocOperations.findNode(toc, currentNodeId);
+  if (isReadableTocFolder(target) && !isFromBottom) {
+    if (target.children.length === 0) {
+      return null;
+    } else {
+      return target.children[0];
+    }
   }
-
-  if (TocOperations.isRootFolder(toc, parent.id)) {
-    return null;
+  else {
+    const parent = TocOperations.findParent(toc, currentNodeId);
+    const targetIndex = parent.children.indexOf(target);
+    const nextIndex = targetIndex + 1;
+    if (nextIndex <= parent.children.length - 1) {
+      return parent.children[nextIndex];
+    }
+    if (TocOperations.isRootFolder(toc, parent.id)) {
+      return null;
+    }
+    return findNextNodeRecursive(toc, parent.id, true);
   }
-  return findNextNodeRecursive(toc, parent.id);
 }
 
 /**
@@ -324,8 +343,10 @@ export const useReadableUnit = () => {
    * 현재 leadNode를 기준으로 이전, 또는 다음 leadNode로 이동한다.
    * 만약 현재 leadNode가 toc에서 가장 앞, 혹은 뒤에 있는 leadNode인 경우 아무런 동작도 하지 않는다.
    * TODO: 나중에 마지막인 경우를 미리 확인해서 flag로 걸어줘야 ui에서 옆으로 못 넘어가게함.
+   * 
+   * @returns 실제로 이동을 했는지 여부 (양 끝이라면 이동을 못함.)
    */
-  const moveLeadNode = useCallback((direction: "prev" | "next") => {
+  const moveLeadNode = useCallback((direction: "prev" | "next"): boolean => {
     let moved: ReadableTocNode | null = null;
     if (direction === "prev") {
       moved = findPrevLeadNode(toc, leadNode.id);
@@ -335,6 +356,10 @@ export const useReadableUnit = () => {
 
     if (moved !== null) {
       setLeadNode(moved);
+      return true;
+    } else {
+      console.debug("더 이상 (이전/다음)으로 이동할 수 없습니다.");
+      return false;
     }
   }, [leadNode.id, setLeadNode, toc]);
 

@@ -90,5 +90,18 @@ export const TocOperations = {
 
   isRootFolder: (toc: ReadableToc, folderId: string): boolean => {
     return toc.root.id === folderId;
-  }
+  },
+
+  findRightMostNode: (folder: ReadableTocFolder): ReadableTocNode => {
+    let rightMostNode: ReadableTocNode = folder;
+    while (isReadableTocFolder(rightMostNode) && rightMostNode.children.length > 0) {
+      const lastChild = rightMostNode.children[rightMostNode.children.length - 1];
+      if (isReadableTocFolder(lastChild)) {
+        rightMostNode = lastChild;
+      } else {
+        break;
+      }
+    }
+    return rightMostNode;
+  },
 }

@@ -3,7 +3,7 @@ import { SxProps } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import { ReadableFolderContent, ReadableSectionContent } from "../model/readable-content";
 import { useReadableUnit } from "../model/readable-unit";
-import { pageChangedEvent, pageOverflowEvent, totalPagesChangedEvent } from "../model/reader-event";
+import { pageChangedEvent, pageOverflowEvent, readableUnitChangedEvent } from "../model/reader-event";
 import { FolderContent } from "./FolderContent";
 import { SectionContent } from "./SectionContent";
 
@@ -25,18 +25,29 @@ export const VirtualTocNodeLoader = ({
     moveLeadNode,
     resolveReadableUnit
   } = useReadableUnit();
-  console.log("leadFolder", leadNode, "sections", sections);
 
   /**
    * 최초 렌더링시에 LeadFolder를 초기화한다.
    */
   useEffect(() => {
     resolveReadableUnit(startingNode);
+    readableUnitChangedEvent.emit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * leadNode가 변경될 때마다, 추가적인 섹션을 로드한다.
+   * 딱 한번만 fillNextSection()을 호출하면 연쇄적으로
+   * fillNextSection 새로운 섹션이 로드됨.(가능하다면) => totalPageCount가 변함 => 아래쪽에 등록한 이벤트가 호출되어서 page가 모자라다면 더 채움.
+   */
+  useEffect(() => {
+    if (isUnitEnd) {
+      return;
+    }
+    fillNextSection();
+  }, [fillNextSection, isUnitEnd, leadNode]);
 
-  const fileNextSectionHandler = useCallback((pages: { current: number; total: number }) => {
+  const resolveNextSection = useCallback((pages: { current: number; total: number }) => {
     if (isUnitEnd) {
       return;
     }
@@ -52,33 +63,32 @@ export const VirtualTocNodeLoader = ({
    */
   useEffect(() => {
     const rmPageOverflowListener = pageOverflowEvent.registerListener(({ edge }) => {
+      console.log(`page ${edge === "start" ? "이전" : "다음"}으로 오버플로우`);
+
+      let movedSuccess = false;
       if (edge === "start") {
-        moveLeadNode("prev");
+        movedSuccess = moveLeadNode("prev");
       } else {
-        moveLeadNode("next");
+        movedSuccess = moveLeadNode("next");
+      }
+
+      if (movedSuccess) {
+        readableUnitChangedEvent.emit();
       }
     });
 
-    const rmPageChangedListener = pageChangedEvent.registerListener(
-      e => fileNextSectionHandler({
+    const rmPageChangedListener = pageChangedEvent.registerListener(e => {
+      resolveNextSection({
         current: e.currentPage,
         total: e.totalPageCount
       })
-    );
-
-    const rmTotalPagesChangedListener = totalPagesChangedEvent.registerListener(
-      e => fileNextSectionHandler({
-        current: e.currentPage,
-        total: e.totalPageCount
-      })
-    );
+    });
 
     return () => {
       rmPageOverflowListener();
       rmPageChangedListener();
-      rmTotalPagesChangedListener();
     }
-  }, [fileNextSectionHandler, fillNextSection, isUnitEnd, moveLeadNode]);
+  }, [resolveNextSection, fillNextSection, isUnitEnd, moveLeadNode]);
 
 
   return (
