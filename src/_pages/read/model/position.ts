@@ -101,7 +101,7 @@ type PositionStore = {
 export const [PositionStoreContextProvider, usePositionStore] = createStoreContext<ReadableToc, PositionStore>((toc, set, get) => {
   // position: getStartingPositionOfToc(toc),
   const current: Position = {
-    tocNodeId: "9725c2a3-d1fb-4d4d-8f17-713c8c0f7fe9",
+    tocNodeId: "bceb5c28-b432-438c-afe7-f6afa8a1aeee",
     tocNodeType: "SECTION",
     contentElementIndex: 1,
     contextText: null,

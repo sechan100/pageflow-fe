@@ -254,22 +254,24 @@ export const useReadableUnit = () => {
   }, [bookId]);
 
   const setLeadNode = useCallback(async (newLeadNode: ReadableTocNode) => {
-    useReadableUnitStore.setState({
+    const newUnit: ReadableUnit = {
       leadNode: newLeadNode,
-      leadNodeContent: await loadFolder(newLeadNode.id),
+      leadNodeContent: newLeadNode.type === "FOLDER" ? await loadFolder(newLeadNode.id) : await loadSection(newLeadNode.id),
       sections: [],
       isUnitEnd: false,
+    }
+    const isNewUnitEnd = !validateCanFillNextNode(newUnit, toc);
+    useReadableUnitStore.setState({
+      ...newUnit,
+      isUnitEnd: isNewUnitEnd
     });
-  }, [loadFolder]);
+  }, [loadFolder, loadSection, toc]);
 
   /**
    * nodeId를 통해서 readableUnit을 로드한다.
    * nodeId가 속한 readableUnit의 leadNode를 찾아서 leadNode로 설정한다.
    */
   const resolveReadableUnit = useCallback(async (nodeId: string) => {
-    if (!isLeadNode(toc, nodeId)) {
-      throw new Error(`LeadNode가 아닙니다. ${nodeId}`);
-    }
     const leadNode = findLeadNode(toc, nodeId);
     setLeadNode(leadNode);
   }, [setLeadNode, toc]);

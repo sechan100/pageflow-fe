@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { readerController } from "../../model/reader-controller";
-import { pageChangedEvent, totalPagesChangedEvent } from "../../model/reader-event";
+import { pageChangedEvent, pageOverflowEvent, totalPagesChangedEvent } from "../../model/reader-event";
 import { columnGapRatio, columnWidthRatio } from "../ReaderScrollContainer";
 import { useContainerSize } from "./use-container-size";
 
@@ -93,12 +93,21 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     if (!container) return;
     if (isScrolling) return;
     const currentPage = currentPageRef.current;
-    // 방향에 따른 동작조건 체크
+
+    /**
+     * 이동방향에 따른 경계를 체크하고, 경계를 넘어갈 수 없도록 한다.
+     * 대신 pageOverflowEvent를 발행한다.
+     */
     if (direction === "prev") {
-      if (currentPage === 0) return;
+      if (currentPage === 0) {
+        pageOverflowEvent.emit({ edge: "start" })
+        return;
+      }
     } else {
-      // TODO: Page 데이터를 만들고, page가 마지막이라면 못 넘어가게 막기
-      if (currentPage === totalPageCount - 1) return;
+      if (currentPage >= totalPageCount - 1) {
+        pageOverflowEvent.emit({ edge: "end" });
+        return;
+      }
     }
     setIsScrolling(true);
     const newScrollLeft = container.scrollLeft + (direction === "prev" ? -pageBreakPointCommonDifference : pageBreakPointCommonDifference);
