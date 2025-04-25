@@ -1,6 +1,7 @@
 'use client'
 import { SxProps } from "@mui/material";
 import { useEffect } from "react";
+import { ReadableFolderContent, ReadableSectionContent } from "../model/readable-content";
 import { pageChangedEvent, totalPagesChangedEvent } from "../model/reader-event";
 import { useReadableUnit } from "../model/use-readable-unit";
 import { FolderContent } from "./FolderContent";
@@ -15,14 +16,22 @@ export const VirtualTocNodeLoader = ({
 }: Props) => {
   // TODO: 이거 구현하기(현재 position의 가장 가까운 부모 folder 가져오기)
   const startingFolderId = "70020faa-f35d-4722-8d46-4203274b151b";
-  const { setLeadFolder, fetchNextSection, isFullyLoaded, folder, leadFolder, sections } = useReadableUnit();
-  console.log("leadFolder", leadFolder, "sections", sections);
+  const {
+    leadNode,
+    leadNodeContent,
+    sections,
+    isUnitEnd,
+    fillNextSection,
+    moveLeadNode,
+    resolveReadableUnit
+  } = useReadableUnit();
+  console.log("leadFolder", leadNode, "sections", sections);
 
   /**
    * 최초 렌더링시에 LeadFolder를 초기화한다.
    */
   useEffect(() => {
-    setLeadFolder(startingFolderId);
+    resolveReadableUnit(startingFolderId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,7 +46,7 @@ export const VirtualTocNodeLoader = ({
     const fetchNextSectionHandler = (pages: Pages) => {
       // 이제 다음 페이지가 끝 페이지인 경우 새로운 섹션을 로드한다.
       if (pages.current >= (pages.total - 1) - 1) {
-        fetchNextSection();
+        fillNextSection();
       }
     }
     const rmPageChangedListener = pageChangedEvent.registerListener(
@@ -56,12 +65,15 @@ export const VirtualTocNodeLoader = ({
       rmPageChangedListener();
       rmTotalPagesChangedListener();
     }
-  }, [fetchNextSection, setLeadFolder]);
+  }, [fillNextSection]);
 
 
   return (
     <>
-      <FolderContent folder={folder} />
+      {leadNode.type === "FOLDER"
+        ? <FolderContent folder={leadNodeContent as ReadableFolderContent} />
+        : <SectionContent section={leadNodeContent as ReadableSectionContent} />
+      }
       {sections.map((content) => (
         <SectionContent key={content.id} section={content} />
       ))}

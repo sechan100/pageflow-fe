@@ -1,14 +1,14 @@
 import { ReadableToc, ReadableTocFolder, ReadableTocNode, ReadableTocSection, isReadableTocFolder, isReadableTocSection } from '@/entities/book';
 
 
-const findNode = (children: ReadableTocNode[], nodeId: string): ReadableTocNode | null => {
+const findNodeRecursive = (children: ReadableTocNode[], nodeId: string): ReadableTocNode | null => {
   for (const node of children) {
     if (node.id === nodeId) {
       return node;
     }
 
     if (isReadableTocFolder(node)) {
-      const found = findNode(node.children, nodeId);
+      const found = findNodeRecursive(node.children, nodeId);
       if (found) {
         return found;
       }
@@ -17,7 +17,7 @@ const findNode = (children: ReadableTocNode[], nodeId: string): ReadableTocNode 
   return null;
 }
 
-const findParent = (parent: ReadableTocFolder, nodeId: string): ReadableTocFolder | null => {
+const findParentRecursive = (parent: ReadableTocFolder, nodeId: string): ReadableTocFolder | null => {
   for (let i = 0; i < parent.children.length; i++) {
     const child = parent.children[i];
     if (child.id === nodeId) {
@@ -25,7 +25,7 @@ const findParent = (parent: ReadableTocFolder, nodeId: string): ReadableTocFolde
     }
 
     if (isReadableTocFolder(child)) {
-      const found = findParent(child, nodeId);
+      const found = findParentRecursive(child, nodeId);
       if (found) {
         return found;
       }
@@ -34,14 +34,20 @@ const findParent = (parent: ReadableTocFolder, nodeId: string): ReadableTocFolde
   return null;
 }
 
-export const TocUtils = {
+const cache = new Map<string, ReadableTocNode>();
+const parentCache = new Map<string, ReadableTocFolder>();
 
+export const TocOperations = {
   findNode: (toc: ReadableToc, nodeId: string): ReadableTocNode => {
+    if (cache.has(nodeId)) {
+      return cache.get(nodeId)!;
+    }
     if (nodeId === toc.root.id) {
       return toc.root;
     }
-    const found = findNode(toc.root.children, nodeId);
+    const found = findNodeRecursive(toc.root.children, nodeId);
     if (found) {
+      cache.set(nodeId, found);
       return found;
     } else {
       throw new Error(`Node not found: ${nodeId}`);
@@ -52,7 +58,7 @@ export const TocUtils = {
     if (folderId === toc.root.id) {
       return toc.root;
     }
-    const found = findNode(toc.root.children, folderId);
+    const found = findNodeRecursive(toc.root.children, folderId);
     if (isReadableTocFolder(found)) {
       return found;
     } else {
@@ -61,7 +67,7 @@ export const TocUtils = {
   },
 
   findSection: (toc: ReadableToc, sectionId: string): ReadableTocSection => {
-    const found = findNode(toc.root.children, sectionId);
+    const found = findNodeRecursive(toc.root.children, sectionId);
     if (isReadableTocSection(found)) {
       return found;
     } else {
@@ -70,11 +76,19 @@ export const TocUtils = {
   },
 
   findParent: (toc: ReadableToc, nodeId: string): ReadableTocFolder => {
-    const found = findParent(toc.root, nodeId);
+    if (parentCache.has(nodeId)) {
+      return parentCache.get(nodeId)!;
+    }
+    const found = findParentRecursive(toc.root, nodeId);
     if (found) {
+      parentCache.set(nodeId, found);
       return found;
     } else {
       throw new Error(`Parent not found: ${nodeId}`);
     }
   },
+
+  isRootFolder: (toc: ReadableToc, folderId: string): boolean => {
+    return toc.root.id === folderId;
+  }
 }
