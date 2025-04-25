@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { readerController } from "../../model/reader-controller";
-import { pageChangedEvent } from "../../model/reader-event";
+import { pageChangedEvent, totalPagesChangedEvent } from "../../model/reader-event";
 import { columnGapRatio, columnWidthRatio } from "../ReaderScrollContainer";
 import { useContainerSize } from "./use-container-size";
 
@@ -34,14 +34,14 @@ export const calculatePage = ({ width, scrollWidth }: { width: number, scrollWid
    * 페이지 수는 2개의 반페이지를 합쳐서 1개로 세고, 마지막은 반페이지는 1개든 2개든 1개로 셈.
    */
   const isLastFullPage = halfPageCount % 2 === 0;
-  const totalPage = Math.floor(halfPageCount / 2) + (isLastFullPage ? 0 : 1);
+  const totalPageCount = Math.floor(halfPageCount / 2) + (isLastFullPage ? 0 : 1);
 
   return {
     gap,
     column,
     halfPage,
     pageBreakPointCommonDifference,
-    totalPage,
+    totalPageCount,
     isLastFullPage
   }
 }
@@ -54,7 +54,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     column,
     halfPage,
     pageBreakPointCommonDifference,
-    totalPage,
+    totalPageCount,
     isLastFullPage
   } = calculatePage({ width, scrollWidth });
 
@@ -98,7 +98,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
       if (currentPage === 0) return;
     } else {
       // TODO: Page 데이터를 만들고, page가 마지막이라면 못 넘어가게 막기
-      if (currentPage === totalPage - 1) return;
+      if (currentPage === totalPageCount - 1) return;
     }
     setIsScrolling(true);
     const newScrollLeft = container.scrollLeft + (direction === "prev" ? -pageBreakPointCommonDifference : pageBreakPointCommonDifference);
@@ -108,7 +108,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     });
     const newPage = direction === "prev" ? currentPage - 1 : currentPage + 1;
     currentPageRef.current = newPage;
-  }, [containerRef, isScrolling, pageBreakPointCommonDifference, totalPage]);
+  }, [containerRef, isScrolling, pageBreakPointCommonDifference, totalPageCount]);
 
   /**
    * moveScroll 함수로 스크롤 이동이 완료된 후에 호출
@@ -118,10 +118,10 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     // currentPage 상태가 업데이트되기 전에 onScrollEnd가 호출될 수 있음 -> ref로 참조
     const newPage = currentPageRef.current;
     pageChangedEvent.emit({
-      page: newPage,
-      totalPages: totalPage,
+      currentPage: newPage,
+      totalPageCount: totalPageCount,
     })
-  }, [totalPage])
+  }, [totalPageCount])
 
   /**
    * moveScroll, onScrollEnd 콜백들을 등록
@@ -142,14 +142,14 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
 
 
   /**
-   * totalPage가 변경되면 'page-changed' 이벤트를 발행
+   * totalPage가 변경되면 'totalPagesChanged' 이벤트를 발행
    */
   useEffect(() => {
-    pageChangedEvent.emit({
-      page: currentPageRef.current,
-      totalPages: totalPage,
+    totalPagesChangedEvent.emit({
+      currentPage: currentPageRef.current,
+      totalPageCount: totalPageCount,
     })
-  }, [totalPage]);
+  }, [totalPageCount]);
 
   return {
     gap,
@@ -158,7 +158,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     scrollWidth,
     halfPage,
     pageBreakPointCommonDifference,
-    totalPage,
+    totalPageCount,
     isLastFullPage
   }
 }

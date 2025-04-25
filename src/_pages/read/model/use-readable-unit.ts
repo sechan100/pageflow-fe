@@ -49,7 +49,9 @@ export const useReadableUnit = () => {
   const toc = useTocContext();
   const { leadFolder, folder, sections, isFullyLoaded } = useReadableUnitStore();
 
-
+  /**
+   * 캐시에서 폴더를 가져오거나, api를 호출하여 가져오고 캐싱한다.
+   */
   const loadFolder = useCallback(async (folderId: string) => {
     if (folderCache.has(folderId)) {
       return folderCache.get(folderId) as ReadableFolderContent;
@@ -59,7 +61,9 @@ export const useReadableUnit = () => {
     return loaded;
   }, [bookId]);
 
-
+  /**
+   * 캐시에서 section을 가져오거나, api를 호출하여 가져오고 캐싱한다.
+   */
   const loadSection = useCallback(async (sectionId: string) => {
     if (sectionCache.has(sectionId)) {
       return sectionCache.get(sectionId) as ReadableSectionContent;
@@ -69,21 +73,19 @@ export const useReadableUnit = () => {
     return loaded;
   }, [bookId]);
 
-
   /**
-   * 새로운 Folder를 ReadableUnit의 leaderFolder로 설정한다.
+   * 새로운 Folder를 ReadableUnit의 leadFolder로 설정한다.
    */
   const setLeadFolder = useCallback(async (folderId: string) => {
-    const newLeaderFolder = TocUtils.findFolder(toc, folderId);
+    const newLeadFolder = TocUtils.findFolder(toc, folderId);
 
     return useReadableUnitStore.setState({
-      leadFolder: newLeaderFolder,
-      folder: await loadFolder(newLeaderFolder.id),
+      leadFolder: newLeadFolder,
+      folder: await loadFolder(newLeadFolder.id),
       sections: [],
       isFullyLoaded: false,
     });
   }, [loadFolder, toc]);
-
 
   /**
    * section의 lazy 로딩을 위한 api.
@@ -116,6 +118,14 @@ export const useReadableUnit = () => {
       });
     }
   }, [isFullyLoaded, leadFolder, loadSection, sections]);
+
+  /**
+   * 현재 leadFolder를 기준으로 이전, 또는 다음 folder로 이동한다. 
+   * 
+   */
+  const moveToLeadFolder = useCallback((direction: "prev" | "next") => {
+
+  }, []);
 
 
   return {
