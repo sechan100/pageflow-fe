@@ -31,10 +31,10 @@ export const BookCard = ({
     let link = null;
     switch (book.status) {
       case "DRAFT":
+      case "REVISING":
         link = writeBookLink(book.id);
         break;
       case "PUBLISHED":
-      case "REVISING":
         link = bookReadLink(book.id);
         break;
       default:
