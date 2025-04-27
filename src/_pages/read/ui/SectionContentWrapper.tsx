@@ -1,8 +1,6 @@
 'use client'
 import { Box, SxProps } from "@mui/material"
-import { useEffect } from "react"
 import { ReadableSectionContent } from "../model/readable-content"
-import { contentRenderedEvent } from "../model/reader-event"
 import { useLayoutStore } from "../model/use-reader-layout-store"
 
 
@@ -18,10 +16,6 @@ export const SectionContentWrapper = ({
 }: Props) => {
   const { height } = useLayoutStore();
 
-  useEffect(() => {
-    contentRenderedEvent.emit()
-  }, [])
-
   return (
     <Box
       component={"section"}
@@ -29,7 +23,6 @@ export const SectionContentWrapper = ({
       sx={{
         breakBefore: section.shouldBreakSection ? "column" : undefined,
       }}
-
     >
       {children}
     </Box>

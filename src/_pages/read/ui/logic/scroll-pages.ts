@@ -1,9 +1,9 @@
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { readerController } from "../../model/reader-controller";
-import { pageChangedEvent, pageOverflowEvent, readableUnitChangedEvent, totalPageCountChangedEvent } from "../../model/reader-event";
+import { ReadableUnitChangedEvent, readerEvent } from "../../model/reader-event";
 import { columnGapRatio, columnWidthRatio } from "../ReaderScrollContainer";
-import { useContainerSize } from "./use-container-size";
+import { registerScrollContainerMeasure, ScrollContainerSize } from "./container-size";
 
 
 export const calculatePage = ({ width, scrollWidth }: { width: number, scrollWidth: number }) => {
@@ -48,7 +48,13 @@ export const calculatePage = ({ width, scrollWidth }: { width: number, scrollWid
 
 
 export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
-  const { width, scrollWidth } = useContainerSize(containerRef);
+  const [size, setScrollContainerSize] = useState<ScrollContainerSize>({
+    width: 0,
+    height: 0,
+    scrollWidth: 0,
+    scrollLeft: 0
+  });
+
   const {
     gap,
     column,
@@ -56,19 +62,46 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     pageBreakPointCommonDifference,
     totalPageCount,
     isLastFullPage
-  } = calculatePage({ width, scrollWidth });
+  } = calculatePage({ width: size.width, scrollWidth: size.scrollWidth });
 
   const currentPageRef = useRef<number>(0);
 
-  const resetPage = useCallback(() => {
+  /**
+   * size가 재측정된 이후에 실행해야하는 cb를 ref 배열에 추가하고, 상태가 안전하게 변경된 이후에 실행한다.
+  */
+  const afterScrollContainerReMeasureCallbacks = useRef<(() => void)[]>([]);
+  useEffect(() => {
+    afterScrollContainerReMeasureCallbacks.current.forEach(cb => cb());
+    afterScrollContainerReMeasureCallbacks.current = [];
+  }, [size]);
+
+  /**
+   * scrollContainer의 사이즈가 재측정되면 상태를 변경하는 cb을 등록
+   */
+  useEffect(() => {
+    const containerEl = containerRef.current;
+    if (!containerEl) {
+      return;
+    }
+    const cleanup = registerScrollContainerMeasure(containerEl, (size) => {
+      setScrollContainerSize(size)
+    });
+
+    return () => {
+      cleanup();
+    }
+  }, [containerRef])
+
+  const pageTo = useCallback((to: "start" | "end") => {
     const container = containerRef.current;
     if (!container) return;
+    const newPage = to === "start" ? 0 : totalPageCount - 1;
     container.scrollTo({
-      left: 0,
+      left: newPage * pageBreakPointCommonDifference,
       behavior: "instant",
     });
-    currentPageRef.current = 0;
-  }, [containerRef]);
+    currentPageRef.current = newPage;
+  }, [containerRef, pageBreakPointCommonDifference, totalPageCount]);
 
   const LOGPAGE = useCallback(() => console.log("[페이지]", currentPageRef.current + 1, "/", totalPageCount), [totalPageCount]);
   useEffect(() => {
@@ -87,7 +120,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     const container = containerRef.current;
     if (!container) return;
     const resizeCallbackDebounced = debounce<ResizeObserverCallback>((entries) => entries.forEach(entry => {
-      if (entry.target.scrollWidth === scrollWidth) return;
+      if (entry.target.scrollWidth === size.scrollWidth) return;
       const newScrollLeft = currentPageRef.current * pageBreakPointCommonDifference;
       container.scrollTo({
         left: newScrollLeft,
@@ -98,7 +131,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     const resizeObserver = new ResizeObserver(resizeCallbackDebounced);
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
-  }, [containerRef, currentPageRef, pageBreakPointCommonDifference, scrollWidth]);
+  }, [containerRef, pageBreakPointCommonDifference, size.scrollWidth]);
 
   /**
    * 1개의 페이지만큼 스크롤을 이동시키는 함수
@@ -115,12 +148,12 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
      */
     if (direction === "prev") {
       if (currentPage === 0) {
-        pageOverflowEvent.emit({ edge: "start" })
+        readerEvent.emit("page-overflow", { edge: "start" })
         return;
       }
     } else {
       if (currentPage >= totalPageCount - 1) {
-        pageOverflowEvent.emit({ edge: "end" });
+        readerEvent.emit("page-overflow", { edge: "end" });
         return;
       }
     }
@@ -142,7 +175,7 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     setIsScrolling(false);
     // currentPage 상태가 업데이트되기 전에 onScrollEnd가 호출될 수 있음 -> ref로 참조
     const newPage = currentPageRef.current;
-    pageChangedEvent.emit({
+    readerEvent.emit("page-changed", {
       currentPage: newPage,
       totalPageCount: totalPageCount,
     })
@@ -165,35 +198,35 @@ export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
     }
   }, [containerRef, moveScroll, onScrollEnd]);
 
-
   /**
    * totalPage가 변경되면 'totalPagesChanged' 이벤트를 발행
    */
   useEffect(() => {
-    totalPageCountChangedEvent.emit({
+    readerEvent.emit("total-page-count-changed", {
       currentPage: currentPageRef.current,
       totalPageCount: totalPageCount,
     })
   }, [totalPageCount]);
 
   /**
-   * 'readableUnitChanged' 이벤트가 발생하면 page를 초기화
+   * 'readableUnitChanged' 이벤트가 page를 시작, 또는 끝으로 이동시키는 함수실행을 등록
    */
   useEffect(() => {
-    const rmListener = readableUnitChangedEvent.registerListener(() => {
-      resetPage();
-    });
+    const adjustReadFrom = ({ readFrom }: ReadableUnitChangedEvent) => {
+      afterScrollContainerReMeasureCallbacks.current.push(() => pageTo(readFrom));
+    }
+    readerEvent.on("readable-unit-changed", adjustReadFrom);
 
     return () => {
-      rmListener();
+      readerEvent.off("readable-unit-changed", adjustReadFrom);
     }
-  }, [resetPage, totalPageCount]);
+  }, [pageTo, totalPageCount]);
 
   return {
     gap,
     column,
-    width,
-    scrollWidth,
+    width: size.width,
+    scrollWidth: size.scrollWidth,
     halfPage,
     pageBreakPointCommonDifference,
     totalPageCount,

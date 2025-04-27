@@ -3,7 +3,7 @@ import { Box, SxProps } from "@mui/material";
 import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { usePositionStore } from "../model/position";
-import { contentRenderedEvent } from "../model/reader-event";
+import { readerEvent } from "../model/reader-event";
 import { useTocContext } from "../model/toc-context";
 import { useLayoutStore } from "../model/use-reader-layout-store";
 import { extractNodeInfoFromElement } from "./logic/content-element";
@@ -68,7 +68,10 @@ const useObserveCurrentPosition = ({ scrollContainerRef }: GetCurrentPositionArg
 
   useEffect(() => {
     const debouncedRegisterObserver = debounce(registerObserver, 100);
-    contentRenderedEvent.registerListener(debouncedRegisterObserver);
+    readerEvent.on("content-mounted", debouncedRegisterObserver);
+    return () => {
+      readerEvent.off("content-mounted", debouncedRegisterObserver);
+    }
   }, [registerObserver]);
 
   return firstVisibleElement;
