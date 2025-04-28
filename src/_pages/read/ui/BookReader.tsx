@@ -1,7 +1,7 @@
 'use client'
 import { Box } from '@mui/material';
 import { useBookContext } from "../model/book-context";
-import { VirtualTocNodeLoader } from './ContentLoader';
+import { ContentLoader } from './ContentLoader';
 import { ControllerChevron } from './ControllerChevron';
 import { ReaderScrollContainer } from './ReaderScrollContainer';
 
@@ -22,7 +22,7 @@ export const BookReader = () => {
       }}>
         <ControllerChevron direction='left' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
         <ReaderScrollContainer>
-          <VirtualTocNodeLoader />
+          <ContentLoader />
         </ReaderScrollContainer>
         <ControllerChevron direction='right' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
       </Box>

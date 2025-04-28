@@ -1,22 +1,26 @@
 'use client'
+import { ReadableTocNode } from "@/entities/book";
 import { SxProps } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import { ReadableFolderContent, ReadableSectionContent } from "../model/readable-content";
-import { useReadableUnit } from "../model/readable-unit";
+import { resolveLeadNode, useReadableUnit } from "../model/readable-unit";
 import { PageChangedEvent, PageOverflowEvent, readerEvent } from "../model/reader-event";
-import { ContentMountChecker } from "./ContentMountChecker";
+import { useTocContext } from "../model/toc-context";
 import { FolderContent } from "./FolderContent";
 import { SectionContent } from "./SectionContent";
+import { useContainerStore } from "./logic/use-container-store";
 
 
 type Props = {
   sx?: SxProps;
 }
-export const VirtualTocNodeLoader = ({
+export const ContentLoader = ({
   sx
 }: Props) => {
   // TODO: 이거 구현하기(현재 position의 가장 가까운 부모 folder 가져오기)
   const startingNode = "bceb5c28-b432-438c-afe7-f6afa8a1aeee";
+  const changeLeadNode = useContainerStore(s => s.changeLeadNode);
+  const toc = useTocContext();
   const {
     leadNode,
     leadNodeContent,
@@ -24,15 +28,16 @@ export const VirtualTocNodeLoader = ({
     isUnitEnd,
     fillNextSection,
     moveLeadNode,
-    resolveReadableUnit
+    setLeadNode
   } = useReadableUnit();
 
   /**
    * 최초 렌더링시에 LeadFolder를 초기화한다.
    */
   useEffect(() => {
-    resolveReadableUnit(startingNode);
-    readerEvent.emit("readable-unit-changed", { readFrom: "start" });
+    const newLeadNode = resolveLeadNode(toc, startingNode);
+    setLeadNode(newLeadNode);
+    changeLeadNode({ id: newLeadNode.id, readFrom: "start" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,26 +70,29 @@ export const VirtualTocNodeLoader = ({
     const cb = ({ edge }: PageOverflowEvent) => {
       console.log(`page ${edge === "start" ? "이전" : "다음"}으로 오버플로우`);
 
-      let movedSuccess = false;
+      let moved: ReadableTocNode | null;
+      let readFrom: "start" | "end";
       if (edge === "start") {
-        movedSuccess = moveLeadNode("prev");
+        moved = moveLeadNode("prev");
+        readFrom = "end"
       } else {
-        movedSuccess = moveLeadNode("next");
+        moved = moveLeadNode("next");
+        readFrom = "start";
       }
 
-      if (movedSuccess) {
-        readerEvent.emit("readable-unit-changed", { readFrom: "end" });
+      if (moved !== null) {
+        changeLeadNode({ id: moved.id, readFrom });
       }
     }
     readerEvent.on("page-overflow", cb);
     return () => {
       readerEvent.off("page-overflow", cb);
     }
-  }, [resolveNextSection, moveLeadNode]);
+  }, [resolveNextSection, moveLeadNode, changeLeadNode]);
 
 
   /**
-   * pageChangedEvent가 발생한 경우, 다음 페이지가 충분히 준비될 수 있도록 추가적으로 section을 로드한다.
+   * 특정 이벤트가 발생한 경우, 다음 페이지가 충분히 준비될 수 있도록 추가적으로 section을 로드한다.
    */
   useEffect(() => {
     const cb = ({ currentPage, totalPageCount }: PageChangedEvent) => {
@@ -109,7 +117,6 @@ export const VirtualTocNodeLoader = ({
       {sections.map((content) => (
         <SectionContent key={content.id} section={content} />
       ))}
-      <ContentMountChecker />
     </>
   )
 }

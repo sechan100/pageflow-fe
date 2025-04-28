@@ -32,6 +32,7 @@ export const ErrorCatchProvider = ({
 
       // 에러를 처리
       event.preventDefault();
+      // console.error("Unhandled error:", event);
     }
 
     window.addEventListener('error', handleError);

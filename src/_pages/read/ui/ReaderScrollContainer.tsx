@@ -1,13 +1,12 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
-import { debounce } from "lodash";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { usePositionStore } from "../model/position";
-import { readerEvent } from "../model/reader-event";
 import { useTocContext } from "../model/toc-context";
 import { useLayoutStore } from "../model/use-reader-layout-store";
 import { extractNodeInfoFromElement } from "./logic/content-element";
 import { usePages } from "./logic/scroll-pages";
+import { useScrollContainerSize } from "./logic/use-scroll-container-size";
 
 export const columnGapRatio = 0.1;
 export const columnWidthRatio = (1 - columnGapRatio) / 2;
@@ -66,13 +65,13 @@ const useObserveCurrentPosition = ({ scrollContainerRef }: GetCurrentPositionArg
     return () => observer.disconnect();
   }, [observerCallback, scrollContainerRef]);
 
-  useEffect(() => {
-    const debouncedRegisterObserver = debounce(registerObserver, 100);
-    readerEvent.on("content-mounted", debouncedRegisterObserver);
-    return () => {
-      readerEvent.off("content-mounted", debouncedRegisterObserver);
-    }
-  }, [registerObserver]);
+  // useEffect(() => {
+  //   const debouncedRegisterObserver = debounce(registerObserver, 100);
+  //   readerEvent.on("content-mounted", debouncedRegisterObserver);
+  //   return () => {
+  //     readerEvent.off("content-mounted", debouncedRegisterObserver);
+  //   }
+  // }, [registerObserver]);
 
   return firstVisibleElement;
 }
@@ -91,7 +90,8 @@ export const ReaderScrollContainer = ({
   const currentPosition = usePositionStore(s => s.position);
   const setPosition = usePositionStore(s => s.setPosition);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { width } = usePages(scrollContainerRef);
+  useScrollContainerSize(scrollContainerRef);
+  const { width, scrollWidth } = usePages(scrollContainerRef);
 
   // 페이지의 첫부분에 보이는 LexicalNode나 FolderNode를 관찰하여 position을 업데이트한다.
   const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });

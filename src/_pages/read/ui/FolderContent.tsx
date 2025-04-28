@@ -5,6 +5,7 @@ import { LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { Paper, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { ReadableFolderContent } from '../model/readable-content';
 import { useLayoutStore } from '../model/use-reader-layout-store';
 

@@ -23,17 +23,11 @@ export type PageOverflowEvent = {
   edge: "start" | "end";
 }
 
-export type ReadableUnitChangedEvent = {
-  readFrom: "start" | "end";
-}
-
 
 type ReaderEvents = {
-  "content-mounted": void;
   "page-changed": PageChangedEvent;
   "total-page-count-changed": TotalPageCountChangedEvent;
   "page-overflow": PageOverflowEvent;
-  "readable-unit-changed": ReadableUnitChangedEvent;
 }
 
 export const readerEvent = mitt<ReaderEvents>();

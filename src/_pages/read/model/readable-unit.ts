@@ -131,7 +131,7 @@ const findPrevLeadNode = (toc: ReadableToc, currentLeadNodeId: string): Readable
 
   // currentLeadNode의 바로 앞에 있는 prevLeadNode를 기준으로 rightmost path로 움직여 도달한 node
   const prevRightMostNode = TocOperations.findRightMostNode(prevLeadNodeAmongSiblings as ReadableTocFolder);
-  const leadNodeOfPrevRightMostNode = findLeadNode(toc, prevRightMostNode.id);
+  const leadNodeOfPrevRightMostNode = resolveLeadNode(toc, prevRightMostNode.id);
   return leadNodeOfPrevRightMostNode;
 }
 
@@ -225,7 +225,7 @@ const validateCanFillNextNode = ({ leadNode, isUnitEnd, sections }: ReadableUnit
 /**
  * 제공된 nodeId가 속하는 unit의 leadNode를 찾는다.
  */
-const findLeadNode = (toc: ReadableToc, targetId: string) => {
+export const resolveLeadNode = (toc: ReadableToc, targetId: string) => {
   // target이 leadNode가 아닌 경우, target은 반드시 readableUnit의 중간에 속하는 Section이므로, 앞 node로 이동하다보면 leadNode를 발견할 수 밖에 없다.
   const parent = TocOperations.findParent(toc, targetId);
   const target = TocOperations.findNode(toc, targetId);
@@ -241,6 +241,35 @@ const findLeadNode = (toc: ReadableToc, targetId: string) => {
    * 한편, parent가 root인 경우 isLeadNode 함수가 0번째 section을 leadNode로 판단하기 때문에 parent는 절대 root folder가 아니다.
    */
   return parent;
+}
+
+/**
+ * 다음 채워야할 section의 id를 가져온다.
+ */
+const findNextSectionId = (leadNode: ReadableTocNode, sections: ReadableSectionContent[], toc: ReadableToc): string => {
+  let parent: ReadableTocFolder;
+  let nextIndex: number;
+  // leadNode가 Folder
+  if (isReadableTocFolder(leadNode)) {
+    parent = leadNode;
+    nextIndex = sections.length;
+  }
+  // leadNode가 Section
+  else {
+    parent = TocOperations.findParent(toc, leadNode.id);
+    nextIndex = parent.children.indexOf(leadNode) + 1;
+  }
+
+  if (nextIndex > parent.children.length - 1) {
+    throw new Error("다음 section을 가져올 수 없습니다 IndexOutOfRange. 이런 경우 isUnitEnd가 이전 fill 호출에서 true로 세팅돼야 했습니다. validateCanFillNextNode를 확인하세요.");
+  }
+
+  const nextNode = parent.children[nextIndex];
+  if (nextNode.type !== "SECTION") {
+    throw new Error("다음 로드한 node가 Section이 아닙니다. 이런 경우 isUnitEnd가 이전 fill 호출에서 true로 세팅돼야 했습니다. validateCanFillNextNode를 확인하세요.")
+  }
+
+  return nextNode.id;
 }
 
 export const useReadableUnit = () => {
@@ -272,28 +301,23 @@ export const useReadableUnit = () => {
     return loaded;
   }, [bookId]);
 
-  const setLeadNode = useCallback(async (newLeadNode: ReadableTocNode) => {
+  const setLeadNode = useCallback(async (newLeadNode: ReadableTocNode, withFullSections: boolean = false) => {
     const newUnit: ReadableUnit = {
       leadNode: newLeadNode,
       leadNodeContent: newLeadNode.type === "FOLDER" ? await loadFolder(newLeadNode.id) : await loadSection(newLeadNode.id),
       sections: [],
       isUnitEnd: false,
     }
-    const isNewUnitEnd = !validateCanFillNextNode(newUnit, toc);
-    useReadableUnitStore.setState({
-      ...newUnit,
-      isUnitEnd: isNewUnitEnd
-    });
+    newUnit.isUnitEnd = !validateCanFillNextNode(newUnit, toc);
+    if (withFullSections) {
+      while (newUnit.isUnitEnd === false) {
+        const nextId = findNextSectionId(newLeadNode, newUnit.sections, toc);
+        newUnit.sections.push(await loadSection(nextId));
+        newUnit.isUnitEnd = !validateCanFillNextNode(newUnit, toc);
+      }
+    }
+    useReadableUnitStore.setState(newUnit);
   }, [loadFolder, loadSection, toc]);
-
-  /**
-   * nodeId를 통해서 readableUnit을 로드한다.
-   * nodeId가 속한 readableUnit의 leadNode를 찾아서 leadNode로 설정한다.
-   */
-  const resolveReadableUnit = useCallback(async (nodeId: string) => {
-    const leadNode = findLeadNode(toc, nodeId);
-    setLeadNode(leadNode);
-  }, [setLeadNode, toc]);
 
   /**
    * section의 lazy 로딩을 위한 api.
@@ -304,28 +328,8 @@ export const useReadableUnit = () => {
     if (isUnitEnd) {
       throw new Error("다음 섹션을 로드할 수 없습니다.")
     }
-    let parent: ReadableTocFolder;
-    let nextIndex: number;
-    // leadNode가 Folder
-    if (isReadableTocFolder(leadNode)) {
-      parent = leadNode;
-      nextIndex = sections.length;
-    }
-    // leadNode가 Section
-    else {
-      parent = TocOperations.findParent(toc, leadNode.id);
-      nextIndex = parent.children.indexOf(leadNode) + 1;
-    }
-
-    if (nextIndex > parent.children.length - 1) {
-      throw new Error("다음 section을 가져올 수 없습니다 IndexOutOfRange. 이런 경우 isUnitEnd가 이전 fill 호출에서 true로 세팅돼야 했습니다. validateCanFillNextNode를 확인하세요.");
-    }
-
-    const nextNode = parent.children[nextIndex];
-    if (nextNode.type !== "SECTION") {
-      throw new Error("다음 로드한 node가 Section이 아닙니다. 이런 경우 isUnitEnd가 이전 fill 호출에서 true로 세팅돼야 했습니다. validateCanFillNextNode를 확인하세요.")
-    }
-    const nextSection = await loadSection(nextNode.id);
+    const nextSectionId = findNextSectionId(leadNode, sections, toc);
+    const nextSection = await loadSection(nextSectionId);
     const newUnit: ReadableUnit = {
       isUnitEnd,
       leadNode,
@@ -346,20 +350,23 @@ export const useReadableUnit = () => {
    * 
    * @returns 실제로 이동을 했는지 여부 (양 끝이라면 이동을 못함.)
    */
-  const moveLeadNode = useCallback((direction: "prev" | "next"): boolean => {
+  const moveLeadNode = useCallback((direction: "prev" | "next") => {
     let moved: ReadableTocNode | null = null;
+    let fillFullSection = false;
     if (direction === "prev") {
       moved = findPrevLeadNode(toc, leadNode.id);
+      fillFullSection = true;
     } else {
       moved = findNextLeadNode(toc, leadNode.id);
+      fillFullSection = false;
     }
 
     if (moved !== null) {
-      setLeadNode(moved);
-      return true;
+      setLeadNode(moved, fillFullSection);
+      return moved;
     } else {
       console.debug("더 이상 (이전/다음)으로 이동할 수 없습니다.");
-      return false;
+      return null;
     }
   }, [leadNode.id, setLeadNode, toc]);
 
@@ -368,8 +375,8 @@ export const useReadableUnit = () => {
     leadNodeContent,
     sections,
     isUnitEnd,
-    resolveReadableUnit,
     fillNextSection,
     moveLeadNode,
+    setLeadNode,
   };
 }
