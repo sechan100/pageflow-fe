@@ -6,7 +6,7 @@ import { BookContextProvider } from '../model/book-context';
 import { PositionStoreContextProvider } from '../model/position';
 import { TocContextProvider } from "../model/toc-context";
 import { BookReader } from './BookReader';
-import { ReaderToc } from './toc/ReaderToc';
+import { ReadPageDialMenu } from './ReadPageDialMenu';
 
 
 type ReadPageContentProps = {
@@ -59,8 +59,9 @@ const ReadPageContent = ({
           flexGrow: 1,
           overflow: 'hidden'
         }}>
-          <ReaderToc />
+          {/* <ReaderToc /> */}
           <BookReader />
+          <ReadPageDialMenu />
         </Box>
       </Box>
     </>

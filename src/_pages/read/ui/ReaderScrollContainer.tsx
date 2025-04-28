@@ -3,7 +3,7 @@ import { Box, SxProps } from "@mui/material";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { usePositionStore } from "../model/position";
 import { useTocContext } from "../model/toc-context";
-import { useLayoutStore } from "../model/use-reader-layout-store";
+import { useReaderStyleStore } from "../model/use-reader-style-store";
 import { extractNodeInfoFromElement } from "./logic/content-element";
 import { usePages } from "./logic/scroll-pages";
 import { useScrollContainerSize } from "./logic/use-scroll-container-size";
@@ -85,7 +85,7 @@ export const ReaderScrollContainer = ({
   children,
   sx
 }: Props) => {
-  const layout = useLayoutStore();
+  const layout = useReaderStyleStore();
   const toc = useTocContext();
   const currentPosition = usePositionStore(s => s.position);
   const setPosition = usePositionStore(s => s.setPosition);
@@ -115,8 +115,8 @@ export const ReaderScrollContainer = ({
       ref={scrollContainerRef}
       sx={{
         position: 'relative',
-        width: layout.width,
-        height: layout.height,
+        width: `${layout.viewportWidth}vw`,
+        height: `${layout.viewportHeight}vh`,
         columnCount: 2,
         columnGap: `${width * columnGapRatio}px`,
         columnWidth: `${width * columnWidthRatio}px`,

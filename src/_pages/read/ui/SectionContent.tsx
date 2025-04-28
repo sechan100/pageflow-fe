@@ -14,7 +14,7 @@ import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
 import { ReadableSectionContent } from "../model/readable-content";
 import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
-import { useLayoutStore } from '../model/use-reader-layout-store';
+import { useReaderStyleStore } from '../model/use-reader-style-store';
 import { SECTION_CONTENT_DATA_NODE_ID } from './logic/content-element';
 import { SectionContentWrapper } from './SectionContentWrapper';
 
@@ -68,16 +68,17 @@ const Title = ({
   title,
   sx
 }: TitleProps) => {
-  const { lineHeight, fontSize, wordSpacing } = useLayoutStore();
+  const { lineHeight, fontSize, wordSpacing } = useReaderStyleStore();
 
   return (
     <Typography
       variant="h6"
       sx={{
-        fontSize: fontSize * 1.2,
+        fontSize: fontSize * 1.1,
         wordSpacing,
-        pt: lineHeight * 0.7,
-        pb: lineHeight * 0.3,
+        fontWeight: 600,
+        pt: lineHeight * 5,
+        pb: lineHeight * 0.5,
       }}
     >
       {title}
@@ -90,7 +91,7 @@ type Props = {
   section: ReadableSectionContent;
 }
 export const SectionContent = ({ section }: Props) => {
-  const layout = useLayoutStore();
+  const layout = useReaderStyleStore();
   const lexicalConfig = useMemo(() => ({
     namespace: `section-${section.id}-reader`,
     nodes: [ListNode, ListItemNode, QuoteNode, LinkNode, ImageNode],

@@ -1,7 +1,7 @@
 'use client'
 import { Box, SxProps } from "@mui/material"
 import { ReadableSectionContent } from "../model/readable-content"
-import { useLayoutStore } from "../model/use-reader-layout-store"
+import { useReaderStyleStore } from "../model/use-reader-style-store"
 
 
 type Props = {
@@ -14,7 +14,7 @@ export const SectionContentWrapper = ({
   children,
   sx
 }: Props) => {
-  const { height } = useLayoutStore();
+  const { viewportHeight } = useReaderStyleStore();
 
   return (
     <Box
