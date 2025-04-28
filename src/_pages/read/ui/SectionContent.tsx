@@ -79,6 +79,7 @@ const Title = ({
         fontWeight: 600,
         pt: lineHeight * 5,
         pb: lineHeight * 0.5,
+        userSelect: "none",
       }}
     >
       {title}

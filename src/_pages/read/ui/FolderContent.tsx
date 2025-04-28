@@ -17,6 +17,7 @@ const Title = ({
       sx={{
         fontSize: 20,
         fontWeight: 500,
+        userSelect: "none",
       }}
     >
       {title}
