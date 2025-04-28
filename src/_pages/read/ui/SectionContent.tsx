@@ -9,11 +9,12 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { QuoteNode } from '@lexical/rich-text';
-import { Typography } from '@mui/material';
+import { SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
 import { ReadableSectionContent } from "../model/readable-content";
 import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
+import { useLayoutStore } from '../model/use-reader-layout-store';
 import { SECTION_CONTENT_DATA_NODE_ID } from './logic/content-element';
 import { SectionContentWrapper } from './SectionContentWrapper';
 
@@ -59,11 +60,37 @@ const LexicalSettings = ({
   )
 }
 
+type TitleProps = {
+  title: string;
+  sx?: SxProps;
+}
+const Title = ({
+  title,
+  sx
+}: TitleProps) => {
+  const { lineHeight, fontSize, wordSpacing } = useLayoutStore();
+
+  return (
+    <Typography
+      variant="h6"
+      sx={{
+        fontSize: fontSize * 1.2,
+        wordSpacing,
+        pt: lineHeight * 0.7,
+        pb: lineHeight * 0.3,
+      }}
+    >
+      {title}
+    </Typography>
+  )
+}
+
 
 type Props = {
   section: ReadableSectionContent;
 }
 export const SectionContent = ({ section }: Props) => {
+  const layout = useLayoutStore();
   const lexicalConfig = useMemo(() => ({
     namespace: `section-${section.id}-reader`,
     nodes: [ListNode, ListItemNode, QuoteNode, LinkNode, ImageNode],
@@ -76,7 +103,7 @@ export const SectionContent = ({ section }: Props) => {
 
   return (
     <SectionContentWrapper section={section}>
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>{section.title}</Typography>
+      {section.shouldShowTitle && <Title title={section.title} />}
       <LexicalComposer initialConfig={lexicalConfig}>
         <RichTextPlugin
           contentEditable={<ContentEditable />}

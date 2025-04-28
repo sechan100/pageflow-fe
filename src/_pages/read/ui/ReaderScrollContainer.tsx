@@ -120,7 +120,7 @@ export const ReaderScrollContainer = ({
         columnCount: 2,
         columnGap: `${width * columnGapRatio}px`,
         columnWidth: `${width * columnWidthRatio}px`,
-        columnFill: "auto",
+        columnFill: "balance",
         overflowX: "hidden",
 
         // 가로축 미세 오차 때문에 글자가 잘리는 경우를 방지
@@ -131,8 +131,9 @@ export const ReaderScrollContainer = ({
 
         "& .pf-p": {
           textAlign: "justify",
-          // wordBreak: "break-all",
+          wordBreak: "break-all",
           orphans: "1 !important",
+          widows: "1 !important",
           m: 0,
         },
 

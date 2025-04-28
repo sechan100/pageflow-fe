@@ -12,9 +12,8 @@ const measureSize = (el: HTMLElement) => {
   const scrollLeft = el.scrollLeft;
 
   const style = getComputedStyle(el);
-  // / 0.5는 보정값
-  const width = el.clientWidth - (parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + 0.5);
-  const height = el.clientHeight - (parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) + 0.5);
+  const width = el.clientWidth - (parseFloat(style.paddingLeft) + parseFloat(style.paddingRight));
+  const height = el.clientHeight - (parseFloat(style.paddingTop) + parseFloat(style.paddingBottom));
   const newSize = { width, height, scrollWidth, scrollLeft };
   return newSize;
 }
