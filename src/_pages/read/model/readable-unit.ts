@@ -4,9 +4,9 @@ import { create } from "zustand";
 import { getReadableFolderContentApi } from "../api/folder";
 import { getReadableSectionContentApi } from "../api/section";
 import { useBookContext } from "./context/book-context";
+import { useTocContext } from "./context/toc-context";
 import { ReadableContent, ReadableFolderContent, ReadableSectionContent } from "./readable-content";
 import { TocOperations } from "./toc-utils";
-import { useTocContext } from "./context/toc-context";
 
 /**
  * reader가 연속적으로 읽을 수 있는 단위.
