@@ -1,7 +1,7 @@
 import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
 import { ReadableFolderContent } from '../model/readable-content';
-import { useReaderStyleStore } from '../model/use-reader-style-store';
+import { useReaderStyleStore } from '../model/stores/use-reader-style-store';
 import { useCalculatedPages } from './logic/use-calculated-pages';
 
 type TitleProps = {

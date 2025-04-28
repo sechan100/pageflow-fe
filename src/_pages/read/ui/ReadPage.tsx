@@ -2,9 +2,9 @@ import { PublishedBook, usePublishedBookQuery } from '@/entities/book';
 import { useNextRouter } from '@/shared/hooks/useNextRouter';
 import { Box, CircularProgress } from '@mui/material';
 import { useState } from 'react';
-import { BookContextProvider } from '../model/book-context';
+import { BookContextProvider } from '../model/context/book-context';
+import { TocContextProvider } from "../model/context/toc-context";
 import { PositionStoreContextProvider } from '../model/position';
-import { TocContextProvider } from "../model/toc-context";
 import { BookReader } from './BookReader';
 import { ReadPageDialMenu } from './ReadPageDialMenu';
 

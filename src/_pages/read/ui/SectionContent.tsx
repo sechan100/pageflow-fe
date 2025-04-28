@@ -13,8 +13,8 @@ import { SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
 import { ReadableSectionContent } from "../model/readable-content";
+import { useReaderStyleStore } from '../model/stores/use-reader-style-store';
 import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
-import { useReaderStyleStore } from '../model/use-reader-style-store';
 import { SECTION_CONTENT_DATA_NODE_ID } from './logic/content-element';
 import { SectionContentWrapper } from './SectionContentWrapper';
 

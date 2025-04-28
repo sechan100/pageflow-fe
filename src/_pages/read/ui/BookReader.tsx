@@ -1,6 +1,9 @@
 'use client'
 import { Box } from '@mui/material';
-import { useReaderStyleStore } from '../model/use-reader-style-store';
+import { useEffect } from 'react';
+import { useTocContext } from '../model/context/toc-context';
+import { createReadingUnitSequence } from '../model/reading-unit';
+import { useReaderStyleStore } from '../model/stores/use-reader-style-store';
 import { ContentLoader } from './ContentLoader';
 import { ControllerChevron } from './ControllerChevron';
 import { ReaderScrollContainer } from './ReaderScrollContainer';
@@ -11,6 +14,13 @@ const chevronHorizontalDistance = "6vw";
 
 export const BookReader = () => {
   const { viewportWidth, viewportHeight } = useReaderStyleStore();
+  const toc = useTocContext();
+
+  useEffect(() => {
+    const readingUnitSequence = createReadingUnitSequence(toc);
+    console.log(readingUnitSequence.map((unit) => unit.headNode.title));
+    // console.log(readingUnitSequence);
+  }, [toc]);
 
   return (
     <Box>

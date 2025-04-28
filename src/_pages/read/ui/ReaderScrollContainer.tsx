@@ -1,9 +1,9 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useTocContext } from "../model/context/toc-context";
 import { usePositionStore } from "../model/position";
-import { useTocContext } from "../model/toc-context";
-import { useReaderStyleStore } from "../model/use-reader-style-store";
+import { useReaderStyleStore } from "../model/stores/use-reader-style-store";
 import { extractNodeInfoFromElement } from "./logic/content-element";
 import { usePages } from "./logic/scroll-pages";
 import { useScrollContainerSize } from "./logic/use-scroll-container-size";

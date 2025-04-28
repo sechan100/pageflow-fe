@@ -3,10 +3,10 @@ import { useCallback } from "react";
 import { create } from "zustand";
 import { getReadableFolderContentApi } from "../api/folder";
 import { getReadableSectionContentApi } from "../api/section";
-import { useBookContext } from "./book-context";
+import { useBookContext } from "./context/book-context";
 import { ReadableContent, ReadableFolderContent, ReadableSectionContent } from "./readable-content";
-import { useTocContext } from "./toc-context";
 import { TocOperations } from "./toc-utils";
+import { useTocContext } from "./context/toc-context";
 
 /**
  * reader가 연속적으로 읽을 수 있는 단위.

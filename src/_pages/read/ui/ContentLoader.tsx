@@ -2,10 +2,10 @@
 import { ReadableTocNode } from "@/entities/book";
 import { SxProps } from "@mui/material";
 import { useCallback, useEffect } from "react";
+import { useTocContext } from "../model/context/toc-context";
 import { ReadableFolderContent, ReadableSectionContent } from "../model/readable-content";
 import { resolveLeadNode, useReadableUnit } from "../model/readable-unit";
 import { PageChangedEvent, PageOverflowEvent, readerEvent } from "../model/reader-event";
-import { useTocContext } from "../model/toc-context";
 import { FolderContent } from "./FolderContent";
 import { SectionContent } from "./SectionContent";
 import { useContainerStore } from "./logic/use-container-store";

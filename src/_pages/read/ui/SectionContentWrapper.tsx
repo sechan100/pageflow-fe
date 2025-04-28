@@ -1,7 +1,7 @@
 'use client'
 import { Box, SxProps } from "@mui/material"
 import { ReadableSectionContent } from "../model/readable-content"
-import { useReaderStyleStore } from "../model/use-reader-style-store"
+import { useReaderStyleStore } from "../model/stores/use-reader-style-store"
 
 
 type Props = {
