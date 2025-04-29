@@ -1,2 +1,2 @@
-export { ReadPage } from './ui/ReadPage';
+export { ReadPage } from './ui';
 

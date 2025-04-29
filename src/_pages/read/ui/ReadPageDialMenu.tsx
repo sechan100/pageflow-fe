@@ -2,7 +2,7 @@
 import { SpeedDial, SpeedDialAction, SpeedDialIcon, SxProps } from "@mui/material";
 import { AArrowDown, AArrowUp, Cog, RotateCcw } from "lucide-react";
 import { useMemo } from "react";
-import { DEFAULT_READER_STYLE, useReaderStyleStore } from "../model/stores/use-reader-style-store";
+import { DEFAULT_READER_STYLE, useReaderStyleStore } from "../stores/use-reader-style-store";
 
 type DialAction = {
   icon: React.ReactNode;

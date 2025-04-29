@@ -112,7 +112,7 @@ const buildReadingUnit = (headNode: ReadableTocNode, toc: ReadableToc): ReadingU
   }
 }
 
-export const createReadingUnitSequence = (toc: ReadableToc): ReadaingUnitSequence => {
+const createReadingUnitSequence = (toc: ReadableToc): ReadaingUnitSequence => {
   const sequence: ReadaingUnitSequence = [];
 
   /**
@@ -135,4 +135,28 @@ export const createReadingUnitSequence = (toc: ReadableToc): ReadaingUnitSequenc
   }
 
   return sequence;
+}
+
+/**
+ * nodeId에 해당하는 node를 포함하고있는 unit을 찾아서 반환한다
+ * 찾지 못한 경우 null을 반환
+ */
+const findUnitContainingNode = (nodeId: string, sequence: ReadaingUnitSequence): ReadingUnit | null => {
+  for (const unit of sequence) {
+    if (unit.headNode.id === nodeId) {
+      return unit;
+    }
+    for (const tailNode of unit.tailNodes) {
+      if (tailNode.id === nodeId) {
+        return unit;
+      }
+    }
+  }
+  return null;
+}
+
+
+export const ReadingUnitService = {
+  createReadingUnitSequence,
+  findUnitContainingNode,
 }

@@ -25,9 +25,17 @@ export type PageOverflowEvent = {
 
 
 type ReaderEvents = {
-  "page-changed": PageChangedEvent;
-  "total-page-count-changed": TotalPageCountChangedEvent;
-  "page-overflow": PageOverflowEvent;
+  "page-changed": {
+    currentPage: number;
+    totalPageCount: number;
+  }
+  "total-page-count-changed": {
+    currentPage: number;
+    totalPageCount: number;
+  }
+  "page-overflow": {
+    edge: "start" | "end";
+  }
 }
 
 export const readerEvent = mitt<ReaderEvents>();
