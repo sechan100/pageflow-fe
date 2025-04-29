@@ -27,8 +27,8 @@ export const useReadingUnitExplorer = () => {
    * 새로운 unit을 읽기 대상으로 지정한다.
    */
   const readUnit = useCallback(async (newUnit: ReadingUnit) => {
-    const readingUnitContent = await ReadingUnitContentLoader.createReadingUnitContent(bookId, newUnit);
-    useReadingUnitStore.setState({ readingUnitContent });
+    const newReadingUnitContent = await ReadingUnitContentLoader.createReadingUnitContent(bookId, newUnit);
+    useReadingUnitStore.setState({ readingUnitContent: newReadingUnitContent });
   }, [bookId]);
 
   /**
@@ -36,6 +36,7 @@ export const useReadingUnitExplorer = () => {
    */
   const init = useCallback((startingNodeId: string) => {
     const initialSequence = ReadingUnitService.createReadingUnitSequence(toc);
+    useReadingUnitStore.setState({ sequence: initialSequence });
     const startingUnit = ReadingUnitService.findUnitContainingNode(startingNodeId, initialSequence);
     if (startingUnit === null) {
       throw new Error("StartingUnit을 찾을 수 없습니다.");
@@ -43,25 +44,35 @@ export const useReadingUnitExplorer = () => {
     readUnit(startingUnit);
   }, [readUnit, toc]);
 
-  const loadNextContent = useCallback(async () => {
-    if (readingUnitContent === null) return;
-    const newReadingUnitContent = await ReadingUnitContentLoader.loadNextContent(bookId, readingUnitContent);
-    useReadingUnitStore.setState({ readingUnitContent: newReadingUnitContent });
-  }, [bookId, readingUnitContent]);
-
-  const moveUnitTo = useCallback((to: "prev" | "next") => {
-    if (readingUnitContent === null) return;
-    const currentUnitIndex = sequence.indexOf(readingUnitContent.readingUnit);
+  /**
+   * 이전/다음 unit으로 이동
+   * @param to 이동할 방향
+   * @returns 이동 성공 여부
+   */
+  const moveUnitTo = useCallback((to: "prev" | "next"): boolean => {
+    if (readingUnitContent === null) return false;
+    const currentUnitHeadNodeId = readingUnitContent.readingUnit.headNode.id;
+    const currentUnitIndex = sequence.findIndex((unit) => unit.headNode.id === currentUnitHeadNodeId);
+    // 처음이나 마지막 unit에 도달했을 때는 이동하지 않음
+    if (
+      currentUnitIndex === 0 && to === "prev"
+      ||
+      currentUnitIndex === sequence.length - 1 && to === "next"
+    ) {
+      return false;
+    }
     const destUnitIndex = currentUnitIndex + (to === "prev" ? -1 : 1);
     const newReadingUnit = sequence[destUnitIndex];
+    if (newReadingUnit === undefined) {
+      throw new Error("이동하려는 Unit이 Sequence에 없습니다.");
+    }
     readUnit(newReadingUnit);
+    return true;
   }, [readingUnitContent, readUnit, sequence]);
 
 
   return {
     init,
-    readUnit,
-    loadNextContent,
     moveUnitTo,
   }
 }

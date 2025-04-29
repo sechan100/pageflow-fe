@@ -3,7 +3,7 @@ import { registerKeyboardShortCut } from "@/shared/keyboard";
 import { Box, SxProps } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
-import { readerController } from "../model/reader-controller";
+import { pageMover } from "../model/reader-controller";
 
 
 const chevronSize = 30;
@@ -24,9 +24,9 @@ export const ControllerChevron = ({
   const ref = useRef<HTMLDivElement>(null);
   const moveFn = useMemo(() => {
     if (direction === "left") {
-      return () => readerController.toPrev();
+      return () => pageMover.toPrev();
     } else {
-      return () => readerController.toNext();
+      return () => pageMover.toNext();
     }
   }, [direction]);
 

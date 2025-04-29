@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import { columnGapRatio, columnWidthRatio } from "./ReaderScrollContainer";
+import { ScrollContainerSize } from "./scroll-container-size";
+import { columnGapRatio, columnWidthRatio } from "./ScrollContainer";
 
 
-type CalculatedPages = {
+export type PageMeasurement = {
   gap: number;
   column: number;
   halfPage: number;
@@ -11,7 +11,7 @@ type CalculatedPages = {
   isLastFullPage: boolean;
 }
 
-const calculatePage = ({ width, scrollWidth }: { width: number, scrollWidth: number }) => {
+export const measurePage = ({ width, scrollWidth }: ScrollContainerSize) => {
   /**
    * 모든 수치들은 width 값이다.
    * 사용되는 값들은 
@@ -49,18 +49,4 @@ const calculatePage = ({ width, scrollWidth }: { width: number, scrollWidth: num
     totalPageCount,
     isLastFullPage
   }
-}
-
-
-export const useCalculatedPages = create<CalculatedPages>(() => ({
-  gap: 0,
-  column: 0,
-  halfPage: 0,
-  pageBreakPointCommonDifference: 0,
-  totalPageCount: 0,
-  isLastFullPage: false,
-}));
-
-export const reCalculatePages = (args: { width: number, scrollWidth: number }) => {
-  useCalculatedPages.setState(calculatePage(args));
 }

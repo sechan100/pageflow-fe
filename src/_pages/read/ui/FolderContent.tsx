@@ -1,8 +1,8 @@
 import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
 import { ReadableFolderContent } from '../model/readable-content';
+import { useContainerPageMeasurementStore } from '../stores/use-container-page-measurement-store';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { useCalculatedPages } from './reading-unit/use-calculated-pages';
 
 type TitleProps = {
   title: string;
@@ -32,13 +32,13 @@ export const FolderContent = ({
   folder,
 }: Props) => {
   const { viewportWidth, viewportHeight } = useReaderStyleStore();
-  const { halfPage, gap } = useCalculatedPages();
+  const { pageMeasurement } = useContainerPageMeasurementStore();
 
   return (
     <Paper
       elevation={0}
       sx={{
-        width: halfPage - gap,
+        width: pageMeasurement.halfPage - pageMeasurement.gap,
         height: `${viewportHeight}vh`,
         backgroundColor: STYLES.color.backgroundHsla({
           h: 0,

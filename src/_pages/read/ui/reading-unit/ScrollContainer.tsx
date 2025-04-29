@@ -3,10 +3,10 @@ import { Box, SxProps } from "@mui/material";
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useTocContext } from "../../model/context/toc-context";
 import { usePositionStore } from "../../model/position";
+import { useContainerPageMeasurementStore } from "../../stores/use-container-page-measurement-store";
 import { useReaderStyleStore } from "../../stores/use-reader-style-store";
-import { usePages } from "../logic/scroll-pages";
-import { useScrollContainerSize } from "../logic/use-scroll-container-size";
 import { extractNodeInfoFromElement } from "./content-element";
+import { usePages } from "./use-pages";
 
 export const columnGapRatio = 0.1;
 export const columnWidthRatio = (1 - columnGapRatio) / 2;
@@ -81,7 +81,7 @@ type Props = {
   children: React.ReactNode;
   sx?: SxProps;
 }
-export const ReaderScrollContainer = ({
+export const ScrollContainer = ({
   children,
   sx
 }: Props) => {
@@ -90,8 +90,8 @@ export const ReaderScrollContainer = ({
   const currentPosition = usePositionStore(s => s.position);
   const setPosition = usePositionStore(s => s.setPosition);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  useScrollContainerSize(scrollContainerRef);
-  const { width, scrollWidth } = usePages(scrollContainerRef);
+  usePages(scrollContainerRef);
+  const { containserSize: { width } } = useContainerPageMeasurementStore();
 
   // 페이지의 첫부분에 보이는 LexicalNode나 FolderNode를 관찰하여 position을 업데이트한다.
   const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });
@@ -123,8 +123,11 @@ export const ReaderScrollContainer = ({
         columnFill: "balance",
         overflowX: "hidden",
 
-        // 가로축 미세 오차 때문에 글자가 잘리는 경우를 방지
-        px: 1,
+        /**
+         * 가로축 미세 오차 때문에 글자가 잘리는 경우를 방지
+         * 이게 페이지가 많이 넘어가다보면 소숫점 오차 때문에 옆으로 계속 밀려서 5(40px)정도는 줘야 괜찮음
+         */
+        px: 5,
 
         fontSize: layout.fontSize,
         lineHeight: layout.lineHeight,

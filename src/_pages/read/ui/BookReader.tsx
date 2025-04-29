@@ -2,9 +2,9 @@
 import { Box } from '@mui/material';
 import { useTocContext } from '../model/context/toc-context';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { ContentLoader } from './ContentLoader';
 import { ControllerChevron } from './ControllerChevron';
-import { ReaderScrollContainer } from './reading-unit/ReaderScrollContainer';
+import { ReadingUnitExplorer } from './reading-unit/ReadingUnitExplorer';
+import { ScrollContainer } from './reading-unit/ScrollContainer';
 
 
 const chevronTop = "42%";
@@ -23,9 +23,9 @@ export const BookReader = () => {
         position: "relative"
       }}>
         <ControllerChevron direction='left' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
-        <ReaderScrollContainer>
-          <ContentLoader />
-        </ReaderScrollContainer>
+        <ScrollContainer>
+          <ReadingUnitExplorer />
+        </ScrollContainer>
         <ControllerChevron direction='right' top={chevronTop} horizontalDistance={chevronHorizontalDistance} />
       </Box>
     </Box>

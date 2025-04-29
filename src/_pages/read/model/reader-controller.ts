@@ -6,7 +6,7 @@ const emitter = mitt();
 const toPrevEvent = "to-prev";
 const toNextEvent = "to-next";
 
-export const readerController = {
+export const pageMover = {
   registerToPrevListener: (callback: () => void) => {
     emitter.on(toPrevEvent, callback);
     return () => emitter.off(toPrevEvent, callback);
