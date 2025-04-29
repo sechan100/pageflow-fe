@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ReadableSectionContent } from "../model/readable-content";
 import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { SECTION_CONTENT_DATA_NODE_ID } from './logic/content-element';
+import { SECTION_CONTENT_DATA_NODE_ID } from './reading-unit/content-element';
 import { SectionContentWrapper } from './SectionContentWrapper';
 
 

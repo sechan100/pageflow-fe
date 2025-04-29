@@ -4,7 +4,7 @@ import { useTocContext } from '../model/context/toc-context';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
 import { ContentLoader } from './ContentLoader';
 import { ControllerChevron } from './ControllerChevron';
-import { ReaderScrollContainer } from './ReaderScrollContainer';
+import { ReaderScrollContainer } from './reading-unit/ReaderScrollContainer';
 
 
 const chevronTop = "42%";

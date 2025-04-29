@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { columnGapRatio, columnWidthRatio } from "../ReaderScrollContainer";
+import { columnGapRatio, columnWidthRatio } from "./ReaderScrollContainer";
 
 
 type CalculatedPages = {

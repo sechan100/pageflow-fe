@@ -2,7 +2,7 @@ import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
 import { ReadableFolderContent } from '../model/readable-content';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { useCalculatedPages } from './logic/use-calculated-pages';
+import { useCalculatedPages } from './reading-unit/use-calculated-pages';
 
 type TitleProps = {
   title: string;
