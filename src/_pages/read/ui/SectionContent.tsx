@@ -12,10 +12,10 @@ import { QuoteNode } from '@lexical/rich-text';
 import { SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
+import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../config/section-content-element';
 import { ReadableSectionContent } from "../model/readable-content";
 import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { SECTION_CONTENT_DATA_NODE_ID } from './reading-unit/content-element';
 import { SectionContentWrapper } from './SectionContentWrapper';
 
 
@@ -26,11 +26,11 @@ const LexicalSettings = ({
   section,
 }: LexicalSettingsProps) => {
   const [editor] = useLexicalComposerContext();
+  const [updatedEditorState, setUpdatedEditorState] = useState<EditorState>(editor.getEditorState());
   useNormalizedLexicalNodeKey();
   useLexicalEditorSerializedHtmlSync(section.content);
 
 
-  const [updatedEditorState, setUpdatedEditorState] = useState<EditorState>(editor.getEditorState());
   useEffect(() => editor.registerUpdateListener(({ editorState }) => {
     setUpdatedEditorState(editorState);
   }), [editor]);
@@ -42,13 +42,15 @@ const LexicalSettings = ({
    */
   useEffect(() => {
     const nodes = updatedEditorState._nodeMap.values().toArray();
+    let num = 0;
     for (const n of nodes) {
       if (n instanceof RootNode) continue;
       // if (!(n instanceof ElementNode)) continue;
       const el = editor.getElementByKey(n.getKey());
       if (el) {
-        el.classList.add('reader-lexical-node');
-        el.setAttribute(SECTION_CONTENT_DATA_NODE_ID, section.id);
+        el.classList.add(CN_SECTION_CONTENT_ELEMENT);
+        el.setAttribute(DATA_TOC_SECTION_ID, section.id);
+        el.setAttribute(DATA_SECTION_CONTENT_ELEMENT_ID, String(num++));
       }
     }
   }, [editor, section.id, updatedEditorState]);

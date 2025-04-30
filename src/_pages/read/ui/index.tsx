@@ -4,7 +4,6 @@ import { Box, CircularProgress } from '@mui/material';
 import { useState } from 'react';
 import { BookContextProvider } from '../model/context/book-context';
 import { TocContextProvider } from "../model/context/toc-context";
-import { PositionStoreContextProvider } from '../model/position';
 import { BookReader } from './BookReader';
 import { ReadPageDialMenu } from './ReadPageDialMenu';
 
@@ -85,9 +84,7 @@ export const ReadPage = ({ bookId }: Props) => {
   return (
     <BookContextProvider value={book}>
       <TocContextProvider value={book.toc}>
-        <PositionStoreContextProvider data={book.toc}>
-          <ReadPageContent book={book} />
-        </PositionStoreContextProvider>
+        <ReadPageContent book={book} />
       </TocContextProvider>
     </BookContextProvider>
   );

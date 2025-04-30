@@ -1,11 +1,9 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useRef, useState } from "react";
 import { useTocContext } from "../../model/context/toc-context";
-import { usePositionStore } from "../../model/position";
 import { useContainerPageMeasurementStore } from "../../stores/use-container-page-measurement-store";
 import { useReaderStyleStore } from "../../stores/use-reader-style-store";
-import { extractNodeInfoFromElement } from "./content-element";
 import { usePages } from "./use-pages";
 
 export const columnGapRatio = 0.1;
@@ -87,26 +85,24 @@ export const ScrollContainer = ({
 }: Props) => {
   const layout = useReaderStyleStore();
   const toc = useTocContext();
-  const currentPosition = usePositionStore(s => s.position);
-  const setPosition = usePositionStore(s => s.setPosition);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   usePages(scrollContainerRef);
   const { containserSize: { width } } = useContainerPageMeasurementStore();
 
-  // 페이지의 첫부분에 보이는 LexicalNode나 FolderNode를 관찰하여 position을 업데이트한다.
-  const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });
-  useEffect(() => {
-    if (!firstVisibleElement) return;
-    const { tocNodeId, tocNodeType } = extractNodeInfoFromElement(firstVisibleElement);
-    // position을 업데이트한다.
-    if (currentPosition.tocNodeId === tocNodeId) return;
-    setPosition(toc, {
-      tocNodeId,
-      tocNodeType,
-      contentElementIndex: 0,
-      contextText: null,
-    })
-  }, [currentPosition.tocNodeId, firstVisibleElement, setPosition, toc]);
+  // // 페이지의 첫부분에 보이는 LexicalNode나 FolderNode를 관찰하여 position을 업데이트한다.
+  // const firstVisibleElement = useObserveCurrentPosition({ scrollContainerRef });
+  // useEffect(() => {
+  //   if (!firstVisibleElement) return;
+  //   const { tocNodeId, tocNodeType } = extractNodeInfoFromElement(firstVisibleElement);
+  //   // position을 업데이트한다.
+  //   if (currentPosition.tocNodeId === tocNodeId) return;
+  //   setPosition(toc, {
+  //     tocNodeId,
+  //     tocNodeType,
+  //     contentElementIndex: 0,
+  //     contextText: null,
+  //   })
+  // }, [currentPosition.tocNodeId, firstVisibleElement, setPosition, toc]);
 
   return (
     <Box

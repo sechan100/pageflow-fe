@@ -27,6 +27,7 @@ export const useReadingUnitExplorer = () => {
    * 새로운 unit을 읽기 대상으로 지정한다.
    */
   const readUnit = useCallback(async (newUnit: ReadingUnit) => {
+    useReadingUnitStore.setState({ readingUnitContent: null });
     const newReadingUnitContent = await ReadingUnitContentLoader.createReadingUnitContent(bookId, newUnit);
     useReadingUnitStore.setState({ readingUnitContent: newReadingUnitContent });
   }, [bookId]);
