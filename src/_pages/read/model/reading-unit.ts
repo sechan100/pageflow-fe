@@ -1,5 +1,5 @@
 import { isReadableTocFolder, ReadableToc, ReadableTocNode, ReadableTocSection } from "@/entities/book";
-import { TocOperations } from "./toc-utils";
+import { TocOperations } from "./toc-operations";
 
 
 /**

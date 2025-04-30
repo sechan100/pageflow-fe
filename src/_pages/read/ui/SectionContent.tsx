@@ -14,7 +14,6 @@ import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
 import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../config/section-content-element';
 import { ReadableSectionContent } from "../model/readable-content";
-import { useNormalizedLexicalNodeKey } from '../model/use-cnkey';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
 import { SectionContentWrapper } from './SectionContentWrapper';
 
@@ -27,7 +26,6 @@ const LexicalSettings = ({
 }: LexicalSettingsProps) => {
   const [editor] = useLexicalComposerContext();
   const [updatedEditorState, setUpdatedEditorState] = useState<EditorState>(editor.getEditorState());
-  useNormalizedLexicalNodeKey();
   useLexicalEditorSerializedHtmlSync(section.content);
 
 
