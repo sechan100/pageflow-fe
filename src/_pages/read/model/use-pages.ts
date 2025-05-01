@@ -1,8 +1,8 @@
 import { RefObject, useCallback, useEffect, useRef } from "react";
-import { pageMover } from "../../model/reader-controller";
-import { useReadingUnitExplorer } from "../../stores/reading-unit-store";
-import { useContainerPageMeasurementStore } from "../../stores/use-container-page-measurement-store";
+import { useReadingUnitExplorer } from "../stores/reading-unit-store";
+import { useContainerPageMeasurementStore } from "../stores/use-container-page-measurement-store";
 import { measurePage, PageMeasurement } from "./page-measurement";
+import { pageMover } from "./page-mover";
 import { registerScrollContainerSizeObserver, ScrollContainerSize } from "./scroll-container-size";
 
 

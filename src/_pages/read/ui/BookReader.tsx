@@ -3,8 +3,8 @@ import { Box } from '@mui/material';
 import { useTocContext } from '../model/context/toc-context';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
 import { ControllerChevron } from './ControllerChevron';
-import { ReadingUnitExplorer } from './reading-unit/ReadingUnitExplorer';
-import { ScrollContainer } from './reading-unit/ScrollContainer';
+import { ReadingUnitExplorer } from './ReadingUnitExplorer';
+import { ScrollContainer } from './ScrollContainer';
 
 
 const chevronTop = "42%";

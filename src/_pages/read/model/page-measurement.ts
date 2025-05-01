@@ -1,5 +1,5 @@
+import { columnGapRatio, columnWidthRatio } from "../ui/reading-unit/ScrollContainer";
 import { ScrollContainerSize } from "./scroll-container-size";
-import { columnGapRatio, columnWidthRatio } from "./ScrollContainer";
 
 
 export type PageMeasurement = {
@@ -18,7 +18,7 @@ export const measurePage = ({ width, scrollWidth }: ScrollContainerSize) => {
    * - column: css columns의 columnWidth
    * - gap: css columns의 columnGap
    * - halfPage: 하나의 column과 하나의 gap을 합친 수치
-   * -pageBreakPointCommonDifference: 페이지가 바뀌는 지점을 각 항으로 하는 등차수열의 공차(첫 항 = 0)
+   * - pageBreakPointCommonDifference: 페이지가 바뀌는 지점을 각 항으로 하는 등차수열의 공차(첫 항 = 0)
    */
   const gap = width * columnGapRatio;
   const column = width * columnWidthRatio;

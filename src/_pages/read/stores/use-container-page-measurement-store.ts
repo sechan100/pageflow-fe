@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { ScrollContainerSize } from "../ui/reading-unit/scroll-container-size";
-import { PageMeasurement } from "../ui/reading-unit/page-measurement";
+import { PageMeasurement } from "../model/page-measurement";
+import { ScrollContainerSize } from "../model/scroll-container-size";
 
 
 
