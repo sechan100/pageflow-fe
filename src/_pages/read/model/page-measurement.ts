@@ -1,4 +1,4 @@
-import { columnGapRatio, columnWidthRatio } from "../ui/reading-unit/ScrollContainer";
+import { columnGapRatio, columnWidthRatio } from "../ui/ScrollContainer";
 import { ScrollContainerSize } from "./scroll-container-size";
 
 

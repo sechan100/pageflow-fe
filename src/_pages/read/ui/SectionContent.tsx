@@ -9,13 +9,13 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { QuoteNode } from '@lexical/rich-text';
-import { SxProps, Typography } from '@mui/material';
+import { Box, SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useState } from 'react';
-import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../config/section-content-element';
+import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../config/node-element';
+import { SECTION_CONTENT_WRAPPER_CLASS_NAME } from '../config/readable-content';
 import { ReadableSectionContent } from "../model/readable-content";
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { SectionContentWrapper } from './SectionContentWrapper';
 
 
 type LexicalSettingsProps = {
@@ -57,6 +57,32 @@ const LexicalSettings = ({
     <>
 
     </>
+  )
+}
+
+type WrapperProps = {
+  section: ReadableSectionContent;
+  children: React.ReactNode;
+  sx?: SxProps;
+}
+export const Wrapper = ({
+  section,
+  children,
+  sx
+}: WrapperProps) => {
+  const { viewportHeight } = useReaderStyleStore();
+
+  return (
+    <Box
+      component={"div"}
+      className={SECTION_CONTENT_WRAPPER_CLASS_NAME}
+      data-section-id={section.id}
+      sx={{
+        breakBefore: section.shouldBreakSection ? "column" : undefined,
+      }}
+    >
+      {children}
+    </Box>
   )
 }
 
@@ -104,7 +130,7 @@ export const SectionContent = ({ section }: Props) => {
   }), [section.id]);
 
   return (
-    <SectionContentWrapper section={section}>
+    <Wrapper section={section}>
       {section.shouldShowTitle && <Title title={section.title} />}
       <LexicalComposer initialConfig={lexicalConfig}>
         <RichTextPlugin
@@ -115,6 +141,6 @@ export const SectionContent = ({ section }: Props) => {
         <LexicalSettings section={section} />
         {/* <TreeViewPlugin /> */}
       </LexicalComposer>
-    </SectionContentWrapper>
+    </Wrapper>
   );
 };

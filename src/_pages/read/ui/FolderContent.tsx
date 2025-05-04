@@ -1,8 +1,43 @@
 import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
+import { useEffect, useRef } from 'react';
+import { DATA_TOC_FOLDER_ID } from '../config/node-element';
+import { FOLDER_CONTENT_WRAPPER_CLASS_NAME } from '../config/readable-content';
 import { ReadableFolderContent } from '../model/readable-content';
 import { useContainerPageMeasurementStore } from '../stores/use-container-page-measurement-store';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
+
+
+type WrapperProps = {
+  folder: ReadableFolderContent;
+  children: React.ReactNode;
+}
+export const Wrapper = ({
+  folder,
+  children,
+}: WrapperProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { viewportHeight } = useReaderStyleStore();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.setAttribute(DATA_TOC_FOLDER_ID, folder.id);
+  }, [folder.id, viewportHeight]);
+
+  return (
+    <Box
+      component={"div"}
+      ref={ref}
+      className={FOLDER_CONTENT_WRAPPER_CLASS_NAME}
+      sx={{
+      }}
+    >
+      {children}
+    </Box>
+  )
+}
+
 
 type TitleProps = {
   title: string;
@@ -35,26 +70,28 @@ export const FolderContent = ({
   const { pageMeasurement } = useContainerPageMeasurementStore();
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: pageMeasurement.halfPage - pageMeasurement.gap,
-        height: `${viewportHeight}vh`,
-        backgroundColor: STYLES.color.backgroundHsla({
-          h: 0,
-          s: 0,
-          l: -3,
-        }),
-      }}
-    >
-      <Box sx={{
-        pt: "30%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}>
-        <Title title={folder.title} />
-      </Box>
-    </Paper>
+    <Wrapper folder={folder}>
+      <Paper
+        elevation={0}
+        sx={{
+          width: pageMeasurement.halfPage - pageMeasurement.gap,
+          height: `${viewportHeight}vh`,
+          backgroundColor: STYLES.color.backgroundHsla({
+            h: 0,
+            s: 0,
+            l: -3,
+          }),
+        }}
+      >
+        <Box sx={{
+          pt: "30%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+          <Title title={folder.title} />
+        </Box>
+      </Paper>
+    </Wrapper>
   );
 };
