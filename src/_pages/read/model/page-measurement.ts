@@ -138,7 +138,13 @@ const registerPageMeasurementListener = (listener: PageMeasurementListener) => {
   }
 }
 
+let scrollContainerElement: HTMLElement | null = null;
+const getScrollContainerElement = () => {
+  return scrollContainerElement;
+}
+
 const usePageMeasurement = (containerRef: React.RefObject<HTMLElement | null>) => {
+  scrollContainerElement = containerRef.current;
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -159,6 +165,12 @@ const usePageMeasurement = (containerRef: React.RefObject<HTMLElement | null>) =
 }
 
 
-export { fallbackPageMeasurement, registerPageMeasurementListener, usePageMeasurement, usePageMeasurementStore };
+export {
+  fallbackPageMeasurement,
+  getScrollContainerElement,
+  registerPageMeasurementListener,
+  usePageMeasurement,
+  usePageMeasurementStore
+};
 export type { PageMeasurement, ScrollContainerSize };
 

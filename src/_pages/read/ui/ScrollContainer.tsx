@@ -25,8 +25,8 @@ export const ScrollContainer = ({
   usePageMeasurement(scrollContainerRef);
   const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
 
-  usePageControll(scrollContainerRef);
-  useReadingBookmark({ scrollContainerRef });
+  usePageControll();
+  useReadingBookmark();
 
   return (
     <Box

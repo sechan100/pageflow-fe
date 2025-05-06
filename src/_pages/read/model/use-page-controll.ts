@@ -1,11 +1,11 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useReadingUnitExplorer } from "../stores/reading-unit-store";
-import { registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
+import { getScrollContainerElement, registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
 import { pageMover } from "./page-mover";
 
 const getMeasurement = () => usePageMeasurementStore.getState();
 
-export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => {
+export const usePageControll = () => {
 
   /**
    * 이전 unit으로 넘어갈 때, 반드시 한 프레임에 scrollContainer 아래의 모든 unit content들이 렌더링되리란 보장은 없다.
@@ -22,8 +22,8 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
   const log = useCallback(() => console.log("[페이지]", currentPageRef.current + 1, "/", getMeasurement().totalPageCount), []);
 
   const updatePage = useCallback((newPage: number) => {
-    if (!containerRef.current) return;
-    const container = containerRef.current;
+    const container = getScrollContainerElement();
+    if (!container) return;
     const diff = getMeasurement().pageBreakPointCommonDifference;
     container.scrollTo({
       left: newPage * diff,
@@ -31,7 +31,7 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
     });
     currentPageRef.current = newPage;
     log();
-  }, [containerRef, log]);
+  }, [log]);
 
   /**
    * page가 경계를 넘어간 경우 호출
@@ -84,7 +84,7 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
    * scrollWidth가 바뀌었을 때, currentPage에 맞게 scrollLeft를 새롭게 조정
    */
   const onScrollWidthChanged = useCallback(() => {
-    const container = containerRef.current;
+    const container = getScrollContainerElement();
     if (!container) return;
     console.log("[scrollWidth changed]", container.scrollWidth);
     const diff = getMeasurement().pageBreakPointCommonDifference;
@@ -93,7 +93,7 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
       left: newScrollLeft,
       behavior: "instant",
     });
-  }, [containerRef]);
+  }, []);
 
   const onTotalPageCountChanged = useCallback(() => {
     if (shouldFixOnEndPage.current) {
@@ -112,13 +112,13 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
       if (isTotalPageCountChanged) onTotalPageCountChanged();
     })
     return () => unregister();
-  }, [containerRef, containerRef, onScrollWidthChanged, onTotalPageCountChanged]);
+  }, [onScrollWidthChanged, onTotalPageCountChanged]);
 
   /**
    * moveScroll, onScrollEnd 콜백들을 등록
    */
   useEffect(() => {
-    const container = containerRef.current;
+    const container = getScrollContainerElement();
     if (!container) return;
 
     // const onScrollEnd = () => setIsScrolling(false);
@@ -130,5 +130,5 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
       nextListenerCleanUp();
       // container.removeEventListener("scrollend", onScrollEnd);
     }
-  }, [containerRef, movePageTo]);
+  }, [movePageTo]);
 }

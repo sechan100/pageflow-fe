@@ -1,9 +1,10 @@
 import { ReadableTocNodeType } from "@/entities/book";
-import { RefObject, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { getReadingBookmarkApi, saveReadingBookmarkApi } from "../api/reading-bookmark";
 import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_FOLDER_ID, DATA_TOC_SECTION_ID } from "../config/node-element";
 import { FOLDER_CONTENT_WRAPPER_CLASS_NAME, SECTION_CONTENT_WRAPPER_CLASS_NAME } from "../config/readable-content";
 import { useBookContext } from "./context/book-context";
+import { getScrollContainerElement } from "./page-measurement";
 
 
 type ReadingBookmark = {
@@ -21,13 +22,13 @@ const SECTION_ELEMENT_SELECTOR = `.${SECTION_CONTENT_WRAPPER_CLASS_NAME} .${CN_S
 
 
 type RegisterAnchorObserverArgs = {
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
+  container: HTMLElement;
   onAnchorChange: (anchorSCE: HTMLElement) => void;
 };
 /**
  * folder 또는 section의 기준이 되는 엘리먼트(anchor)를 관찰한다.
  */
-const registerAnchorObserver = ({ scrollContainerRef, onAnchorChange }: RegisterAnchorObserverArgs): () => void => {
+const registerAnchorObserver = ({ container, onAnchorChange }: RegisterAnchorObserverArgs): () => void => {
   const onIntersect = (entries: IntersectionObserverEntry[]) => {
     for (const entry of entries) {
       const el = entry.target as HTMLElement;
@@ -41,8 +42,6 @@ const registerAnchorObserver = ({ scrollContainerRef, onAnchorChange }: Register
   /**
    * MutationObserver를 통해서, ScrollContainer에 변경이 발생하면 IntersectionObserver를 재등록한다.
    */
-  const container = scrollContainerRef.current;
-  if (!container) return () => { };
   const intersectionObserver = new IntersectionObserver(onIntersect, {
     root: container,
     threshold: [0]
@@ -120,6 +119,10 @@ const extractReadingBookmark = (el: HTMLElement): ReadingBookmark => {
   }
 }
 
+const isOnBookmarkedPage = () => {
+
+}
+
 /**
  * 
  */
@@ -127,10 +130,7 @@ const resolveReadingBookmark = () => {
 
 }
 
-type UseReadingBookmarkArgs = {
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
-};
-const useReadingBookmark = ({ scrollContainerRef }: UseReadingBookmarkArgs) => {
+const useReadingBookmark = () => {
   const { id: bookId } = useBookContext();
   const onAnchorChange = useCallback(async (anchorSce: HTMLElement) => {
     const readingBookmark = extractReadingBookmark(anchorSce);
@@ -142,14 +142,16 @@ const useReadingBookmark = ({ scrollContainerRef }: UseReadingBookmarkArgs) => {
   }, [bookId]);
 
   useEffect(() => {
+    const el = getScrollContainerElement();
+    if (!el) return;
     const cleanup = registerAnchorObserver({
-      scrollContainerRef,
+      container: el,
       onAnchorChange
     });
     return () => {
       cleanup();
     };
-  }, [onAnchorChange, scrollContainerRef]);
+  }, [onAnchorChange]);
 };
 
 
