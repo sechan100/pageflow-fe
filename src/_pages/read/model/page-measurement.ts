@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { columnGapRatio, columnWidthRatio } from "../ui/ScrollContainer";
 
 
-type PageMeasurement = {
+export type PageMeasurement = {
   gap: number;
   column: number;
   halfPage: number;
@@ -14,7 +14,7 @@ type PageMeasurement = {
   scrollContainerSize: ScrollContainerSize;
 }
 
-type ScrollContainerSize = {
+export type ScrollContainerSize = {
   width: number;
   height: number;
   scrollWidth: number;
@@ -165,5 +165,3 @@ export {
   usePageMeasurement,
   usePageMeasurementStore
 };
-export type { PageMeasurement, ScrollContainerSize };
-
