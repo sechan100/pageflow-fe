@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useTocContext } from "../model/context/toc-context";
 import { usePageMeasurement, usePageMeasurementStore } from "../model/page-measurement";
 import { useReadingBookmark } from "../model/reading-bookmark";
-import { usePages } from "../model/use-pages";
+import { usePageControll } from "../model/use-page-controll";
 import { useReaderStyleStore } from "../stores/use-reader-style-store";
 
 
@@ -25,8 +25,8 @@ export const ScrollContainer = ({
   usePageMeasurement(scrollContainerRef);
   const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
 
+  usePageControll(scrollContainerRef);
   useReadingBookmark({ scrollContainerRef });
-  usePages(scrollContainerRef);
 
   return (
     <Box

@@ -5,7 +5,7 @@ import { pageMover } from "./page-mover";
 
 const getMeasurement = () => usePageMeasurementStore.getState();
 
-export const usePages = (containerRef: RefObject<HTMLElement | null>) => {
+export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => {
 
   /**
    * 이전 unit으로 넘어갈 때, 반드시 한 프레임에 scrollContainer 아래의 모든 unit content들이 렌더링되리란 보장은 없다.
