@@ -1,17 +1,55 @@
+import { debounce } from "lodash";
+import { useEffect } from "react";
+import { create } from "zustand";
 import { columnGapRatio, columnWidthRatio } from "../ui/ScrollContainer";
-import { ScrollContainerSize } from "./scroll-container-size";
 
 
-export type PageMeasurement = {
+type PageMeasurement = {
   gap: number;
   column: number;
   halfPage: number;
   pageBreakPointCommonDifference: number;
   totalPageCount: number;
   isLastFullPage: boolean;
+  scrollContainerSize: ScrollContainerSize;
 }
 
-export const measurePage = ({ width, scrollWidth }: ScrollContainerSize) => {
+type ScrollContainerSize = {
+  width: number;
+  height: number;
+  scrollWidth: number;
+  scrollLeft: number;
+}
+
+const fallbackPageMeasurement: PageMeasurement = {
+  column: 0,
+  gap: 0,
+  halfPage: 0,
+  isLastFullPage: false,
+  pageBreakPointCommonDifference: 0,
+  totalPageCount: 0,
+  scrollContainerSize: {
+    width: 0,
+    height: 0,
+    scrollWidth: 0,
+    scrollLeft: 0,
+  }
+}
+
+const measureSize = (el: HTMLElement): ScrollContainerSize => {
+  const scrollWidth = el.scrollWidth;
+  const scrollLeft = el.scrollLeft;
+
+  const style = getComputedStyle(el);
+  const offset = 0.1;
+  const width = el.clientWidth - (parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + offset);
+  const height = el.clientHeight - (parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) + offset);
+  const newSize = { width, height, scrollWidth, scrollLeft };
+  return newSize;
+}
+
+const measurePage = (scrollContainerSize: ScrollContainerSize): PageMeasurement => {
+  const { width, scrollWidth } = scrollContainerSize;
   /**
    * 모든 수치들은 width 값이다.
    * 사용되는 값들은 
@@ -47,6 +85,80 @@ export const measurePage = ({ width, scrollWidth }: ScrollContainerSize) => {
     halfPage,
     pageBreakPointCommonDifference,
     totalPageCount,
-    isLastFullPage
+    isLastFullPage,
+    scrollContainerSize,
   }
 }
+
+
+const registerPageMeasurementMonitor = (el: HTMLElement, onMeasure: (measurement: PageMeasurement) => void) => {
+  const reMeasure = () => {
+    const newSize = measureSize(el);
+    const measurement = measurePage(newSize);
+    onMeasure(measurement);
+  };
+
+  const mutationObserver = new MutationObserver(reMeasure);
+  mutationObserver.observe(el, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+  ;
+  const resizeObserver = new ResizeObserver(
+    debounce(() => reMeasure(), 0)
+  );
+  resizeObserver.observe(el);
+
+  return () => {
+    mutationObserver.disconnect();
+    resizeObserver.unobserve(el);
+  };
+
+}
+
+const usePageMeasurementStore = create<PageMeasurement>(() => fallbackPageMeasurement);
+
+type PageMeasurementListener = (args: {
+  prev: PageMeasurement;
+  newMeasurement: PageMeasurement;
+}) => void;
+const pageMeasurementEventListeners: PageMeasurementListener[] = [];
+
+/**
+ * usePageMeasurementStore가 업데이트 완료된 이후에 호출된다.
+ */
+const registerPageMeasurementListener = (listener: PageMeasurementListener) => {
+  pageMeasurementEventListeners.push(listener);
+  return () => {
+    const index = pageMeasurementEventListeners.indexOf(listener);
+    if (index > -1) {
+      pageMeasurementEventListeners.splice(index, 1);
+    }
+  }
+}
+
+const usePageMeasurement = (containerRef: React.RefObject<HTMLElement | null>) => {
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const detach = registerPageMeasurementMonitor(container, (newMeasurement) => {
+      const prev = usePageMeasurementStore.getState();
+      usePageMeasurementStore.setState(newMeasurement);
+      for (const listener of pageMeasurementEventListeners) {
+        listener({
+          prev,
+          newMeasurement,
+        });
+      }
+    });
+    return () => {
+      detach();
+    };
+  }, [containerRef]);
+}
+
+
+export { fallbackPageMeasurement, registerPageMeasurementListener, usePageMeasurement, usePageMeasurementStore };
+export type { PageMeasurement, ScrollContainerSize };
+

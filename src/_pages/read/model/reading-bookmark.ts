@@ -95,7 +95,7 @@ const extractTocNodeInfo = (el: HTMLElement): TocNodeInfo => {
   };
 };
 
-const resolveReadingBookmark = (el: HTMLElement): ReadingBookmark => {
+const extractReadingBookmark = (el: HTMLElement): ReadingBookmark => {
   const { tocNodeType, tocNodeId } = extractTocNodeInfo(el);
 
   // FOLDER
@@ -120,6 +120,12 @@ const resolveReadingBookmark = (el: HTMLElement): ReadingBookmark => {
   }
 }
 
+/**
+ * 
+ */
+const resolveReadingBookmark = () => {
+
+}
 
 type UseReadingBookmarkArgs = {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
@@ -127,7 +133,7 @@ type UseReadingBookmarkArgs = {
 const useReadingBookmark = ({ scrollContainerRef }: UseReadingBookmarkArgs) => {
   const { id: bookId } = useBookContext();
   const onAnchorChange = useCallback(async (anchorSce: HTMLElement) => {
-    const readingBookmark = resolveReadingBookmark(anchorSce);
+    const readingBookmark = extractReadingBookmark(anchorSce);
     await saveReadingBookmarkApi({
       bookId,
       readingBookmark

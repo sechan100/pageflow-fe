@@ -2,13 +2,14 @@
 import { Box, SxProps } from "@mui/material";
 import { useRef } from "react";
 import { useTocContext } from "../model/context/toc-context";
+import { usePageMeasurement, usePageMeasurementStore } from "../model/page-measurement";
 import { useReadingBookmark } from "../model/reading-bookmark";
 import { usePages } from "../model/use-pages";
-import { useContainerPageMeasurementStore } from "../stores/use-container-page-measurement-store";
 import { useReaderStyleStore } from "../stores/use-reader-style-store";
+
+
 export const columnGapRatio = 0.1;
 export const columnWidthRatio = (1 - columnGapRatio) / 2;
-
 
 type Props = {
   children: React.ReactNode;
@@ -21,9 +22,11 @@ export const ScrollContainer = ({
   const layout = useReaderStyleStore();
   const toc = useTocContext();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  usePages(scrollContainerRef);
+  usePageMeasurement(scrollContainerRef);
+  const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
+
   useReadingBookmark({ scrollContainerRef });
-  const { containserSize: { width } } = useContainerPageMeasurementStore();
+  usePages(scrollContainerRef);
 
   return (
     <Box

@@ -3,8 +3,8 @@ import { Box, Paper, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { DATA_TOC_FOLDER_ID } from '../config/node-element';
 import { FOLDER_CONTENT_WRAPPER_CLASS_NAME } from '../config/readable-content';
+import { usePageMeasurementStore } from '../model/page-measurement';
 import { ReadableFolderContent } from '../model/readable-content';
-import { useContainerPageMeasurementStore } from '../stores/use-container-page-measurement-store';
 import { useReaderStyleStore } from '../stores/use-reader-style-store';
 
 
@@ -67,14 +67,14 @@ export const FolderContent = ({
   folder,
 }: Props) => {
   const { viewportWidth, viewportHeight } = useReaderStyleStore();
-  const { pageMeasurement } = useContainerPageMeasurementStore();
+  const { halfPage, gap } = usePageMeasurementStore();
 
   return (
     <Wrapper folder={folder}>
       <Paper
         elevation={0}
         sx={{
-          width: pageMeasurement.halfPage - pageMeasurement.gap,
+          width: halfPage - gap,
           height: `${viewportHeight}vh`,
           backgroundColor: STYLES.color.backgroundHsla({
             h: 0,
