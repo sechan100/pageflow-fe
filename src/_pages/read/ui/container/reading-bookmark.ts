@@ -1,12 +1,12 @@
 import { ReadableTocNode, ReadableTocNodeType } from "@/entities/book";
 import { RefObject, useCallback, useEffect, useRef } from "react";
-import { getReadingBookmarkApi, saveReadingBookmarkApi } from "../api/reading-bookmark";
-import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_FOLDER_ID, DATA_TOC_SECTION_ID } from "../config/node-element";
-import { FOLDER_CONTENT_WRAPPER_CLASS_NAME, SECTION_CONTENT_WRAPPER_CLASS_NAME } from "../config/readable-content";
-import { useReadingUnitExplorer, useReadingUnitStore } from "../stores/reading-unit-store";
-import { useBookContext } from "./context/book-context";
+import { getReadingBookmarkApi, saveReadingBookmarkApi } from "../../api/reading-bookmark";
+import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_FOLDER_ID, DATA_TOC_SECTION_ID } from "../../config/node-element";
+import { FOLDER_CONTENT_WRAPPER_CLASS_NAME, SECTION_CONTENT_WRAPPER_CLASS_NAME } from "../../config/readable-content";
+import { ReadaingUnitSequence } from "../../model/reading-unit";
+import { useBookContext } from "../book-context";
 import { registerPageMeasurementListener } from "./page-measurement";
-import { ReadaingUnitSequence } from "./reading-unit";
+import { useReadingUnitExplorer, useReadingUnitStore } from "./reading-unit-store";
 
 
 type ReadingBookmark = {

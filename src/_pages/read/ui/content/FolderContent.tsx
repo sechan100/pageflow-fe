@@ -1,11 +1,11 @@
 import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
-import { DATA_TOC_FOLDER_ID } from '../config/node-element';
-import { FOLDER_CONTENT_WRAPPER_CLASS_NAME } from '../config/readable-content';
-import { usePageMeasurementStore } from '../model/page-measurement';
-import { ReadableFolderContent } from '../model/readable-content';
-import { useReaderStyleStore } from '../stores/use-reader-style-store';
+import { DATA_TOC_FOLDER_ID } from '../../config/node-element';
+import { FOLDER_CONTENT_WRAPPER_CLASS_NAME } from '../../config/readable-content';
+import { ReadableFolderContent } from '../../model/readable-content';
+import { usePageMeasurementStore } from '../container/page-measurement';
+import { useReaderStyleStore } from '../use-reader-style-store';
 
 
 type WrapperProps = {

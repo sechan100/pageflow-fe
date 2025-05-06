@@ -1,10 +1,10 @@
 'use client'
 import { Box } from '@mui/material';
-import { useTocContext } from '../model/context/toc-context';
-import { useReaderStyleStore } from '../stores/use-reader-style-store';
-import { ControllerChevron } from './ControllerChevron';
-import { ReadingUnitExplorer } from './ReadingUnitExplorer';
-import { ScrollContainer } from './ScrollContainer';
+import { ControllerChevron } from './container/ControllerChevron';
+import { ReadingUnitExplorer } from './container/ReadingUnitExplorer';
+import { ScrollContainer } from './container/ScrollContainer';
+import { useTocContext } from './toc/toc-context';
+import { useReaderStyleStore } from './use-reader-style-store';
 
 
 const chevronTop = "42%";

@@ -3,7 +3,7 @@ import { registerKeyboardShortCut } from "@/shared/keyboard";
 import { Box, SxProps } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
-import { pageMover } from "../model/page-mover";
+import { pageMover } from "../../model/page-mover";
 
 
 const chevronSize = 30;

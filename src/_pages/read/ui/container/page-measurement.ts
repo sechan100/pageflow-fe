@@ -1,7 +1,7 @@
 import { debounce } from "lodash";
 import { RefObject, useEffect } from "react";
 import { create } from "zustand";
-import { columnGapRatio, columnWidthRatio } from "../ui/ScrollContainer";
+import { columnGapRatio, columnWidthRatio } from "./ScrollContainer";
 
 
 export type PageMeasurement = {

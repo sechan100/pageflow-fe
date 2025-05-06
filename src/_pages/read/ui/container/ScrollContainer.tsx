@@ -1,16 +1,54 @@
 'use client'
 import { Box, SxProps } from "@mui/material";
-import { useRef } from "react";
-import { ScrollContainerContextProvider } from "../model/context/scroll-container-context";
-import { useTocContext } from "../model/context/toc-context";
-import { usePageMeasurement, usePageMeasurementStore } from "../model/page-measurement";
-import { useRestoreReadingBookmark, useTraceReadingBookmark } from "../model/reading-bookmark";
-import { usePageControll } from "../model/use-page-controll";
-import { useReaderStyleStore } from "../stores/use-reader-style-store";
+import { useEffect, useRef } from "react";
+import { pageMover } from "../../model/page-mover";
+import { useTocContext } from "../toc/toc-context";
+import { useReaderStyleStore } from "../use-reader-style-store";
+import { registerPageMeasurementListener, usePageMeasurement, usePageMeasurementStore } from "./page-measurement";
+import { useRestoreReadingBookmark, useTraceReadingBookmark } from "./reading-bookmark";
+import { ScrollContainerContextProvider, useScrollContainerContext } from "./scroll-container-context";
+import { usePageControl } from "./use-page-control";
 
 
 export const columnGapRatio = 0.1;
 export const columnWidthRatio = (1 - columnGapRatio) / 2;
+
+/**
+ * usePageContol 훅에 필요한 여러가지 콜백과 이벤트 등을 구성한다.
+ */
+const PageControlConfiguration = () => {
+  const container = useScrollContainerContext();
+  const { adjustScrollLeft, afterReMeasurement, movePageByOne } = usePageControl();
+  /**
+   * PageMeasurement가 재측정될 때, 적절한 콜백들을 호출한다.
+   */
+  useEffect(() => {
+    const unregister = registerPageMeasurementListener(({ newMeasurement, prev }) => {
+      afterReMeasurement();
+      const isScrollWidthChanged = prev.scrollContainerSize.scrollWidth !== newMeasurement.scrollContainerSize.scrollWidth;
+      if (isScrollWidthChanged) adjustScrollLeft();
+    })
+    return () => unregister();
+  }, [adjustScrollLeft, afterReMeasurement]);
+
+  /**
+   * moveScroll, onScrollEnd 콜백들을 등록
+   */
+  useEffect(() => {
+    if (!container) return;
+    // const onScrollEnd = () => setIsScrolling(false);
+    const prevListenerCleanUp = pageMover.registerToPrevListener(() => movePageByOne("prev"));
+    const nextListenerCleanUp = pageMover.registerToNextListener(() => movePageByOne("next"));
+    // container.addEventListener("scrollend", onScrollEnd);
+    return () => {
+      prevListenerCleanUp();
+      nextListenerCleanUp();
+      // container.removeEventListener("scrollend", onScrollEnd);
+    }
+  }, [container, movePageByOne]);
+
+  return <></>
+}
 
 type Props = {
   children: React.ReactNode;
@@ -26,12 +64,12 @@ export const ScrollContainer = ({
   usePageMeasurement(containerRef);
   const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
 
-  usePageControll(containerRef);
   useTraceReadingBookmark(containerRef);
   useRestoreReadingBookmark(containerRef);
 
   return (
     <ScrollContainerContextProvider value={containerRef.current}>
+      <PageControlConfiguration />
       <Box
         component="main"
         className="reader-scroll-container"

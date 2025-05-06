@@ -1,4 +1,4 @@
-import { ReadingBookmark } from "../model/reading-bookmark";
+import { ReadingBookmark } from "../ui/container/reading-bookmark";
 
 type Form = {
   bookId: string;

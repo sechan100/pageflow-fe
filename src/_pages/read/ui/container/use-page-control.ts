@@ -1,12 +1,13 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
-import { useReadingUnitExplorer } from "../stores/reading-unit-store";
-import { registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
-import { pageMover } from "./page-mover";
+import { useCallback } from "react";
+import { create } from "zustand";
+import { usePageMeasurementStore } from "./page-measurement";
+import { useReadingUnitExplorer } from "./reading-unit-store";
+import { useScrollContainerContext } from "./scroll-container-context";
 
 const getMeasurement = () => usePageMeasurementStore.getState();
 
-export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => {
-
+type PageControllStore = {
+  currentPage: number;
   /**
    * 이전 unit으로 넘어갈 때, 반드시 한 프레임에 scrollContainer 아래의 모든 unit content들이 렌더링되리란 보장은 없다.
    * 때문에 여러번에 걸쳐서 scrollWidth, 결국에는 totalPageCount가 바뀔 수 있다.
@@ -14,26 +15,34 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
    * 때문에 이전 unit으로 넘어가는 경우에 한하여, shouldFixOnEndPage를 true로 설정한다.
    * 이러면 만약 totalPageCount가 바뀌더라도 해당 flag가 true일 때 다시 page를 올바르게 맨 뒤로 조정하여 결국 올바르게 마지막 페이지를 보여줄 수 있다.
    */
-  const shouldFixOnEndPage = useRef<boolean>(false);
-  const currentPageRef = useRef<number>(0);
+  shouldFixOnEndPage: boolean;
+}
+const usePageControlStore = create<PageControllStore>(() => ({
+  currentPage: 0,
+  shouldFixOnEndPage: false,
+}));
+const getCurrentPage = () => usePageControlStore.getState().currentPage;
+const getShouldFixOnEndPage = () => usePageControlStore.getState().shouldFixOnEndPage;
 
+export const usePageControl = () => {
+  const container = useScrollContainerContext();
   const { moveUnitTo } = useReadingUnitExplorer();
 
   const log = useCallback(() => {
     // console.log("[페이지]", currentPageRef.current + 1, "/", getMeasurement().totalPageCount);
   }, []);
 
-  const updatePage = useCallback((newPage: number) => {
-    const container = containerRef.current;
+  const goToPageAt = useCallback((newPage: number) => {
     if (!container) return;
+    if (newPage < 0 || newPage >= getMeasurement().totalPageCount) throw new Error("page out of bound");
     const diff = getMeasurement().pageBreakPointCommonDifference;
     container.scrollTo({
       left: newPage * diff,
       behavior: "instant",
     });
-    currentPageRef.current = newPage;
+    usePageControlStore.setState({ currentPage: newPage });
     log();
-  }, [containerRef, log]);
+  }, [container, log]);
 
   /**
    * page가 경계를 넘어간 경우 호출
@@ -45,23 +54,23 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
     if (!moveSuccess) return;
 
     const newPage = edge === "next" ? 0 : getMeasurement().totalPageCount - 1;
-    updatePage(newPage);
+    goToPageAt(newPage);
     // 이전 페이지로 넘어갔다면 마지막 페이지 고정
     if (edge === "prev") {
-      shouldFixOnEndPage.current = true;
+      usePageControlStore.setState({ shouldFixOnEndPage: true });
     }
-  }, [moveUnitTo, updatePage]);
+  }, [moveUnitTo, goToPageAt]);
 
   /**
    * 1개의 페이지만큼 스크롤을 이동시키는 함수
    */
-  const movePageTo = useCallback((to: "prev" | "next") => {
+  const movePageByOne = useCallback((to: "prev" | "next") => {
     // if (isScrolling) return;
-    const currentPage = currentPageRef.current;
     const totalPageCount = getMeasurement().totalPageCount;
+    const currentPage = getCurrentPage();
 
     // 다시 페이지를 앞뒤로 움직일 때는 fix를 푼다.
-    shouldFixOnEndPage.current = false;
+    usePageControlStore.setState({ shouldFixOnEndPage: false });
 
     /**
      * 이동방향에 따른 경계를 체크하고, 경계를 넘어갈 수 없도록 한다.
@@ -79,58 +88,38 @@ export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => 
     }
     // setIsScrolling(true);
     const newPage = to === "prev" ? currentPage - 1 : currentPage + 1;
-    updatePage(newPage);
-  }, [updatePage, onPageOverflow]);
+    goToPageAt(newPage);
+  }, [goToPageAt, onPageOverflow]);
 
   /**
-   * scrollWidth가 바뀌었을 때, currentPage에 맞게 scrollLeft를 새롭게 조정
+   * scrollLeft가 currentPage와 어긋났을 때, currentPage를 기준으로보고 scrollLeft를 새롭게 조정한다.
+   * 주로 scrollWidth가 바뀌었을 때 어긋난다.
    */
-  const onScrollWidthChanged = useCallback(() => {
-    const container = containerRef.current;
+  const adjustScrollLeft = useCallback(() => {
     if (!container) return;
-    // console.log("[scrollWidth changed]", container.scrollWidth);
     const diff = getMeasurement().pageBreakPointCommonDifference;
-    const newScrollLeft = currentPageRef.current * diff;
+    const newScrollLeft = getCurrentPage() * diff;
     container.scrollTo({
       left: newScrollLeft,
       behavior: "instant",
     });
-  }, [containerRef]);
-
-  const onTotalPageCountChanged = useCallback(() => {
-    if (shouldFixOnEndPage.current) {
-      updatePage(getMeasurement().totalPageCount - 1)
-    }
-  }, [updatePage]);
+  }, [container]);
 
   /**
-   * PageMeasurement가 재측정될 때, 적절한 콜백들을 호출한다.
+   * PageMeasurement가 재측정된 후, 실행해야하는 콜백
    */
-  useEffect(() => {
-    const unregister = registerPageMeasurementListener(({ newMeasurement, prev }) => {
-      const isScrollWidthChanged = prev.scrollContainerSize.scrollWidth !== newMeasurement.scrollContainerSize.scrollWidth;
-      const isTotalPageCountChanged = prev.totalPageCount !== newMeasurement.totalPageCount;
-      if (isScrollWidthChanged) onScrollWidthChanged();
-      if (isTotalPageCountChanged) onTotalPageCountChanged();
-    })
-    return () => unregister();
-  }, [onScrollWidthChanged, onTotalPageCountChanged]);
-
-  /**
-   * moveScroll, onScrollEnd 콜백들을 등록
-   */
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // const onScrollEnd = () => setIsScrolling(false);
-    const prevListenerCleanUp = pageMover.registerToPrevListener(() => movePageTo("prev"));
-    const nextListenerCleanUp = pageMover.registerToNextListener(() => movePageTo("next"));
-    // container.addEventListener("scrollend", onScrollEnd);
-    return () => {
-      prevListenerCleanUp();
-      nextListenerCleanUp();
-      // container.removeEventListener("scrollend", onScrollEnd);
+  const afterReMeasurement = useCallback(() => {
+    // 맨 뒷페이로 고정되어있다면 바로 이동시킨다.
+    if (getShouldFixOnEndPage()) {
+      goToPageAt(getMeasurement().totalPageCount - 1)
     }
-  }, [containerRef, movePageTo]);
+  }, [goToPageAt]);
+
+  return {
+    getCurrentPage,
+    movePageByOne,
+    goToPageAt,
+    afterReMeasurement,
+    adjustScrollLeft,
+  }
 }

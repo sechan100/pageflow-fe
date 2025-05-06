@@ -1,10 +1,10 @@
 'use client'
 import { SxProps } from "@mui/material";
 import { useEffect } from "react";
-import { isReadableSectionContent, ReadableFolderContent, ReadableSectionContent } from "../model/readable-content";
-import { useReadingUnitExplorer, useReadingUnitStore } from "../stores/reading-unit-store";
-import { FolderContent } from "./FolderContent";
-import { SectionContent } from "./SectionContent";
+import { isReadableSectionContent, ReadableFolderContent, ReadableSectionContent } from "../../model/readable-content";
+import { FolderContent } from "../content/FolderContent";
+import { SectionContent } from "../content/SectionContent";
+import { useReadingUnitExplorer, useReadingUnitStore } from "./reading-unit-store";
 
 type Props = {
   sx?: SxProps;
