@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import { useEffect } from "react";
+import { RefObject, useEffect } from "react";
 import { create } from "zustand";
 import { columnGapRatio, columnWidthRatio } from "../ui/ScrollContainer";
 
@@ -138,13 +138,7 @@ const registerPageMeasurementListener = (listener: PageMeasurementListener) => {
   }
 }
 
-let scrollContainerElement: HTMLElement | null = null;
-const getScrollContainerElement = () => {
-  return scrollContainerElement;
-}
-
-const usePageMeasurement = (containerRef: React.RefObject<HTMLElement | null>) => {
-  scrollContainerElement = containerRef.current;
+const usePageMeasurement = (containerRef: RefObject<HTMLElement | null>) => {
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -167,7 +161,6 @@ const usePageMeasurement = (containerRef: React.RefObject<HTMLElement | null>) =
 
 export {
   fallbackPageMeasurement,
-  getScrollContainerElement,
   registerPageMeasurementListener,
   usePageMeasurement,
   usePageMeasurementStore

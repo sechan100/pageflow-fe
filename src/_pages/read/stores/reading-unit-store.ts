@@ -75,5 +75,6 @@ export const useReadingUnitExplorer = () => {
   return {
     init,
     moveUnitTo,
+    readUnit,
   }
 }

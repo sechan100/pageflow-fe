@@ -3,7 +3,7 @@ import { Box, SxProps } from "@mui/material";
 import { useRef } from "react";
 import { useTocContext } from "../model/context/toc-context";
 import { usePageMeasurement, usePageMeasurementStore } from "../model/page-measurement";
-import { useReadingBookmark } from "../model/reading-bookmark";
+import { useRestoreReadingBookmark, useTraceReadingBookmark } from "../model/reading-bookmark";
 import { usePageControll } from "../model/use-page-controll";
 import { useReaderStyleStore } from "../stores/use-reader-style-store";
 
@@ -21,18 +21,19 @@ export const ScrollContainer = ({
 }: Props) => {
   const layout = useReaderStyleStore();
   const toc = useTocContext();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  usePageMeasurement(scrollContainerRef);
+  const containerRef = useRef<HTMLDivElement>(null);
+  usePageMeasurement(containerRef);
   const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
 
-  usePageControll();
-  useReadingBookmark();
+  usePageControll(containerRef);
+  useTraceReadingBookmark(containerRef);
+  useRestoreReadingBookmark(containerRef);
 
   return (
     <Box
       component="main"
       className="reader-scroll-container"
-      ref={scrollContainerRef}
+      ref={containerRef}
       sx={{
         position: 'relative',
         width: `${layout.viewportWidth}vw`,
@@ -75,6 +76,6 @@ export const ScrollContainer = ({
       }}
     >
       {children}
-    </Box >
+    </Box>
   )
 }

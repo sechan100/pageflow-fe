@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 import { useReadingUnitExplorer } from "../stores/reading-unit-store";
-import { getScrollContainerElement, registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
+import { registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
 import { pageMover } from "./page-mover";
 
 const getMeasurement = () => usePageMeasurementStore.getState();
 
-export const usePageControll = () => {
+export const usePageControll = (containerRef: RefObject<HTMLElement | null>) => {
 
   /**
    * 이전 unit으로 넘어갈 때, 반드시 한 프레임에 scrollContainer 아래의 모든 unit content들이 렌더링되리란 보장은 없다.
@@ -19,10 +19,12 @@ export const usePageControll = () => {
 
   const { moveUnitTo } = useReadingUnitExplorer();
 
-  const log = useCallback(() => console.log("[페이지]", currentPageRef.current + 1, "/", getMeasurement().totalPageCount), []);
+  const log = useCallback(() => {
+    // console.log("[페이지]", currentPageRef.current + 1, "/", getMeasurement().totalPageCount);
+  }, []);
 
   const updatePage = useCallback((newPage: number) => {
-    const container = getScrollContainerElement();
+    const container = containerRef.current;
     if (!container) return;
     const diff = getMeasurement().pageBreakPointCommonDifference;
     container.scrollTo({
@@ -31,14 +33,14 @@ export const usePageControll = () => {
     });
     currentPageRef.current = newPage;
     log();
-  }, [log]);
+  }, [containerRef, log]);
 
   /**
    * page가 경계를 넘어간 경우 호출
    */
   const onPageOverflow = useCallback((edge: "prev" | "next") => {
     // 앞으로 넘어갔다면, 이전 유닛의 맨 뒷 페이지에 page를 고정, 또는 vice versa
-    console.log("[Overflow]", edge === "prev" ? "<-" : "->");
+    // console.log("[Overflow]", edge === "prev" ? "<-" : "->");
     const moveSuccess = moveUnitTo(edge);
     if (!moveSuccess) return;
 
@@ -84,16 +86,16 @@ export const usePageControll = () => {
    * scrollWidth가 바뀌었을 때, currentPage에 맞게 scrollLeft를 새롭게 조정
    */
   const onScrollWidthChanged = useCallback(() => {
-    const container = getScrollContainerElement();
+    const container = containerRef.current;
     if (!container) return;
-    console.log("[scrollWidth changed]", container.scrollWidth);
+    // console.log("[scrollWidth changed]", container.scrollWidth);
     const diff = getMeasurement().pageBreakPointCommonDifference;
     const newScrollLeft = currentPageRef.current * diff;
     container.scrollTo({
       left: newScrollLeft,
       behavior: "instant",
     });
-  }, []);
+  }, [containerRef]);
 
   const onTotalPageCountChanged = useCallback(() => {
     if (shouldFixOnEndPage.current) {
@@ -118,7 +120,7 @@ export const usePageControll = () => {
    * moveScroll, onScrollEnd 콜백들을 등록
    */
   useEffect(() => {
-    const container = getScrollContainerElement();
+    const container = containerRef.current;
     if (!container) return;
 
     // const onScrollEnd = () => setIsScrolling(false);
@@ -130,5 +132,5 @@ export const usePageControll = () => {
       nextListenerCleanUp();
       // container.removeEventListener("scrollend", onScrollEnd);
     }
-  }, [movePageTo]);
+  }, [containerRef, movePageTo]);
 }

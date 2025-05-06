@@ -11,7 +11,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { QuoteNode } from '@lexical/rich-text';
 import { Box, SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../config/node-element';
 import { SECTION_CONTENT_WRAPPER_CLASS_NAME } from '../config/readable-content';
 import { ReadableSectionContent } from "../model/readable-content";
@@ -70,13 +70,20 @@ export const Wrapper = ({
   children,
   sx
 }: WrapperProps) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { viewportHeight } = useReaderStyleStore();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.setAttribute(DATA_TOC_SECTION_ID, section.id);
+  }, [section.id]);
 
   return (
     <Box
       component={"div"}
+      ref={ref}
       className={SECTION_CONTENT_WRAPPER_CLASS_NAME}
-      data-section-id={section.id}
       sx={{
         breakBefore: section.shouldBreakSection ? "column" : undefined,
       }}
