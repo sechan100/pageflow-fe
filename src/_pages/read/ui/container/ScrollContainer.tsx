@@ -8,6 +8,7 @@ import { registerPageMeasurementListener, usePageMeasurement, usePageMeasurement
 import { useRestoreReadingBookmark, useTraceReadingBookmark } from "./reading-bookmark";
 import { ScrollContainerContextProvider, useScrollContainerContext } from "./scroll-container-context";
 import { usePageControl } from "./use-page-control";
+import { BookmarkConfiguration } from "./BookmarkConfiguration";
 
 
 export const columnGapRatio = 0.1;
@@ -64,12 +65,10 @@ export const ScrollContainer = ({
   usePageMeasurement(containerRef);
   const { width } = usePageMeasurementStore(s => s.scrollContainerSize);
 
-  useTraceReadingBookmark(containerRef);
-  useRestoreReadingBookmark(containerRef);
-
   return (
-    <ScrollContainerContextProvider value={containerRef.current}>
+    <ScrollContainerContextProvider value={containerRef}>
       <PageControlConfiguration />
+      <BookmarkConfiguration />
       <Box
         component="main"
         className="reader-scroll-container"

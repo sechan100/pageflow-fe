@@ -25,7 +25,7 @@ const getCurrentPage = () => usePageControlStore.getState().currentPage;
 const getShouldFixOnEndPage = () => usePageControlStore.getState().shouldFixOnEndPage;
 
 export const usePageControl = () => {
-  const container = useScrollContainerContext();
+  const containerRef = useScrollContainerContext();
   const { moveUnitTo } = useReadingUnitExplorer();
 
   const log = useCallback(() => {
@@ -33,6 +33,7 @@ export const usePageControl = () => {
   }, []);
 
   const goToPageAt = useCallback((newPage: number) => {
+    const container = containerRef.current;
     if (!container) return;
     if (newPage < 0 || newPage >= getMeasurement().totalPageCount) throw new Error("page out of bound");
     const diff = getMeasurement().pageBreakPointCommonDifference;
@@ -42,7 +43,7 @@ export const usePageControl = () => {
     });
     usePageControlStore.setState({ currentPage: newPage });
     log();
-  }, [container, log]);
+  }, [containerRef, log]);
 
   /**
    * page가 경계를 넘어간 경우 호출
@@ -96,6 +97,7 @@ export const usePageControl = () => {
    * 주로 scrollWidth가 바뀌었을 때 어긋난다.
    */
   const adjustScrollLeft = useCallback(() => {
+    const container = containerRef.current;
     if (!container) return;
     const diff = getMeasurement().pageBreakPointCommonDifference;
     const newScrollLeft = getCurrentPage() * diff;
@@ -103,7 +105,7 @@ export const usePageControl = () => {
       left: newScrollLeft,
       behavior: "instant",
     });
-  }, [container]);
+  }, [containerRef]);
 
   /**
    * PageMeasurement가 재측정된 후, 실행해야하는 콜백
