@@ -26,7 +26,7 @@ export type ReadingUnit = {
  * 어떤 Toc를 분석하여 만들어낸 ReadingUnit의 순서데이터.
  * 해당 순서대로 책을 읽어나갈 수 있다.
  */
-export type ReadaingUnitSequence = ReadingUnit[];
+export type ReadingUnitSequence = ReadingUnit[];
 
 /**
  * 해당 노드가 headNode인지 확인한다.
@@ -112,8 +112,8 @@ const buildReadingUnit = (headNode: ReadableTocNode, toc: ReadableToc): ReadingU
   }
 }
 
-const createReadingUnitSequence = (toc: ReadableToc): ReadaingUnitSequence => {
-  const sequence: ReadaingUnitSequence = [];
+const createReadingUnitSequence = (toc: ReadableToc): ReadingUnitSequence => {
+  const sequence: ReadingUnitSequence = [];
 
   /**
    * 시작 노드를 찾는다.
@@ -141,7 +141,7 @@ const createReadingUnitSequence = (toc: ReadableToc): ReadaingUnitSequence => {
  * nodeId에 해당하는 node를 포함하고있는 unit을 찾아서 반환한다
  * 찾지 못한 경우 null을 반환
  */
-const findUnitContainingNode = (nodeId: string, sequence: ReadaingUnitSequence): ReadingUnit | null => {
+const findUnitContainingNode = (nodeId: string, sequence: ReadingUnitSequence): ReadingUnit | null => {
   for (const unit of sequence) {
     if (unit.headNode.id === nodeId) {
       return unit;

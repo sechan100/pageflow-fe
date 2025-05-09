@@ -144,7 +144,6 @@ export const TocRoot = () => {
   return (
     <Box sx={{
       width: '100%',
-      mt: 2,
       mb: 5,
     }}>
       <List component="nav" disablePadding>

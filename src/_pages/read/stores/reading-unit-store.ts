@@ -1,6 +1,6 @@
 import { ReadableToc } from "@/entities/book";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
-import { ReadaingUnitSequence, ReadingUnit, ReadingUnitService } from "../model/reading-unit";
+import { ReadingUnit, ReadingUnitSequence, ReadingUnitService } from "../model/reading-unit";
 import { ReadingUnitContent, ReadingUnitContentLoader } from "../model/reading-unit-content-loader";
 
 type CreateReadingUnitStoreArgs = {
@@ -9,7 +9,7 @@ type CreateReadingUnitStoreArgs = {
 }
 
 type ReadingUnitStore = {
-  sequence: ReadaingUnitSequence;
+  sequence: ReadingUnitSequence;
   readingUnitContent: ReadingUnitContent | null;
   readUnit: (newUnit: ReadingUnit) => Promise<void>;
   findUnitContainingNode: (nodeId: string) => ReadingUnit;

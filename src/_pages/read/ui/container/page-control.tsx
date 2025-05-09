@@ -18,7 +18,7 @@ type PageControllStore = {
    */
   shouldFixOnEndPage: boolean;
 }
-const usePageControlStore = create<PageControllStore>(() => ({
+export const usePageControlStore = create<PageControllStore>(() => ({
   currentPage: 0,
   shouldFixOnEndPage: false,
 }));
