@@ -2,12 +2,12 @@ import { ReadableTocNode, ReadableTocNodeType } from "@/entities/book";
 import { useCallback, useEffect, useRef } from "react";
 import { createStore } from "zustand";
 import { getReadingBookmarkApi, saveReadingBookmarkApi } from "../../api/reading-bookmark";
-import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_FOLDER_ID, DATA_TOC_SECTION_ID } from "../../config/node-element";
-import { FOLDER_CONTENT_WRAPPER_CLASS_NAME, SECTION_CONTENT_WRAPPER_CLASS_NAME } from "../../config/readable-content";
 import { ReadaingUnitSequence } from "../../model/reading-unit";
-import { useBookContext } from "../book-context";
+import { useBookContext } from "../../stores/book-context";
+import { useReadingUnitExplorer, useReadingUnitStore } from "../../stores/reading-unit-store";
+import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_FOLDER_ID, DATA_TOC_SECTION_ID } from "./node-element";
 import { PageMeasurement, registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
-import { useReadingUnitExplorer, useReadingUnitStore } from "./reading-unit-store";
+import { FOLDER_CONTENT_WRAPPER_CLASS_NAME, SECTION_CONTENT_WRAPPER_CLASS_NAME } from "./readable-content";
 import { useScrollContainerContext } from "./scroll-container-context";
 import { usePageControl } from "./use-page-control";
 

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { create } from "zustand";
-import { ReadaingUnitSequence, ReadingUnit, ReadingUnitService } from "../../model/reading-unit";
-import { ReadingUnitContent, ReadingUnitContentLoader } from "../../model/reading-unit-content-loader";
-import { useBookContext } from "../book-context";
-import { useTocContext } from "../toc/toc-context";
+import { ReadaingUnitSequence, ReadingUnit, ReadingUnitService } from "../model/reading-unit";
+import { ReadingUnitContent, ReadingUnitContentLoader } from "../model/reading-unit-content-loader";
+import { useBookContext } from "./book-context";
+import { useTocContext } from "./toc-context";
 
 
 

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { create } from "zustand";
+import { useReadingUnitExplorer } from "../../stores/reading-unit-store";
 import { usePageMeasurementStore } from "./page-measurement";
-import { useReadingUnitExplorer } from "./reading-unit-store";
 import { useScrollContainerContext } from "./scroll-container-context";
 
 const getMeasurement = () => usePageMeasurementStore.getState();

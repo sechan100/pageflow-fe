@@ -2,13 +2,12 @@
 import { Box, SxProps } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { pageMover } from "../../model/page-mover";
-import { useTocContext } from "../toc/toc-context";
-import { useReaderStyleStore } from "../use-reader-style-store";
+import { useTocContext } from "../../stores/toc-context";
+import { useReaderStyleStore } from "../../stores/use-reader-style-store";
+import { BookmarkConfiguration } from "./BookmarkConfiguration";
 import { registerPageMeasurementListener, usePageMeasurement, usePageMeasurementStore } from "./page-measurement";
-import { useRestoreReadingBookmark, useTraceReadingBookmark } from "./reading-bookmark";
 import { ScrollContainerContextProvider, useScrollContainerContext } from "./scroll-container-context";
 import { usePageControl } from "./use-page-control";
-import { BookmarkConfiguration } from "./BookmarkConfiguration";
 
 
 export const columnGapRatio = 0.1;
