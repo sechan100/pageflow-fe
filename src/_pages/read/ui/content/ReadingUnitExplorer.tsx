@@ -3,8 +3,8 @@ import { SxProps } from "@mui/material";
 import { useEffect } from "react";
 import { isReadableSectionContent, ReadableFolderContent, ReadableSectionContent } from "../../model/readable-content";
 import { useReadingUnitExplorer, useReadingUnitStore } from "../../stores/reading-unit-store";
-import { FolderContent } from "../content/FolderContent";
-import { SectionContent } from "../content/SectionContent";
+import { FolderContent } from "./FolderContent";
+import { SectionContent } from "./SectionContent";
 
 type Props = {
   sx?: SxProps;

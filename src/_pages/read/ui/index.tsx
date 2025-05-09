@@ -6,6 +6,7 @@ import { BookContextProvider } from '../stores/book-context';
 import { TocContextProvider } from "../stores/toc-context";
 import { BookReader } from './BookReader';
 import { ReadPageDialMenu } from './ReadPageDialMenu';
+import { SideDrawer } from './side-drawer/SideDrawer';
 
 
 type ReadPageContentProps = {
@@ -58,7 +59,7 @@ const ReadPageContent = ({
           flexGrow: 1,
           overflow: 'hidden'
         }}>
-          {/* <ReaderToc /> */}
+          <SideDrawer />
           <BookReader />
           <ReadPageDialMenu />
         </Box>

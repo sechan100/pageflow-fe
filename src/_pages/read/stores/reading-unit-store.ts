@@ -17,7 +17,6 @@ export const useReadingUnitStore = create<ReadingUnitStore>(() => ({
   readingUnitContent: null,
 }));
 
-
 export const useReadingUnitExplorer = () => {
   const { sequence, readingUnitContent } = useReadingUnitStore();
   const { id: bookId } = useBookContext();
@@ -55,11 +54,9 @@ export const useReadingUnitExplorer = () => {
     const currentUnitHeadNodeId = readingUnitContent.readingUnit.headNode.id;
     const currentUnitIndex = sequence.findIndex((unit) => unit.headNode.id === currentUnitHeadNodeId);
     // 처음이나 마지막 unit에 도달했을 때는 이동하지 않음
-    if (
-      currentUnitIndex === 0 && to === "prev"
+    if (currentUnitIndex === 0 && to === "prev"
       ||
-      currentUnitIndex === sequence.length - 1 && to === "next"
-    ) {
+      currentUnitIndex === sequence.length - 1 && to === "next") {
       return false;
     }
     const destUnitIndex = currentUnitIndex + (to === "prev" ? -1 : 1);
@@ -76,5 +73,7 @@ export const useReadingUnitExplorer = () => {
     init,
     moveUnitTo,
     readUnit,
-  }
-}
+  };
+};
+
+
