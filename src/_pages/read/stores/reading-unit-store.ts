@@ -1,55 +1,37 @@
-import { useCallback } from "react";
-import { create } from "zustand";
+import { ReadableToc } from "@/entities/book";
+import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { ReadaingUnitSequence, ReadingUnit, ReadingUnitService } from "../model/reading-unit";
 import { ReadingUnitContent, ReadingUnitContentLoader } from "../model/reading-unit-content-loader";
-import { useBookContext } from "./book-context";
-import { useTocContext } from "./toc-context";
 
-
+type CreateReadingUnitStoreArgs = {
+  bookId: string;
+  toc: ReadableToc;
+}
 
 type ReadingUnitStore = {
   sequence: ReadaingUnitSequence;
   readingUnitContent: ReadingUnitContent | null;
+  readUnit: (newUnit: ReadingUnit) => Promise<void>;
+  findUnitContainingNode: (nodeId: string) => ReadingUnit;
+  moveUnitTo: (to: "prev" | "next") => boolean;
 }
 
-export const useReadingUnitStore = create<ReadingUnitStore>(() => ({
-  sequence: [],
+export const [ReadingUnitContextProvider, useReadingUnitStore] = createStoreContext<CreateReadingUnitStoreArgs, ReadingUnitStore>((data, set, get) => ({
+  sequence: ReadingUnitService.createReadingUnitSequence(data.toc),
   readingUnitContent: null,
-}));
-
-export const useReadingUnitExplorer = () => {
-  const { sequence, readingUnitContent } = useReadingUnitStore();
-  const { id: bookId } = useBookContext();
-  const toc = useTocContext();
-
-  /**
-   * 새로운 unit을 읽기 대상으로 지정한다.
-   */
-  const readUnit = useCallback(async (newUnit: ReadingUnit) => {
-    useReadingUnitStore.setState({ readingUnitContent: null });
-    const newReadingUnitContent = await ReadingUnitContentLoader.createReadingUnitContent(bookId, newUnit);
-    useReadingUnitStore.setState({ readingUnitContent: newReadingUnitContent });
-  }, [bookId]);
-
-  /**
-   * 최초 렌더링시에 시작 unit 초기화
-   */
-  const init = useCallback((startingNodeId: string) => {
-    const initialSequence = ReadingUnitService.createReadingUnitSequence(toc);
-    useReadingUnitStore.setState({ sequence: initialSequence });
-    const startingUnit = ReadingUnitService.findUnitContainingNode(startingNodeId, initialSequence);
-    if (startingUnit === null) {
-      throw new Error("StartingUnit을 찾을 수 없습니다.");
+  readUnit: async (newUnit: ReadingUnit) => {
+    const newReadingUnitContent = await ReadingUnitContentLoader.createReadingUnitContent(data.bookId, newUnit);
+    set({ readingUnitContent: newReadingUnitContent });
+  },
+  findUnitContainingNode: (nodeId: string) => {
+    const unit = ReadingUnitService.findUnitContainingNode(nodeId, get().sequence);
+    if (unit === null) {
+      throw new Error("해당하는 Unit을 찾을 수 없습니다.");
     }
-    readUnit(startingUnit);
-  }, [readUnit, toc]);
-
-  /**
-   * 이전/다음 unit으로 이동
-   * @param to 이동할 방향
-   * @returns 이동 성공 여부
-   */
-  const moveUnitTo = useCallback((to: "prev" | "next"): boolean => {
+    return unit;
+  },
+  moveUnitTo: (to: "prev" | "next") => {
+    const { readingUnitContent, sequence, readUnit } = get();
     if (readingUnitContent === null) return false;
     const currentUnitHeadNodeId = readingUnitContent.readingUnit.headNode.id;
     const currentUnitIndex = sequence.findIndex((unit) => unit.headNode.id === currentUnitHeadNodeId);
@@ -64,16 +46,9 @@ export const useReadingUnitExplorer = () => {
     if (newReadingUnit === undefined) {
       throw new Error("이동하려는 Unit이 Sequence에 없습니다.");
     }
+    set({ readingUnitContent: null });
     readUnit(newReadingUnit);
     return true;
-  }, [readingUnitContent, readUnit, sequence]);
-
-
-  return {
-    init,
-    moveUnitTo,
-    readUnit,
-  };
-};
-
+  }
+}));
 

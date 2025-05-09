@@ -1,7 +1,7 @@
 'use client'
 import { Box } from '@mui/material';
+import { useReaderStyleStore } from '../stores/reader-style-store';
 import { useTocContext } from '../stores/toc-context';
-import { useReaderStyleStore } from '../stores/use-reader-style-store';
 import { ControllerChevron } from './container/ControllerChevron';
 import { ScrollContainer } from './container/ScrollContainer';
 import { ReadingUnitExplorer } from './content/ReadingUnitExplorer';

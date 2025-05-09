@@ -2,7 +2,7 @@ import { STYLES } from '@/global/styles';
 import { Box, Paper, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { ReadableFolderContent } from '../../model/readable-content';
-import { useReaderStyleStore } from '../../stores/use-reader-style-store';
+import { useReaderStyleStore } from '../../stores/reader-style-store';
 import { DATA_TOC_FOLDER_ID } from '../container/node-element';
 import { usePageMeasurementStore } from '../container/page-measurement';
 import { FOLDER_CONTENT_WRAPPER_CLASS_NAME } from '../container/readable-content';

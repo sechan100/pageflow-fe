@@ -13,7 +13,7 @@ import { Box, SxProps, Typography } from '@mui/material';
 import { EditorState, RootNode } from 'lexical';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ReadableSectionContent } from "../../model/readable-content";
-import { useReaderStyleStore } from '../../stores/use-reader-style-store';
+import { useReaderStyleStore } from '../../stores/reader-style-store';
 import { CN_SECTION_CONTENT_ELEMENT, DATA_SECTION_CONTENT_ELEMENT_ID, DATA_TOC_SECTION_ID } from '../container/node-element';
 import { SECTION_CONTENT_WRAPPER_CLASS_NAME } from '../container/readable-content';
 

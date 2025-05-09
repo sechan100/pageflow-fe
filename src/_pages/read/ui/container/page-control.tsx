@@ -1,7 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { create } from "zustand";
-import { useReadingUnitExplorer } from "../../stores/reading-unit-store";
-import { usePageMeasurementStore } from "./page-measurement";
+import { pageMover } from "../../model/page-mover";
+import { useReadingUnitStore } from "../../stores/reading-unit-store";
+import { registerPageMeasurementListener, usePageMeasurementStore } from "./page-measurement";
 import { useScrollContainerContext } from "./scroll-container-context";
 
 const getMeasurement = () => usePageMeasurementStore.getState();
@@ -26,7 +27,7 @@ const getShouldFixOnEndPage = () => usePageControlStore.getState().shouldFixOnEn
 
 export const usePageControl = () => {
   const containerRef = useScrollContainerContext();
-  const { moveUnitTo } = useReadingUnitExplorer();
+  const moveUnitTo = useReadingUnitStore(s => s.moveUnitTo);
 
   const log = useCallback(() => {
     // console.log("[페이지]", currentPageRef.current + 1, "/", getMeasurement().totalPageCount);
@@ -124,4 +125,41 @@ export const usePageControl = () => {
     afterReMeasurement,
     adjustScrollLeft,
   }
+}
+
+/**
+ * usePageContol 훅에 필요한 여러가지 콜백과 이벤트 등을 구성한다.
+ */
+export const PageControlConfig = () => {
+  const container = useScrollContainerContext();
+  const { adjustScrollLeft, afterReMeasurement, movePageByOne } = usePageControl();
+  /**
+   * PageMeasurement가 재측정될 때, 적절한 콜백들을 호출한다.
+   */
+  useEffect(() => {
+    const unregister = registerPageMeasurementListener(({ newMeasurement, prev }) => {
+      afterReMeasurement();
+      const isScrollWidthChanged = prev.scrollContainerSize.scrollWidth !== newMeasurement.scrollContainerSize.scrollWidth;
+      if (isScrollWidthChanged) adjustScrollLeft();
+    })
+    return () => unregister();
+  }, [adjustScrollLeft, afterReMeasurement]);
+
+  /**
+   * moveScroll, onScrollEnd 콜백들을 등록
+   */
+  useEffect(() => {
+    if (!container) return;
+    // const onScrollEnd = () => setIsScrolling(false);
+    const prevListenerCleanUp = pageMover.registerToPrevListener(() => movePageByOne("prev"));
+    const nextListenerCleanUp = pageMover.registerToNextListener(() => movePageByOne("next"));
+    // container.addEventListener("scrollend", onScrollEnd);
+    return () => {
+      prevListenerCleanUp();
+      nextListenerCleanUp();
+      // container.removeEventListener("scrollend", onScrollEnd);
+    }
+  }, [container, movePageByOne]);
+
+  return <></>
 }

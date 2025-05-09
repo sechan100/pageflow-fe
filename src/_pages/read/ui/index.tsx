@@ -3,6 +3,8 @@ import { useNextRouter } from '@/shared/hooks/useNextRouter';
 import { Box, CircularProgress } from '@mui/material';
 import { useState } from 'react';
 import { BookContextProvider } from '../stores/book-context';
+import { BookmarkStoreProvider } from '../stores/bookmark-store';
+import { ReadingUnitContextProvider } from '../stores/reading-unit-store';
 import { TocContextProvider } from "../stores/toc-context";
 import { BookReader } from './BookReader';
 import { ReadPageDialMenu } from './ReadPageDialMenu';
@@ -85,7 +87,11 @@ export const ReadPage = ({ bookId }: Props) => {
   return (
     <BookContextProvider value={book}>
       <TocContextProvider value={book.toc}>
-        <ReadPageContent book={book} />
+        <BookmarkStoreProvider bookId={book.id}>
+          <ReadingUnitContextProvider data={{ bookId: book.id, toc: book.toc }}>
+            <ReadPageContent book={book} />
+          </ReadingUnitContextProvider>
+        </BookmarkStoreProvider>
       </TocContextProvider>
     </BookContextProvider>
   );
