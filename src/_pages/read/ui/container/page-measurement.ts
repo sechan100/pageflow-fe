@@ -104,7 +104,7 @@ const registerPageMeasurementMonitor = (el: HTMLElement, onMeasure: (measurement
     subtree: true,
     characterData: true
   });
-  ;
+
   const resizeObserver = new ResizeObserver(
     debounce(() => reMeasure(), 0)
   );

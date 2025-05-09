@@ -30,9 +30,10 @@ const getPageByBookmark = (bookmark: ReadingBookmark, pageMeasurement: PageMeasu
   const el = findBookmarkedElement(container, bookmark);
   if (!el) return -1;
   const rect = el.getBoundingClientRect();
+  const rectLeft = rect.left + container.scrollLeft; // container의 scrollLeft를 더해줘야함.
   for (let i = 1; i <= pageMeasurement.totalPageCount; i++) { // 맨 처음 경계는 볼 필요 없고, 뒤쪽 경계들만 체크하면 됨.
     const boundScrollLeft = pageMeasurement.pageBreakPointCommonDifference * i;
-    if (rect.left < boundScrollLeft) {
+    if (rectLeft < boundScrollLeft) {
       return i - 1;
     }
   }
@@ -54,32 +55,41 @@ export const NavigateBookmarkConfig = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    // 북마크에 맞는 readingUnit을 찾아서 상태변경 -> 렌더링 트리거
-    useBookmarkStore.subscribe(({ bookmark, navigatingStatus, setNavigatingStatus }) => {
-      const { readUnit, findUnitContainingNode } = useReadingUnitStore.getState();
-      if (navigatingStatus === "required") {
-        if (bookmark === null) return;
-        const unit = findUnitContainingNode(bookmark.tocNodeId);
-        readUnit(unit);
-        setNavigatingStatus("unit-rendering");
-      }
-    })
-
     // 북마크 렌더링이 끝난 후에 구체적인 page 정보에 맞게 scroll을 조정
-    const cleanup = registerPageMeasurementListener(async () => {
+    const tryAdjustPage = async () => {
       const { setNavigatingStatus, navigatingStatus, bookmark } = useBookmarkStore.getState();
       if (bookmark === null) return;
       if (navigatingStatus === "unit-rendering") {
-        requestAnimationFrame(() => {
-          const newPage = getPageByBookmark(bookmark, usePageMeasurementStore.getState(), container);
-          if (newPage !== -1) {
-            goToPageAt(newPage);
-            setNavigatingStatus("navigated");
-          }
-        });
+        const newPage = getPageByBookmark(bookmark, usePageMeasurementStore.getState(), container);
+        if (newPage !== -1) {
+          goToPageAt(newPage);
+          setNavigatingStatus("navigated");
+        }
       }
-    });
+    }
 
+    // 북마크에 맞는 readingUnit을 찾아서 상태변경 -> 렌더링 트리거
+    useBookmarkStore.subscribe(({ bookmark, navigatingStatus, setNavigatingStatus }) => {
+      const { readUnit, findUnitContainingNode } = useReadingUnitStore.getState();
+      const currentUnitOrNull = useReadingUnitStore.getState().readingUnitContent?.readingUnit ?? null;
+      if (navigatingStatus === "required") {
+        if (bookmark === null) return;
+        const newUnit = findUnitContainingNode(bookmark.tocNodeId);
+        readUnit(newUnit);
+        setNavigatingStatus("unit-rendering");
+
+        // unit이 동일한 경우 아래 registerPageMeasurementListener가 호출되지 않음으로, 여기서 호출해줘야함.
+        if (currentUnitOrNull !== null && currentUnitOrNull.headNode.id === newUnit.headNode.id) {
+          tryAdjustPage();
+        }
+      }
+    })
+
+    const cleanup = registerPageMeasurementListener(() => {
+      requestAnimationFrame(() => {
+        tryAdjustPage()
+      })
+    });
     return () => cleanup();
   }, [bookId, containerRef, goToPageAt]);
 

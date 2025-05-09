@@ -1,16 +1,11 @@
 'use client'
-import { SxProps } from "@mui/material";
 import { isReadableSectionContent, ReadableFolderContent, ReadableSectionContent } from "../../model/readable-content";
 import { useReadingUnitStore } from "../../stores/reading-unit-store";
 import { FolderContent } from "./FolderContent";
 import { SectionContent } from "./SectionContent";
 
-type Props = {
-  sx?: SxProps;
-}
-export const ReadingUnitExplorer = ({
-  sx
-}: Props) => {
+
+export const ReadingUnitExplorer = () => {
   const { readingUnitContent } = useReadingUnitStore();
 
   if (readingUnitContent === null) {
