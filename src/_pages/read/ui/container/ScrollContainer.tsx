@@ -2,7 +2,6 @@
 import { Box, SxProps } from "@mui/material";
 import { useRef } from "react";
 import { useReaderStyleStore } from "../../stores/reader-style-store";
-import { useTocContext } from "../../stores/toc-context";
 import { NavigateBookmarkConfig } from "./navigate-bookmark";
 import { PageControlConfig } from "./page-control";
 import { usePageMeasurement, usePageMeasurementStore } from "./page-measurement";
@@ -40,8 +39,8 @@ export const ScrollContainer = ({
           width: `${layout.viewportWidth}vw`,
           height: `${layout.viewportHeight}vh`,
           columnCount: 2,
-          columnGap: `${width * columnGapRatio}px`,
-          columnWidth: `${width * columnWidthRatio}px`,
+          columnGap: `${Math.floor(width * columnGapRatio)}px`,
+          columnWidth: `${Math.floor(width * columnWidthRatio)}px`,
           columnFill: "balance",
           overflowX: "hidden",
 
