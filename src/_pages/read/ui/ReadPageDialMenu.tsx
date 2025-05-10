@@ -1,7 +1,9 @@
 'use client'
+import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon, SxProps } from "@mui/material";
-import { AArrowDown, AArrowUp, Cog, RotateCcw } from "lucide-react";
-import { useMemo } from "react";
+import { AArrowDown, AArrowUp, Cog, LogOut, RotateCcw } from "lucide-react";
+import { useCallback, useMemo } from "react";
+import { useBookContext } from "../stores/book-context";
 import { DEFAULT_READER_STYLE, useReaderStyleStore } from "../stores/reader-style-store";
 
 type DialAction = {
@@ -30,6 +32,13 @@ type Props = {
 export const ReadPageDialMenu = ({
   sx
 }: Props) => {
+  const { router } = useNextRouter();
+  const book = useBookContext();
+
+  const routeToBookPage = useCallback(() => {
+    router.push(`/books/${book.id}`);
+  }, [book.id, router]);
+
   const mainDial: DialAction = useMemo(() => ({
     icon: <SpeedDialIcon icon={<Cog />} />,
     name: "Main",
@@ -52,7 +61,12 @@ export const ReadPageDialMenu = ({
       name: "초기화",
       cb: () => resetReaderFontSize()
     },
-  ]), []);
+    {
+      icon: <LogOut />,
+      name: "나가기",
+      cb: () => routeToBookPage()
+    }
+  ]), [routeToBookPage]);
 
   return (
     <>
