@@ -87,11 +87,11 @@ export const ReadPage = ({ bookId }: Props) => {
   return (
     <BookContextProvider value={book}>
       <TocContextProvider value={book.toc}>
-        <BookmarkStoreProvider bookId={book.id}>
-          <ReadingUnitContextProvider data={{ bookId: book.id, toc: book.toc }}>
+        <ReadingUnitContextProvider data={{ bookId: book.id, toc: book.toc }}>
+          <BookmarkStoreProvider bookId={book.id}>
             <ReadPageContent book={book} />
-          </ReadingUnitContextProvider>
-        </BookmarkStoreProvider>
+          </BookmarkStoreProvider>
+        </ReadingUnitContextProvider>
       </TocContextProvider>
     </BookContextProvider>
   );

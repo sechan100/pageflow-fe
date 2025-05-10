@@ -87,7 +87,7 @@ export const NavigateBookmarkConfig = () => {
 
     const cleanup = registerPageMeasurementListener(() => {
       requestAnimationFrame(() => {
-        tryAdjustPage()
+        tryAdjustPage();
       })
     });
     return () => cleanup();

@@ -1,4 +1,5 @@
 import { ReadableTocNodeType } from "@/entities/book";
+import { debounce } from "lodash";
 import { useCallback, useEffect } from "react";
 import { saveReadingBookmarkApi } from "../../api/reading-bookmark";
 import { useBookContext } from "../../stores/book-context";
@@ -140,12 +141,13 @@ export const TraceBookmarkConfig = () => {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    const debouncedSaveReadingBookmark = debounce(saveReadingBookmark, 3000);
     const cleanup = registerAnchorObserver({
       container,
       onAnchorChange: (anchorSce) => {
         // 이동로직이 수행된 이후에만 북마크 추적을 시작
         if (useBookmarkStore.getState().navigatingStatus !== "navigated") return;
-        saveReadingBookmark(anchorSce);
+        debouncedSaveReadingBookmark(anchorSce);
       }
     });
     return () => {

@@ -2,7 +2,8 @@ import { ReadableTocNodeType } from "@/entities/book";
 import { createStoreContext } from "@/shared/zustand/create-store-context";
 import { useCallback, useEffect, useState } from "react";
 import { StoreApi } from "zustand";
-import { getReadingBookmarkApi } from "../api/reading-bookmark";
+import { getBookmarkOrNullApi } from "../api/reading-bookmark";
+import { useReadingUnitStore } from "./reading-unit-store";
 
 export type ReadingBookmark = {
   tocNodeType: ReadableTocNodeType;
@@ -41,14 +42,22 @@ type BookmarkStoreProviderProps = {
 }
 export const BookmarkStoreProvider = ({ children, bookId }: BookmarkStoreProviderProps) => {
   const [bookmark, setBookmark] = useState<ReadingBookmark | null>(null);
+  const sequence = useReadingUnitStore(s => s.sequence);
 
   useEffect(() => {
     const fetchBookmark = async () => {
-      const bookmark = await getReadingBookmarkApi(bookId);
-      setBookmark(bookmark);
+      let fetched = await getBookmarkOrNullApi(bookId);
+      if (fetched === null) {
+        fetched = {
+          tocNodeType: sequence[0].headNode.type,
+          tocNodeId: sequence[0].headNode.id,
+          sceId: 0,
+        } as ReadingBookmark;
+      }
+      setBookmark(fetched);
     };
     fetchBookmark();
-  }, [bookId]);
+  }, [bookId, sequence]);
 
   const handleDataChange = useCallback((store: StoreApi<BookmarkStore>, newBookmark: ReadingBookmark | null) => {
     if (newBookmark === null) return;
