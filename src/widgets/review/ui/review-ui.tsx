@@ -2,8 +2,6 @@
 
 import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import { BookReviewRating } from "./BookReviewRating";
-import { SectionHeader } from "./utils/SectionHeader";
-import { SectionPaper } from "./utils/SectionPaper";
 
 const ReviewItem = ({ name, rating, date, content }: { name: string; rating: number; date: string; content: string }) => (
   <Paper
@@ -30,7 +28,7 @@ const ReviewItem = ({ name, rating, date, content }: { name: string; rating: num
 );
 
 
-export const ReviewsSection = () => {
+export const ReviewWidget = () => {
   // 샘플 리뷰 데이터
   const reviews = [
     {
@@ -50,9 +48,7 @@ export const ReviewsSection = () => {
   ];
 
   return (
-    <SectionPaper>
-      <SectionHeader title="리뷰" />
-
+    <Box>
       {/* 리뷰 통계 */}
       <Box sx={{
         display: 'flex',
@@ -98,6 +94,6 @@ export const ReviewsSection = () => {
       <Box sx={{ textAlign: 'center', mt: 3 }}>
         <Button variant="outlined">더 보기</Button>
       </Box>
-    </SectionPaper>
+    </Box>
   );
 };

@@ -1,12 +1,14 @@
 'use client'
 
 import { usePublishedBookQuery } from '@/entities/book';
+import { ReviewWidget } from '@/widgets/review';
 import { Box, Container, SxProps, Typography } from "@mui/material";
 import { PublishedBookContextProvider, usePublishedBookContext } from "../model/published-book-context";
 import { AuthorProfile } from "./AuthorProfile";
 import { BookHeroSection } from "./BookHeroSection";
-import { ReviewsSection } from "./ReviewsSection";
 import { TableOfContents } from "./TableOfContents";
+import { SectionHeader } from './utils/SectionHeader';
+import { SectionPaper } from './utils/SectionPaper';
 
 
 const BookInfoContent = () => {
@@ -17,7 +19,10 @@ const BookInfoContent = () => {
       <BookHeroSection />
       <TableOfContents />
       <AuthorProfile />
-      <ReviewsSection />
+      <SectionPaper>
+        <SectionHeader title="리뷰" />
+        <ReviewWidget />
+      </SectionPaper>
     </Container>
   );
 };
