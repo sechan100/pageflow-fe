@@ -1,11 +1,11 @@
 'use client';
 
+import { BookReviewRating } from '@/features/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Book } from "lucide-react";
 import Image from 'next/image';
 import { useState } from 'react';
-import { BookReviewRating } from "../../../widgets/review/ui/BookReviewRating";
 import { usePublishedBookContext } from "../model/published-book-context";
 import { CharacterCountSection } from "./CharacterCountSection";
 import { PublishedRecoredsSection } from './PublishedRecoredsSection';

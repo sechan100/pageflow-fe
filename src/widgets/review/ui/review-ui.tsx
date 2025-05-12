@@ -1,7 +1,7 @@
 'use client';
 
+import { BookReviewRating } from '@/features/book';
 import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
-import { BookReviewRating } from "./BookReviewRating";
 
 const ReviewItem = ({ name, rating, date, content }: { name: string; rating: number; date: string; content: string }) => (
   <Paper
