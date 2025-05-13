@@ -1,7 +1,15 @@
 'use client';
 
+import { Review } from '@/entities/book';
 import { BookReviewRating } from '@/features/book';
-import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
+import { STYLES } from '@/global/styles';
+import { FlaggableButton } from '@/shared/ui/SwitchableButton';
+import { Avatar, Box, Paper, Typography } from "@mui/material";
+import { uniqueId } from 'lodash';
+import { useState } from 'react';
+import { BookIdContextProvider, ReviewsContextProvider } from '../model/context';
+import { ReviewEditor } from './ReviewEditor';
+import { ReviewSummary } from './ReviewSummary';
 
 const ReviewItem = ({ name, rating, date, content }: { name: string; rating: number; date: string; content: string }) => (
   <Paper
@@ -9,7 +17,7 @@ const ReviewItem = ({ name, rating, date, content }: { name: string; rating: num
     sx={{
       p: 3,
       mb: 2,
-      bgcolor: 'background.default',
+      backgroundColor: STYLES.color.background,
       borderRadius: 2
     }}
   >
@@ -27,73 +35,145 @@ const ReviewItem = ({ name, rating, date, content }: { name: string; rating: num
   </Paper>
 );
 
-
-export const ReviewWidget = () => {
-  // 샘플 리뷰 데이터
-  const reviews = [
-    {
-      id: '1',
-      name: '김민수',
-      rating: 5,
-      date: '2023년 12월 12일',
-      content: '이 책은 정말 통찰력 있고 잘 쓰여졌어요. 손에서 내려놓을 수 없었습니다! 저자는 복잡한 개념을 쉽게 접근할 수 있게 하는 필력이 있습니다.'
+// 샘플 리뷰 데이터
+const dummyReviews: Review[] = [
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '전서윤',
+      profileImageUrl: 'https://example.com/profile.jpg',
     },
-    {
-      id: '2',
-      name: '이지은',
-      rating: 4,
-      date: '2023년 11월 30일',
-      content: '전반적으로 훌륭한 책입니다. 일부분은 조금 지루했지만, 주요 주제들은 강력하고 생각을 자극시키는 내용이었습니다.'
-    }
-  ];
+    score: 5,
+    createdAt: '2023년 12월 12일',
+    updatedAt: '2023년 12월 12일',
+    content: '이 책은 정말 통찰력 있고 잘 쓰여졌어요. 손에서 내려놓을 수 없었습니다! 저자는 복잡한 개념을 쉽게 접근할 수 있게 하는 필력이 있습니다.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '최세빈',
+      profileImageUrl: 'https://example.com/profile2.jpg',
+    },
+    score: 4,
+    createdAt: '2023년 11월 30일',
+    updatedAt: '2023년 11월 30일',
+    content: '전반적으로 훌륭한 책입니다. 일부분은 조금 지루했지만, 주요 주제들은 강력하고 생각을 자극시키는 내용이었습니다.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '장예진',
+      profileImageUrl: 'https://example.com/profile8.jpg',
+    },
+    score: 3,
+    createdAt: '2023년 10월 5일',
+    updatedAt: '2023년 10월 5일',
+    content: '괜찮은 책이지만, 기대했던 것만큼은 아니었습니다.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '김연우',
+      profileImageUrl: 'https://example.com/profile3.jpg',
+    },
+    score: 4,
+    createdAt: '2023년 11월 20일',
+    updatedAt: '2023년 11월 20일',
+    content: '책이 좋긴 하지만, 기대했던 것만큼은 아니었습니다. 몇몇 부분은 더 깊이 있는 논의가 필요했어요.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '남하은',
+      profileImageUrl: 'https://example.com/profile4.jpg',
+    },
+    score: 4,
+    createdAt: '2023년 11월 10일',
+    updatedAt: '2023년 11월 10일',
+    content: '솔직히 실망스러웠습니다. 내용이 너무 얕고, 저자의 주장이 설득력이 없었습니다.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '이유리',
+      profileImageUrl: 'https://example.com/profile5.jpg',
+    },
+    score: 1,
+    createdAt: '2023년 11월 1일',
+    updatedAt: '2023년 11월 1일',
+    content: '이 책은 정말 읽기 힘들었습니다. 내용이 산만하고, 저자의 주장이 일관성이 없었습니다.'
+  },
+  {
+    id: uniqueId(),
+    writer: {
+      id: uniqueId(),
+      penname: '이보람',
+      profileImageUrl: 'https://example.com/profile6.jpg',
+    },
+    score: 5,
+    createdAt: '2023년 10월 25일',
+    updatedAt: '2023년 10월 25일',
+    content: '정말 훌륭한 책입니다! 저자의 통찰력이 돋보이고, 읽는 내내 흥미로웠습니다.'
+  },
+];
+
+type Props = {
+  bookId: string;
+  reviews: Review[];
+}
+export const ReviewWidget = ({
+  bookId,
+  // reviews
+}: Props) => {
+  const reviews = dummyReviews;
+  const [writeReviewMode, setWriteReviewMode] = useState(false);
+  const [canWriteReview, setCanWriteReview] = useState(true);
 
   return (
-    <Box>
-      {/* 리뷰 통계 */}
-      <Box sx={{
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        alignItems: { xs: 'center', md: 'flex-start' },
-        justifyContent: 'space-between',
-        mb: 4,
-        gap: 3,
-        pb: 3,
-        borderBottom: '1px solid',
-        borderColor: 'divider'
-      }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: { xs: 'center', md: 'flex-start' }
-        }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="h2" sx={{ mr: 2 }}>4.5</Typography>
-            <Box>
-              <BookReviewRating score={4.5} />
-              <Typography variant="body2" color="text.secondary">24개의 리뷰 기준</Typography>
-            </Box>
+    <BookIdContextProvider value={bookId}>
+      <ReviewsContextProvider value={reviews}>
+        <Box>
+          {/* 리뷰 통계 */}
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: "center",
+            justifyContent: 'space-between',
+            mb: 4,
+            gap: 3,
+            pb: 3,
+            borderBottom: '1px solid',
+            borderColor: 'divider'
+          }}>
+            <ReviewSummary />
+            <FlaggableButton
+              flag={writeReviewMode}
+              setFlag={setWriteReviewMode}
+              toTrue={"리뷰 작성하기"}
+              toFalse={"리뷰 작성 취소"}
+              variant="contained"
+              sx={{ borderRadius: 4, px: 3 }}
+            />
           </Box>
+          {writeReviewMode && <ReviewEditor html="" />}
+          {/* 리뷰 목록 */}
+          {reviews.map(review => (
+            <ReviewItem
+              key={review.id}
+              name={review.writer.penname}
+              rating={review.score}
+              date={review.createdAt}
+              content={review.content}
+            />
+          ))}
         </Box>
-
-        <Button variant="contained" sx={{ borderRadius: 4, px: 3 }}>
-          리뷰 작성하기
-        </Button>
-      </Box>
-
-      {/* 리뷰 목록 */}
-      {reviews.map(review => (
-        <ReviewItem
-          key={review.id}
-          name={review.name}
-          rating={review.rating}
-          date={review.date}
-          content={review.content}
-        />
-      ))}
-
-      <Box sx={{ textAlign: 'center', mt: 3 }}>
-        <Button variant="outlined">더 보기</Button>
-      </Box>
-    </Box>
+      </ReviewsContextProvider>
+    </BookIdContextProvider>
   );
 };

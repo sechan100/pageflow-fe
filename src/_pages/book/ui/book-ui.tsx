@@ -21,7 +21,7 @@ const BookInfoContent = () => {
       <AuthorProfile />
       <SectionPaper>
         <SectionHeader title="리뷰" />
-        <ReviewWidget />
+        <ReviewWidget bookId={book.id} reviews={book.reviews} />
       </SectionPaper>
     </Container>
   );

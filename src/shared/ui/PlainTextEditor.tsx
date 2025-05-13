@@ -61,13 +61,13 @@ export type PlainTextEditorStore = {
   initialHtml: string | null;
   editorName: string;
   save: SaveMethod;
-  onSave: OnSaveMethod;
+  _onSave: OnSaveMethod;
   imagePlugin: boolean;
   ctrl_s_save: boolean;
   canSave: boolean;
-  setSave: (saveMethod: SaveMethod) => void;
-  setOnSave: (onSave: OnSaveMethod) => void;
+  registerSaveListener: (onSave: OnSaveMethod) => void;
   setCanSave: (canSave: boolean) => void;
+  _setSave: (saveMethod: SaveMethod) => void;
 }
 export const createPlainTextEditorStore = (args: {
   initialHtml: string | null;
@@ -81,11 +81,11 @@ export const createPlainTextEditorStore = (args: {
     imagePlugin: args.imagePlugin || false,
     ctrl_s_save: args.ctrl_s_save || false,
     save: () => { throw new Error("save method가 아직 설정되지 않았습니다."); },
-    setSave: (saveMethod: SaveMethod) => set({ save: saveMethod }),
+    _setSave: (saveMethod: SaveMethod) => set({ save: saveMethod }),
     canSave: false,
     setCanSave: (canSave: boolean) => set({ canSave }),
-    onSave: () => { throw new Error("onSave method가 아직 설정되지 않았습니다."); },
-    setOnSave: (onSave: OnSaveMethod) => set({ onSave }),
+    _onSave: () => { throw new Error("onSave method가 아직 설정되지 않았습니다."); },
+    registerSaveListener: (_onSave: OnSaveMethod) => set({ _onSave }),
   }))
 );
 export type PlainTextEditorStoreApi = ReturnType<typeof createPlainTextEditorStore>;
@@ -115,17 +115,17 @@ const Editor = ({
   });
 
   const save = useCallback(async () => {
-    const { onSave, canSave } = store.getState();
+    const { _onSave, canSave } = store.getState();
     if (!canSave) {
       return;
     }
-    await onSave(bufferRef.current);
+    await _onSave(bufferRef.current);
     setBuffer("");
   }, [setBuffer, store]);
 
   // store에 save 메소드 등록
   useEffect(() => {
-    store.getState().setSave(save);
+    store.getState()._setSave(save);
   }, [save, store]);
 
   // save 단축키 등록

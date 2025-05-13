@@ -1,6 +1,7 @@
 import { LocalDateTimeArray } from "@/shared/local-date-time";
 import { SimpleBook } from './book';
 import { ReadableToc } from "./readable-toc";
+import { Review } from "./review";
 
 
 
@@ -27,5 +28,6 @@ export type PublishedBook = {
   publishedRecords: PublishedRecord[];
   authorProfile: AuthorProfile;
   toc: ReadableToc;
+  reviews: Review[];
   totalCharCount: number;
 }

@@ -1,9 +1,9 @@
 'use client'
 import { useNotification } from '@/shared/ui/notification';
-import { createPlainTextEditorStore, PlainTextEditor, PlainTextEditorStore } from '@/shared/ui/PlainTextEditor';
+import { createPlainTextEditorStore, PlainTextEditor } from '@/shared/ui/PlainTextEditor';
 import { Box, Button, Container, SxProps } from "@mui/material";
 import { useCallback, useEffect, useRef } from 'react';
-import { StoreApi, useStore } from 'zustand';
+import { useStore } from 'zustand';
 import { useChangeBookDescriptionMutation } from '../api/change-book-description';
 import { useBookContext } from '../model/book-context';
 
@@ -39,7 +39,7 @@ export const BookDescriptionEditor = ({
 
   // onSave 메서드 동기화
   useEffect(() => {
-    storeRef.current.getState().setOnSave(onSave);
+    storeRef.current.getState().registerSaveListener(onSave);
   }, [onSave]);
 
   return (
