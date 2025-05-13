@@ -86,7 +86,7 @@ export const BookEditer = ({
         <BookCoverImageEditor />
       </BookSetting>
       <BookSetting text="책 설명">
-        <BookDescriptionEditor htmlContent={book.description} />
+        <BookDescriptionEditor html={book.description} />
       </BookSetting>
       <BookSetting text="출판 설정">
         <BookStatusSetting book={book} />

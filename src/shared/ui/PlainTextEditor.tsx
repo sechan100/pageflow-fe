@@ -11,8 +11,12 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { Box, SxProps } from "@mui/material";
-import { Ref, useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { createStore, useStore } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { registerCtrlShortCut } from '../keyboard';
+import { $getHtmlSerializedEditorState } from '../lexical/$getHtmlSerializedEditorState';
+import { useUserInputChangeUpdateListener } from '../lexical/use-user-input-change-update-listener';
 
 const plainTextEditorStyle: SxProps = {
   // Editor Root
@@ -51,58 +55,91 @@ const plainTextEditorStyle: SxProps = {
 
 const placeholder = "내용을 입력해주세요.";
 
-export type PlainTextEditorRef = {
-  save: () => Promise<void>;
-  canSave: boolean;
-}
-type PlainTextEditorProps = {
-  html: string | null;
+type SaveMethod = () => Promise<void> | void;
+type OnSaveMethod = (html: string) => Promise<void> | void;
+export type PlainTextEditorStore = {
+  initialHtml: string | null;
   editorName: string;
-  onSave: (html: string) => Promise<void> | void;
-  ref: Ref<PlainTextEditorRef>;
+  save: SaveMethod;
+  onSave: OnSaveMethod;
+  imagePlugin: boolean;
+  ctrl_s_save: boolean;
+  canSave: boolean;
+  setSave: (saveMethod: SaveMethod) => void;
+  setOnSave: (onSave: OnSaveMethod) => void;
+  setCanSave: (canSave: boolean) => void;
+}
+export const createPlainTextEditorStore = (args: {
+  initialHtml: string | null;
+  editorName: string;
   imagePlugin?: boolean; // default: false
   ctrl_s_save?: boolean; // default: false
-  sx?: SxProps;
+}) => createStore<PlainTextEditorStore>()(
+  subscribeWithSelector((set) => ({
+    initialHtml: args.initialHtml,
+    editorName: args.editorName,
+    imagePlugin: args.imagePlugin || false,
+    ctrl_s_save: args.ctrl_s_save || false,
+    save: () => { throw new Error("save method가 아직 설정되지 않았습니다."); },
+    setSave: (saveMethod: SaveMethod) => set({ save: saveMethod }),
+    canSave: false,
+    setCanSave: (canSave: boolean) => set({ canSave }),
+    onSave: () => { throw new Error("onSave method가 아직 설정되지 않았습니다."); },
+    setOnSave: (onSave: OnSaveMethod) => set({ onSave }),
+  }))
+);
+export type PlainTextEditorStoreApi = ReturnType<typeof createPlainTextEditorStore>;
+
+type PlainTextEditorProps = {
+  store: PlainTextEditorStoreApi;
 }
 const Editor = ({
-  html,
-  editorName,
-  onSave,
-  ref,
-  imagePlugin = false,
-  ctrl_s_save = false,
-  sx
+  store,
 }: PlainTextEditorProps) => {
   const [editor] = useLexicalComposerContext();
-  useLexicalEditorSerializedHtmlSync(html);
+  useLexicalEditorSerializedHtmlSync(store.getState().initialHtml);
+  const ctrl_s_save = useStore(store, s => s.ctrl_s_save);
 
   const bufferRef = useRef<string>("");
-  const canSave = bufferRef.current.length > 0;
+  const setBuffer = useCallback((html: string) => {
+    bufferRef.current = html;
+    store.getState().setCanSave(html.length > 0);
+  }, [store]);
+
+  // editor의 내용이 변경될 때마다 상태에 저장
+  useUserInputChangeUpdateListener(editor => {
+    editor.read(() => {
+      const html = $getHtmlSerializedEditorState();
+      setBuffer(html);
+    });
+  });
 
   const save = useCallback(async () => {
+    const { onSave, canSave } = store.getState();
     if (!canSave) {
       return;
     }
     await onSave(bufferRef.current);
-    bufferRef.current = "";
-  }, [canSave, onSave]);
+    setBuffer("");
+  }, [setBuffer, store]);
 
-  useImperativeHandle(ref, () => ({
-    save,
-    canSave,
-  }), [canSave, save]);
+  // store에 save 메소드 등록
+  useEffect(() => {
+    store.getState().setSave(save);
+  }, [save, store]);
 
   // save 단축키 등록
   useEffect(() => {
     const element = editor.getRootElement();
     if (!element) return;
     if (!ctrl_s_save) return;
-    return registerCtrlShortCut({
+    const cleanup = registerCtrlShortCut({
       element,
       key: 's',
       cb: save,
     })
-  }, [ctrl_s_save, editor, save]);
+    return cleanup;
+  }, [ctrl_s_save, editor, save, store]);
 
   return (
     <Box
@@ -121,26 +158,26 @@ const Editor = ({
         ErrorBoundary={LexicalErrorBoundary}
       />
       <HistoryPlugin />
-      {imagePlugin && <ImagesPlugin />}
+      {store.getState().imagePlugin && <ImagesPlugin />}
       {/* <TreeViewPlugin /> */}
     </Box>
   )
 }
 
-export const PlainTextEditor = (props: PlainTextEditorProps) => {
+export const PlainTextEditor = ({ store }: PlainTextEditorProps) => {
   const editorConfig = useMemo(() => ({
-    namespace: props.editorName,
-    nodes: props.imagePlugin ? [ImageNode] : [],
+    namespace: store.getState().editorName,
+    nodes: store.getState().imagePlugin ? [ImageNode] : [],
     onError(error: Error) {
       throw error;
     },
     theme: editorTheme,
-  }), [props.editorName, props.imagePlugin]);
+  }), [store]);
 
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <Editor {...props} />
+      <Editor store={store} />
     </LexicalComposer>
   )
 }
