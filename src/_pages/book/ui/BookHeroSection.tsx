@@ -1,11 +1,12 @@
 'use client';
 
+import { ReviewService } from '@/entities/book';
 import { BookReviewRating } from '@/features/book';
 import { useNextRouter } from "@/shared/hooks/useNextRouter";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import { Book } from "lucide-react";
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { usePublishedBookContext } from "../model/published-book-context";
 import { CharacterCountSection } from "./CharacterCountSection";
 import { PublishedRecoredsSection } from './PublishedRecoredsSection';
@@ -41,8 +42,10 @@ const BookCoverImage = () => {
 export const BookHeroSection = () => {
   const book = usePublishedBookContext();
   const { router } = useNextRouter();
-  const [reviewScore, setReviewScore] = useState(3.7);
-  const [reviewCount, setReviewCount] = useState(24);
+
+  const reviewAverageScore = useMemo(() => {
+    return ReviewService.getReviewScoreAverage(book.reviews);
+  }, [book.reviews]);
 
   return (
     <SectionPaper>
@@ -74,9 +77,9 @@ export const BookHeroSection = () => {
 
             {/* 리뷰 점수 */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <BookReviewRating score={reviewScore} />
+              <BookReviewRating score={reviewAverageScore} />
               <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
-                {reviewScore} ({reviewCount}개 리뷰)
+                {reviewAverageScore.toFixed(1)} / ({book.reviews.length}개의 리뷰)
               </Typography>
             </Box>
 

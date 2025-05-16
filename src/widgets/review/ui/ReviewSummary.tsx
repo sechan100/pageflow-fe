@@ -1,8 +1,8 @@
 'use client'
+import { ReviewService } from "@/entities/book";
 import { BookReviewRating } from "@/features/book";
 import { Box, SxProps, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { ReviewService } from "../model/review-service";
 import { useReviewsStore } from "../model/use-reviews-store";
 
 
