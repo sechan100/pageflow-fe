@@ -107,10 +107,9 @@ export const ReviewEditor = ({
         notification.error();
         return;
       }
-      updateReview(review.id, r => ({
-        ...r,
-        ...res.data,
-      }));
+      updateReview(review.id, r => {
+        return res.data;
+      });
       notification.success("리뷰가 수정되었습니다.");
     }
     onSave?.();

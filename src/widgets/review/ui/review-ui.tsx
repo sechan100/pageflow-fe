@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import { uniqueId } from 'lodash';
 import { BookIdContextProvider } from '../model/context';
 import { InitReviewsStoreConfig } from '../model/use-reviews-store';
+import { OrderSelector } from './OrderSelector';
 import { ReviewList } from './ReviewList';
 import { ReviewSummary } from './ReviewSummary';
 
@@ -123,6 +124,7 @@ export const ReviewWidget = ({
           borderColor: 'divider'
         }}>
           <ReviewSummary />
+          <OrderSelector />
         </Box>
         <ReviewList />
       </Box>

@@ -15,6 +15,7 @@ export const ReviewList = ({
 }: Props) => {
   const reviews = useReviewsStore(s => s.reviews);
   const canWriteReview = useReviewsStore(s => s.canWriteReview);
+
   return (
     <>
       {canWriteReview && (

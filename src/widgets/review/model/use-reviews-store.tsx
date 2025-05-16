@@ -1,10 +1,11 @@
 import { Review } from "@/entities/book";
 import { useSessionQuery } from "@/entities/user";
+import { LocalDateTimeService } from "@/shared/local-date-time";
 import { useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
 
 
-type ReviewOrderBy = "latest" | "oldest" | "score-asc" | "score-desc";
+export type ReviewOrderBy = "latest" | "oldest" | "score-asc" | "score-desc";
 
 export type ReviewsStore = {
   reviews: Review[];
@@ -14,7 +15,7 @@ export type ReviewsStore = {
 export const useReviewsStore = create<ReviewsStore>(() => ({
   reviews: [],
   canWriteReview: true,
-  orderBy: "latest",
+  orderBy: "score-desc",
 }));
 
 
@@ -50,14 +51,14 @@ export const useReviewsStoreActions = (): UseReviewsStoreActions => {
     const reviews = useReviewsStore.getState().reviews;
     const sortedReviews = [...reviews].sort((a, b) => {
       switch (orderBy) {
-        // case "latest":
-        //   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        // case "oldest":
-        //   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        // case "score-asc":
-        //   return a.score - b.score;
-        // case "score-desc":
-        //   return b.score - a.score;
+        case "latest":
+          return LocalDateTimeService.compare(a.createdAt, b.createdAt);
+        case "oldest":
+          return LocalDateTimeService.compare(b.createdAt, a.createdAt);
+        case "score-asc":
+          return a.score - b.score;
+        case "score-desc":
+          return b.score - a.score;
         default:
           return 0;
       }
@@ -107,6 +108,7 @@ type InitReviewsStoreConfigProps = {
 }
 export const InitReviewsStoreConfig = ({ reviews }: InitReviewsStoreConfigProps) => {
   const sessionQuery = useSessionQuery();
+  const { reorder } = useReviewsStoreActions();
 
   useEffect(() => {
     if (sessionQuery.data === undefined) return;
@@ -116,7 +118,8 @@ export const InitReviewsStoreConfig = ({ reviews }: InitReviewsStoreConfigProps)
       reviews,
       canWriteReview
     });
-  }, [reviews, sessionQuery.data]);
+    reorder(useReviewsStore.getState().orderBy);
+  }, [reorder, reviews, sessionQuery.data]);
 
   return <></>
 }

@@ -1,6 +1,6 @@
 'use client'
 import { PublishedRecord } from '@/entities/book';
-import { convertToLocalDateTime } from "@/shared/local-date-time";
+import { LocalDateTimeService } from "@/shared/local-date-time";
 import { SxProps, Typography } from "@mui/material";
 import { convertEditionToText } from "../model/convert-edition-to-text";
 import { Section, Title } from "./utils/book-info-section";
@@ -20,7 +20,7 @@ export const PublishedRecoredsSection = ({
         출간일
       </Title>
       {publishedRecords.map(({ edition, printingCount, publishedAt }) => {
-        const { year, month, day } = convertToLocalDateTime(publishedAt);
+        const { year, month, day } = LocalDateTimeService.convert(publishedAt);
         return (
           <Typography
             key={edition}

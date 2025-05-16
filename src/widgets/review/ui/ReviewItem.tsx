@@ -3,10 +3,11 @@ import { Review } from "@/entities/book";
 import { useSessionQuery } from "@/entities/user";
 import { BookReviewRating } from "@/features/book";
 import { STYLES } from "@/global/styles";
-import { convertToLocalDateTime } from "@/shared/local-date-time";
+import { LocalDateTimeService } from "@/shared/local-date-time";
 import { useNotification } from "@/shared/ui/notification";
 import { createPlainTextEditorStore, PlainTextEditor, PlainTextEditorStoreApi } from "@/shared/ui/PlainTextEditor";
 import { useDialog } from "@/shared/ui/use-dialog";
+import { AlignBox } from "@/shared/ui/AlignBox";
 import { Avatar, Box, IconButton, Stack, SxProps, Typography } from "@mui/material";
 import { Edit, RotateCcw, Trash } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -16,6 +17,30 @@ import { useReviewsStoreActions } from "../model/use-reviews-store";
 import { ReviewBox } from "./ReviewBox";
 import { ReviewEditor } from "./ReviewEditor";
 
+
+type ReviewDateProps = {
+  review: Review;
+}
+const ReviewDate = ({
+  review,
+}: ReviewDateProps) => {
+  const createdAt = useMemo(() => LocalDateTimeService.convert(review.createdAt), [review.createdAt]);
+  const updatedAt = useMemo(() => LocalDateTimeService.convert(review.updatedAt), [review.updatedAt]);
+
+  const printDate = useCallback((dateType: "createdAt" | "updatedAt") => {
+    const date = dateType === "createdAt" ? createdAt : updatedAt;
+    return `${date.year}년 ${date.month}월 ${date.day}일`;
+  }, [createdAt, updatedAt]);
+
+  return (
+    <>
+      <Typography variant="caption" sx={{ ml: 1 }}>
+        {/* {equalLocalDateTime(createdAt, updatedAt) ? printDate("createdAt") : `${printDate("updatedAt")} (수정됨)`} */}
+        {printDate("createdAt")}
+      </Typography>
+    </>
+  )
+}
 
 type ReviewContentProps = {
   review: Review;
@@ -27,18 +52,18 @@ const ReviewContent = ({ review }: ReviewContentProps) => {
     readOnly: true,
   }));
 
-  const createdAt = useMemo(() => convertToLocalDateTime(review.createdAt), [review.createdAt]);
-  const updatedAt = useMemo(() => convertToLocalDateTime(review.updatedAt), [review.updatedAt]);
-
   return (
     <>
       <Box sx={{ display: 'flex', mb: 2 }}>
-        <Avatar sx={{ mr: 2 }}>{review.writer.penname.charAt(0)}</Avatar>
+        <AlignBox sx={{ mr: 1 }}>
+          <Avatar src={review.writer.profileImageUrl} />
+        </AlignBox>
+        {/* <Avatar sx={{ mr: 2 }}>{review.writer.penname.charAt(0)}</Avatar> */}
         <Box>
           <Typography variant="subtitle1">{review.writer.penname}</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <BookReviewRating score={review.score} />
-            <Typography variant="caption" sx={{ ml: 1 }}>{createdAt.year}년 {createdAt.month}월 {createdAt.day}일</Typography>
+            <ReviewDate review={review} />
           </Box>
         </Box>
       </Box>
