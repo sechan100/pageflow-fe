@@ -1,6 +1,5 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
-import { decode } from "he";
 
 type EditorSectionContent = {
   content: string;
@@ -16,8 +15,8 @@ export const getEditorSectionContentApi = async ({ bookId, sectionId }: { bookId
   }
 
   return {
-    content: decode(res.data.content)
-  };
+    content: res.data.content
+  }
 };
 
 export const EDITOR_SECTION_CONTENT_QUERY_KEY = (sectionId: string) => ['editor', 'section', sectionId, 'content'];

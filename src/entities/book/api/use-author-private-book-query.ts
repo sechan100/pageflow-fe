@@ -1,6 +1,5 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
-import { decode } from "he";
 import { AuthorPrivateBook } from '../model/book';
 
 
@@ -18,18 +17,10 @@ const getAuthorPrivateBookApi = async (bookId: string): Promise<Result> => {
     .get<AuthorPrivateBook>(`/user/books/${bookId}`);
 
   return res.resolver<Result>()
-    .SUCCESS((data) => {
-      const book: AuthorPrivateBook = {
-        ...data,
-        title: decode(data.title),
-        description: decode(data.description),
-      }
-
-      return {
-        code: "success",
-        book,
-      }
-    })
+    .SUCCESS((data) => ({
+      code: "success",
+      book: data,
+    }))
     .resolve();
 }
 

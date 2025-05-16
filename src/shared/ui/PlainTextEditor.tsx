@@ -4,19 +4,41 @@ import { ImageNode } from '@/shared/lexical/ImageNode';
 import { ImagesPlugin } from '@/shared/lexical/ImagePlugin';
 import { LexicalPlaceholder } from '@/shared/lexical/LexicalPlaceholder';
 import { useLexicalEditorSerializedHtmlSync } from '@/shared/lexical/use-lexical-editor-serialized-html-sync';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { Box, SxProps } from "@mui/material";
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { $getRoot, ElementNode } from 'lexical';
+import { useEffect, useMemo } from 'react';
 import { createStore, useStore } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { registerCtrlShortCut } from '../keyboard';
 import { $getHtmlSerializedEditorState } from '../lexical/$getHtmlSerializedEditorState';
 import { useUserInputChangeUpdateListener } from '../lexical/use-user-input-change-update-listener';
+
+const $hasImageNodeRecursive = (parent: ElementNode): boolean => {
+  const children = parent.getChildren();
+  for (const child of children) {
+    if (child.getType() === ImageNode.getType()) {
+      return true;
+    }
+    if (child instanceof ElementNode) {
+      const hasImageNode = $hasImageNodeRecursive(child);
+      if (hasImageNode) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+const isHtmlEmpty = (html: string): boolean => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  return doc.body.innerHTML === "";
+}
 
 const plainTextEditorStyle: SxProps = {
   // Editor Root
@@ -53,41 +75,37 @@ const plainTextEditorStyle: SxProps = {
 }
 
 
-const placeholder = "내용을 입력해주세요.";
-
-type SaveMethod = () => Promise<void> | void;
-type OnSaveMethod = (html: string) => Promise<void> | void;
 export type PlainTextEditorStore = {
   initialHtml: string | null;
+  html: string;
+  /**
+   * 실제 내용이 비어있는 경우 true.
+   * 만약 imagePlugin을 사용한다면, 이미지만 포함된 경우에 false.
+   */
+  isHtmlEmpty: boolean;
+  placeholder: string;
   editorName: string;
-  save: SaveMethod;
-  _onSave: OnSaveMethod;
   imagePlugin: boolean;
-  ctrl_s_save: boolean;
-  canSave: boolean;
-  registerSaveListener: (onSave: OnSaveMethod) => void;
-  setCanSave: (canSave: boolean) => void;
-  _setSave: (saveMethod: SaveMethod) => void;
+  readOnly: boolean;
+  setReadOnly: (readOnly: boolean) => void;
 }
 export const createPlainTextEditorStore = (args: {
   initialHtml: string | null;
   editorName: string;
+  placeholder?: string;
   imagePlugin?: boolean; // default: false
-  ctrl_s_save?: boolean; // default: false
-}) => createStore<PlainTextEditorStore>()(
-  subscribeWithSelector((set) => ({
-    initialHtml: args.initialHtml,
-    editorName: args.editorName,
-    imagePlugin: args.imagePlugin || false,
-    ctrl_s_save: args.ctrl_s_save || false,
-    save: () => { throw new Error("save method가 아직 설정되지 않았습니다."); },
-    _setSave: (saveMethod: SaveMethod) => set({ save: saveMethod }),
-    canSave: false,
-    setCanSave: (canSave: boolean) => set({ canSave }),
-    _onSave: () => { throw new Error("onSave method가 아직 설정되지 않았습니다."); },
-    registerSaveListener: (_onSave: OnSaveMethod) => set({ _onSave }),
-  }))
-);
+  readOnly?: boolean; // default: false
+}) => createStore<PlainTextEditorStore>()(subscribeWithSelector((set) => ({
+  initialHtml: args.initialHtml,
+  html: args.initialHtml || "",
+  isHtmlEmpty: isHtmlEmpty(args.initialHtml || ""),
+  editorName: args.editorName,
+  placeholder: args.placeholder || "내용을 입력해주세요.",
+  imagePlugin: args.imagePlugin || false,
+  readOnly: args.readOnly || false,
+  setReadOnly: (readOnly: boolean) => set({ readOnly }),
+})));
+
 export type PlainTextEditorStoreApi = ReturnType<typeof createPlainTextEditorStore>;
 
 type PlainTextEditorProps = {
@@ -98,48 +116,29 @@ const Editor = ({
 }: PlainTextEditorProps) => {
   const [editor] = useLexicalComposerContext();
   useLexicalEditorSerializedHtmlSync(store.getState().initialHtml);
-  const ctrl_s_save = useStore(store, s => s.ctrl_s_save);
-
-  const bufferRef = useRef<string>("");
-  const setBuffer = useCallback((html: string) => {
-    bufferRef.current = html;
-    store.getState().setCanSave(html.length > 0);
-  }, [store]);
+  const placeholder = useStore(store, s => s.placeholder);
+  const readOnly = useStore(store, s => s.readOnly);
 
   // editor의 내용이 변경될 때마다 상태에 저장
   useUserInputChangeUpdateListener(editor => {
     editor.read(() => {
       const html = $getHtmlSerializedEditorState();
-      setBuffer(html);
+      const isEmpty = $getRoot().getTextContent().length === 0;
+      const isHaveImageNode = $hasImageNodeRecursive($getRoot());
+      store.setState({
+        html,
+        isHtmlEmpty: isEmpty && !isHaveImageNode,
+      });
     });
   });
 
-  const save = useCallback(async () => {
-    const { _onSave, canSave } = store.getState();
-    if (!canSave) {
-      return;
+  // readOnly 상태 동기화
+  useEffect(() => {
+    const newEditable = !readOnly;
+    if (editor.isEditable() !== newEditable) {
+      editor.setEditable(newEditable);
     }
-    await _onSave(bufferRef.current);
-    setBuffer("");
-  }, [setBuffer, store]);
-
-  // store에 save 메소드 등록
-  useEffect(() => {
-    store.getState()._setSave(save);
-  }, [save, store]);
-
-  // save 단축키 등록
-  useEffect(() => {
-    const element = editor.getRootElement();
-    if (!element) return;
-    if (!ctrl_s_save) return;
-    const cleanup = registerCtrlShortCut({
-      element,
-      key: 's',
-      cb: save,
-    })
-    return cleanup;
-  }, [ctrl_s_save, editor, save, store]);
+  }, [editor, readOnly, store]);
 
   return (
     <Box
@@ -153,6 +152,7 @@ const Editor = ({
           <ContentEditable
             aria-placeholder={placeholder}
             placeholder={<LexicalPlaceholder text={placeholder} />}
+            spellCheck={false}
           />
         }
         ErrorBoundary={LexicalErrorBoundary}
@@ -165,13 +165,14 @@ const Editor = ({
 }
 
 export const PlainTextEditor = ({ store }: PlainTextEditorProps) => {
-  const editorConfig = useMemo(() => ({
+  const editorConfig = useMemo<InitialConfigType>(() => ({
     namespace: store.getState().editorName,
     nodes: store.getState().imagePlugin ? [ImageNode] : [],
     onError(error: Error) {
       throw error;
     },
     theme: editorTheme,
+    editable: !store.getState().readOnly,
   }), [store]);
 
 

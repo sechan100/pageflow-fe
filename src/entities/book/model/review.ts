@@ -1,3 +1,4 @@
+import { LocalDateTimeArray } from "@/shared/local-date-time";
 import { Author } from "./author.type";
 
 
@@ -6,6 +7,6 @@ export type Review = {
   writer: Author;
   content: string;
   score: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: LocalDateTimeArray;
+  updatedAt: LocalDateTimeArray;
 }

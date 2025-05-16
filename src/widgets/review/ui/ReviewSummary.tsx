@@ -2,8 +2,8 @@
 import { BookReviewRating } from "@/features/book";
 import { Box, SxProps, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { useReviewsContext } from "../model/context";
 import { ReviewService } from "../model/review-service";
+import { useReviewsStore } from "../model/use-reviews-store";
 
 
 
@@ -13,7 +13,7 @@ type Props = {
 export const ReviewSummary = ({
   sx
 }: Props) => {
-  const reviews = useReviewsContext();
+  const reviews = useReviewsStore(s => s.reviews);
   const reviewScoreAverage = useMemo(() => ReviewService.getReviewScoreAverage(reviews), [reviews]);
 
   return (

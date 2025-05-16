@@ -1,5 +1,4 @@
 import { api } from "@/global/api";
-import { decode } from "he";
 import { ReadableSectionContent } from "../model/readable-content";
 
 type Form = {
@@ -14,8 +13,5 @@ export const getReadableSectionContentApi = async ({ bookId, sectionId }: Form):
   if (!res.isSuccess()) {
     throw new Error(res.description);
   }
-  return {
-    ...res.data,
-    content: decode(res.data.content),
-  }
+  return res.data;
 }

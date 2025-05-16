@@ -1,6 +1,5 @@
 import { api } from "@/global/api";
 import { useQuery } from "@tanstack/react-query";
-import { decode } from "he";
 import { MyBooks } from "../model/my-books";
 
 
@@ -19,20 +18,10 @@ const myBooksApi = async (): Promise<Result> => {
     .get<MyBooks>("/user/books");
 
   return res.resolver<Result>()
-    .SUCCESS((data) => {
-      const myBooks = {
-        ...data,
-        books: data.books.map(book => ({
-          ...book,
-          title: decode(book.title),
-        }))
-      }
-
-      return {
-        code: "success",
-        myBooks,
-      }
-    })
+    .SUCCESS((myBooks) => ({
+      code: "success",
+      myBooks,
+    }))
     .resolve();
 }
 
