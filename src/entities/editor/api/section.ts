@@ -9,7 +9,7 @@ const getEditorSectionApi = async ({ bookId, sectionId }: { bookId: string, sect
   const res = await api
     .user()
     .get<EditorSection>(`/user/books/${bookId}/toc/sections/${sectionId}`);
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
   return res.data;

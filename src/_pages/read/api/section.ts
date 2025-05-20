@@ -10,7 +10,7 @@ export const getReadableSectionContentApi = async ({ bookId, sectionId }: Form):
   const res = await api
     .guest()
     .get<ReadableSectionContent>(`/reader/books/${bookId}/sections/${sectionId}`);
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
   return res.data;

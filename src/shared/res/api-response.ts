@@ -37,8 +37,8 @@ export type ApiResponse<D> = {
   code: string; // unique한 응답 코드
   description: string; // 간단한 설명
   data: D;
+  isSuccess: boolean; // 성공 여부
 
-  isSuccess(): boolean;
   is(code: string): boolean;
   resolver<R>(): ApiResponseResolver<D, R>;
 }
@@ -47,15 +47,13 @@ export class ApiResponseImpl<D> implements ApiResponse<D> {
   code: string;
   description: string;
   data: D;
+  isSuccess: boolean;
 
   constructor(response: PlainApiResponse<D>) {
     this.code = response.code;
     this.description = response.description;
     this.data = decodeStringDataRecursive(response.data);
-  }
-
-  isSuccess(): boolean {
-    return this.code === "SUCCESS";
+    this.isSuccess = response.code === "SUCCESS";
   }
 
   is(code: string): boolean {

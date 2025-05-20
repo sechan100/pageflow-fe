@@ -87,7 +87,7 @@ export const ProfileSettingsPage = ({ session }: Props) => {
       profileImage: profileImageFile,
       toDefaultProfileImage: false,
     })
-    if (res.isSuccess()) {
+    if (res.isSuccess) {
       setProfileImageFile(null);
       queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY });
       notification.success("프로필이 업데이트되었습니다.");

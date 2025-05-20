@@ -9,7 +9,7 @@ const getEditorFolderApi = async ({ bookId, folderId }: { bookId: string, folder
   const res = await api
     .user()
     .get<EditorFolder>(`/user/books/${bookId}/toc/folders/${folderId}`);
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
   return res.data;

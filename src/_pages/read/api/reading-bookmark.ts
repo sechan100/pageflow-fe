@@ -18,7 +18,7 @@ export const saveReadingBookmarkApi = async ({ bookId, readingBookmark }: Form):
     })
     .post<ReadingBookmark>(`/reader/books/${bookId}/bookmark`);
 
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
 }
@@ -42,7 +42,7 @@ export const getBookmarkOrNullApi = async (bookId: string): Promise<ReadingBookm
   const res = await api
     .user()
     .get<BookmarkRes>(`/reader/books/${bookId}/bookmark`);
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
   if (res.data.isBookmarkExist) {
