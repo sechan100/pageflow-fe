@@ -1,24 +1,24 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  MenuItem,
-  AppBar,
-  Drawer,
-  Container,
-  Toolbar,
-} from '@mui/material';
+import { STYLES } from '@/global/styles';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import MenuIcon from '@mui/icons-material/Menu';
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Divider,
+  Drawer,
+  IconButton,
+  MenuItem,
+  Toolbar,
+} from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { BarLogo } from './BarLogo';
 import ColorModeIconDropdown from './ColorModeIconDropdown';
 import { UserWidget } from './UserWidget';
-import { STYLES } from '@/global/styles';
 
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({

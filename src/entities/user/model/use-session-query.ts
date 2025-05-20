@@ -1,6 +1,6 @@
 import { api } from "@/global/api";
-import { useQuery } from "@tanstack/react-query";
 import { useAuthentication } from "@/global/authentication/authentication";
+import { useQuery } from "@tanstack/react-query";
 
 
 export type SessionUser = {
@@ -20,7 +20,11 @@ export type Session = {
 
 const query = async (): Promise<Session> => {
   const res = await api.user().get<Session>("/user/session");
-  return res.resolver().get();
+  if (!res.isSuccess) {
+    throw new Error(res.description);
+  }
+
+  return res.data;
 }
 
 

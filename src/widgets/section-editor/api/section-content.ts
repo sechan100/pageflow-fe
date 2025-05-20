@@ -10,7 +10,7 @@ export const getEditorSectionContentApi = async ({ bookId, sectionId }: { bookId
     .user()
     .get<EditorSectionContent>(`/user/books/${bookId}/toc/sections/${sectionId}/content`);
 
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
 

@@ -48,7 +48,7 @@ export class ApiResponseResolver<D, R> {
   }
 
   get(): D {
-    if (this.#response.isSuccess()) {
+    if (this.#response.isSuccess) {
       return this.#response.data;
     } else {
       throw new ApiResponseError(this.#response);

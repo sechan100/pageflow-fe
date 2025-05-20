@@ -159,9 +159,9 @@ export const Account = ({
   const { popover, setPopover } = useAccountPopoverStore();
   const avatarContainerRef = useRef<HTMLButtonElement>(null);
 
-  if (session.isLoading) {
+  if (session.isLoading || session.data === undefined) {
     return (
-      <Avatar>P</Avatar>
+      <Avatar>...</Avatar>
     )
   }
 

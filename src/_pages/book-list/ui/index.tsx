@@ -27,7 +27,7 @@ export const BookListPage = ({ sx }: Props) => {
   return (
     <Container maxWidth="xl" sx={{ py: 4, ...sx }}>
       <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: 'bold' }}>
-        북 컬렉션
+        책 목록
       </Typography>
 
       <Grid container columns={30} spacing={3}>

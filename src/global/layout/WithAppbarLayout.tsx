@@ -1,6 +1,6 @@
-import React from "react";
 import { AppBarWidget } from "@/widgets/app-bar";
 import { Box } from "@mui/material";
+import React from "react";
 
 
 export const WithAppbarLayout = ({

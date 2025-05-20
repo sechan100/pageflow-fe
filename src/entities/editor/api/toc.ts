@@ -7,7 +7,7 @@ export const getEditorTocApi = async (bookId: string): Promise<EditorToc> => {
     .user()
     .get<EditorToc>(`/user/books/${bookId}/toc`);
 
-  if (!res.isSuccess()) {
+  if (!res.isSuccess) {
     throw new Error(res.description);
   }
 

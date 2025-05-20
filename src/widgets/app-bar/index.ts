@@ -1,1 +1,1 @@
-export { AppBarWidget } from './ui/AppBarWidget'
+export { AppBarWidget } from './ui/app-bar-ui';
