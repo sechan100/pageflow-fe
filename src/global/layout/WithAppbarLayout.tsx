@@ -14,7 +14,7 @@ export const WithAppbarLayout = ({
       <AppBarWidget />
       <Box
         sx={{
-          my: 14,
+          // my: 14,
         }}
       >
         {children}
