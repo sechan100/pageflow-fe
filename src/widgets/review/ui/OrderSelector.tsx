@@ -1,8 +1,9 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, SxProps } from "@mui/material";
-import { useCallback } from "react";
+import { Selector, SelectorOption } from "@/shared/ui/Selector";
+import { SxProps } from "@mui/material";
+import { useCallback, useMemo } from "react";
 import { ReviewOrderBy, useReviewsStore, useReviewsStoreActions } from "../model/use-reviews-store";
 
-const orderByOptions = [
+const orderByOptions: SelectorOption<ReviewOrderBy>[] = [
   { value: "latest", label: "최신순" },
   { value: "oldest", label: "오래된순" },
   { value: "score-asc", label: "평점 낮은순" },
@@ -18,26 +19,24 @@ export const OrderSelector = ({
   const orderBy = useReviewsStore(s => s.orderBy);
   const { reorder } = useReviewsStoreActions();
 
-  const handleChange = useCallback((event: SelectChangeEvent) => {
-    const value = event.target.value as ReviewOrderBy;
-    reorder(value);
+  const currentOption = useMemo(() => {
+    const option = orderByOptions.find(option => option.value === orderBy);
+    if (!option) {
+      throw new Error(`Invalid orderBy value: ${orderBy}`);
+    }
+    return option;
+  }, [orderBy]);
+
+  const handleChange = useCallback((newOrderBy: ReviewOrderBy) => {
+    reorder(newOrderBy);
   }, [reorder]);
 
   return (
-    <Box>
-      <FormControl>
-        <InputLabel id="review-order-by-select-label">정렬</InputLabel>
-        <Select
-          labelId="review-order-by-select-label"
-          value={orderBy}
-          label="Order By"
-          onChange={handleChange}
-        >
-          {orderByOptions.map(({ value, label }) => (
-            <MenuItem key={value} value={value}>{label}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+    <Selector
+      title="정렬"
+      option={currentOption}
+      options={orderByOptions}
+      onChange={handleChange}
+    />
   );
 }

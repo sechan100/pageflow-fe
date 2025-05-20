@@ -111,9 +111,8 @@ export const InitReviewsStoreConfig = ({ reviews }: InitReviewsStoreConfigProps)
   const { reorder } = useReviewsStoreActions();
 
   useEffect(() => {
-    if (sessionQuery.data === undefined) return;
-    const uid = sessionQuery.data.user.uid;
-    const canWriteReview = checkCanWriteReview(uid, reviews);
+    const uid = sessionQuery.data?.user.uid;
+    const canWriteReview = uid ? checkCanWriteReview(uid, reviews) : false;
     useReviewsStore.setState({
       reviews,
       canWriteReview
