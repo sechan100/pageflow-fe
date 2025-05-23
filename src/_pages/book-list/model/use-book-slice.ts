@@ -47,11 +47,12 @@ export const useBookSliceActions = () => {
 
   const setSortBy = useCallback((sortBy: SortBy) => {
     useBookSlice.setState({
-      page: 0,
+      page: -1,
       books: [],
       sortBy
     });
-  }, []);
+    loadNextSlice();
+  }, [loadNextSlice]);
 
   return {
     loadNextSlice,

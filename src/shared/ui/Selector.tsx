@@ -1,13 +1,6 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, SxProps } from "@mui/material";
 import { useCallback, useId } from "react";
 
-const orderByOptions = [
-  { value: "latest", label: "최신순" },
-  { value: "oldest", label: "오래된순" },
-  { value: "score-asc", label: "평점 낮은순" },
-  { value: "score-desc", label: "평점 높은순" },
-];
-
 export type SelectorOption<T> = {
   label: string;
   value: T;
@@ -43,8 +36,8 @@ export const Selector = <T,>({
           label={option.label}
           onChange={handleChange}
         >
-          {orderByOptions.map(({ value, label }) => (
-            <MenuItem key={value} value={value}>{label}</MenuItem>
+          {options.map(({ value, label }) => (
+            <MenuItem key={label} value={String(value)}>{label}</MenuItem>
           ))}
         </Select>
       </FormControl>
