@@ -3,8 +3,7 @@
 import { isReadableTocFolder, isReadableTocSection, ReadableTocFolder, ReadableTocNode, ReadableTocSection } from "@/entities/book";
 import { Box, SxProps, Typography } from "@mui/material";
 import { usePublishedBookContext } from "../model/published-book-context";
-import { SectionHeader } from "./utils/SectionHeader";
-import { SectionPaper } from "./utils/SectionPaper";
+import { BasePaper, PaperHeader } from "./utils/base-paper";
 
 
 type FolderNodeProps = {
@@ -97,15 +96,15 @@ const renderTocNode = (node: ReadableTocNode, level = 0) => {
   }
 };
 
-export const TableOfContents = () => {
+export const TocPaper = () => {
   const book = usePublishedBookContext();
 
   return (
-    <SectionPaper>
-      <SectionHeader title="목차" />
+    <BasePaper>
+      <PaperHeader title="목차" />
       <Box sx={{ pl: 2 }}>
         {book.toc.root.children.map(child => renderTocNode(child))}
       </Box>
-    </SectionPaper>
+    </BasePaper>
   );
 };

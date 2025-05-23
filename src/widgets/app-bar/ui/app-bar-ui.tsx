@@ -4,16 +4,11 @@ import { STYLES } from '@/global/styles';
 import {
   AppBar, Container
 } from '@mui/material';
-import { useState } from 'react';
 import { BarLogo } from './BarLogo';
 import { UserWidget } from './UserWidget';
 
 
 export const AppBarWidget = () => {
-  const [open, setOpen] = useState(false);
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
 
   return (
     <AppBar

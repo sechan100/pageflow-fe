@@ -4,25 +4,24 @@ import { usePublishedBookQuery } from '@/entities/book';
 import { ReviewWidget } from '@/widgets/review';
 import { Box, Container, SxProps, Typography } from "@mui/material";
 import { PublishedBookContextProvider, usePublishedBookContext } from "../model/published-book-context";
-import { AuthorProfile } from "./AuthorProfile";
-import { BookHeroSection } from "./BookHeroSection";
-import { TableOfContents } from "./TableOfContents";
-import { SectionHeader } from './utils/SectionHeader';
-import { SectionPaper } from './utils/SectionPaper';
+import { AuthorProfilePaper } from "./AuthorProfilePaper";
+import { BookPaper } from "./BookPaper";
+import { TocPaper } from "./TocPaper";
+import { BasePaper, PaperHeader } from './utils/base-paper';
 
 
 const BookInfoContent = () => {
   const book = usePublishedBookContext();
 
   return (
-    <Container maxWidth="lg">
-      <BookHeroSection />
-      <TableOfContents />
-      <AuthorProfile />
-      <SectionPaper>
-        <SectionHeader title="리뷰" />
+    <Container maxWidth="md">
+      <BookPaper />
+      <TocPaper />
+      <AuthorProfilePaper />
+      <BasePaper>
+        <PaperHeader title="리뷰" />
         <ReviewWidget bookId={book.id} reviews={book.reviews} />
-      </SectionPaper>
+      </BasePaper>
     </Container>
   );
 };

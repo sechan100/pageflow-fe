@@ -1,5 +1,5 @@
-import { STYLES } from "@/global/styles";
-import { Paper, SxProps } from "@mui/material";
+import { PALLETTE } from "@/global/styles";
+import { Divider, Paper, SxProps } from "@mui/material";
 
 
 type ReviewBoxProps = {
@@ -8,17 +8,20 @@ type ReviewBoxProps = {
 }
 export const ReviewBox = ({ children, sx }: ReviewBoxProps) => {
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 3,
-        mb: 2,
-        backgroundColor: STYLES.color.background,
-        borderRadius: 2,
-        ...sx,
-      }}
-    >
-      {children}
-    </Paper>
+    <>
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          my: 1,
+          backgroundColor: PALLETTE.background,
+          borderRadius: 2,
+          ...sx,
+        }}
+      >
+        {children}
+      </Paper>
+      <Divider />
+    </>
   )
 }

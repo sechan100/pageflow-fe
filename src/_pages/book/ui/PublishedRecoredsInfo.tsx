@@ -3,7 +3,7 @@ import { PublishedRecord } from '@/entities/book';
 import { LocalDateTimeService } from "@/shared/local-date-time";
 import { SxProps, Typography } from "@mui/material";
 import { convertEditionToText } from "../model/convert-edition-to-text";
-import { Section, Title } from "./utils/book-info-section";
+import { GridBox, Title } from "./utils/book-info-layout";
 
 type Props = {
   publishedRecords: PublishedRecord[];
@@ -15,7 +15,7 @@ export const PublishedRecoredsSection = ({
 }: Props) => {
 
   return (
-    <Section>
+    <GridBox>
       <Title>
         출간일
       </Title>
@@ -31,6 +31,6 @@ export const PublishedRecoredsSection = ({
           </Typography>
         )
       })}
-    </Section>
+    </GridBox>
   )
 }

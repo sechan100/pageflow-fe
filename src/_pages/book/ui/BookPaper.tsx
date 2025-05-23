@@ -8,9 +8,9 @@ import { Book } from "lucide-react";
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { usePublishedBookContext } from "../model/published-book-context";
-import { CharacterCountSection } from "./CharacterCountSection";
-import { PublishedRecoredsSection } from './PublishedRecoredsSection';
-import { SectionPaper } from "./utils/SectionPaper";
+import { CharacterCountSection } from "./CharacterCountInfo";
+import { PublishedRecoredsSection } from './PublishedRecoredsInfo';
+import { BasePaper } from "./utils/base-paper";
 
 const bookCoverImageWidth = 300;
 const bookCoverImageHeight = bookCoverImageWidth * 1.5;
@@ -39,7 +39,7 @@ const BookCoverImage = () => {
   )
 }
 
-export const BookHeroSection = () => {
+export const BookPaper = () => {
   const book = usePublishedBookContext();
   const { router } = useNextRouter();
 
@@ -48,10 +48,10 @@ export const BookHeroSection = () => {
   }, [book.reviews]);
 
   return (
-    <SectionPaper>
+    <BasePaper>
       <Grid container spacing={2} justifyContent="space-evenly">
         {/* 책 표지 이미지 */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <BookCoverImage />
         </Grid>
 
@@ -117,6 +117,6 @@ export const BookHeroSection = () => {
           </Box>
         </Grid>
       </Grid>
-    </SectionPaper>
+    </BasePaper>
   );
 };

@@ -1,6 +1,6 @@
 import { InfoOutlined } from "@mui/icons-material";
 import { Tooltip, Typography } from "@mui/material";
-import { BookInfo } from "./utils/book-info-section";
+import { BookInfoLayout } from "./utils/book-info-layout";
 
 
 const charCountPerPage = 700;
@@ -16,10 +16,10 @@ export const CharacterCountSection = ({
   charCount,
 }: CharacterCountSectionProps) => {
   return (
-    <BookInfo.Section>
-      <BookInfo.Title>
+    <BookInfoLayout.GridBox>
+      <BookInfoLayout.Title>
         분량
-      </BookInfo.Title>
+      </BookInfoLayout.Title>
       <Typography variant="body1" color="text.secondary">
         페이지 수
         : {getPageCount(charCount)}p&nbsp;
@@ -37,6 +37,6 @@ export const CharacterCountSection = ({
       <Typography variant="body1" color="text.secondary">
         글자 수: {charCount} 자
       </Typography>
-    </BookInfo.Section>
+    </BookInfoLayout.GridBox>
   );
 };

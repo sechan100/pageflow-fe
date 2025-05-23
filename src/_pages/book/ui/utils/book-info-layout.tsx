@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
   sx?: SxProps;
 }
-export const Section = ({
+export const GridBox = ({
   children,
   sx
 }: Props) => {
@@ -42,7 +42,7 @@ export const Title = ({
   )
 }
 
-export const BookInfo = {
-  Section: Section,
-  Title: Title
+export const BookInfoLayout = {
+  GridBox,
+  Title,
 }
